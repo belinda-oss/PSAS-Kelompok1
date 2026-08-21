@@ -17,3 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/ai-service/venv/
+/ai-service/__pycache__/
+*.pt
