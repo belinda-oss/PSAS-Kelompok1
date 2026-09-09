@@ -8,6 +8,7 @@ import BusinessUnitsSection from './components/BusinessUnitsSection';
 import JoinTeamSection from './components/JoinTeamSection';
 import Footer from './components/Footer';
 import ExploreModal from './components/ExploreModal';
+import ShofiEyelashPage from './components/ShofiEyelashPage';
 
 const UNIT_DETAILS = {
     'shofi-eyelash': {
@@ -39,12 +40,18 @@ const UNIT_DETAILS = {
 };
 
 function App() {
+    const [currentView, setCurrentView] = useState('home'); // 'home' | 'shofi-eyelash'
     const [modalData, setModalData] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenExplore = (data) => {
-        setModalData(data);
-        setIsModalOpen(true);
+        if (data.id === 'shofi-eyelash') {
+            setCurrentView('shofi-eyelash');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            setModalData(data);
+            setIsModalOpen(true);
+        }
     };
 
     const handleCloseExplore = () => {
@@ -52,11 +59,23 @@ function App() {
     };
 
     const handleExploreUnitById = (unitId) => {
-        if (UNIT_DETAILS[unitId]) {
+        if (unitId === 'shofi-eyelash') {
+            setCurrentView('shofi-eyelash');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (UNIT_DETAILS[unitId]) {
             setModalData(UNIT_DETAILS[unitId]);
             setIsModalOpen(true);
         }
     };
+
+    const handleBackToHome = () => {
+        setCurrentView('home');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    if (currentView === 'shofi-eyelash') {
+        return <ShofiEyelashPage onBackToHome={handleBackToHome} />;
+    }
 
     return (
         <div className="site-wrapper">

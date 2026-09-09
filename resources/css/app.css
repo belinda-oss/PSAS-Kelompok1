@@ -1215,3 +1215,894 @@ button {
         padding: 1.75rem 1.25rem;
     }
 }
+
+/* ==========================================================================
+   8. SHOFI EYELASH PAGE STYLES (MATCHING IMAGE 1)
+   ========================================================================== */
+.shofi-page-wrapper {
+    min-height: 100vh;
+    background-color: #ffffff;
+    color: var(--color-text-dark);
+    font-family: var(--font-sans);
+}
+
+/* Shofi Header */
+.shofi-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.shofi-header-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
+
+.shofi-nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.shofi-nav.left-nav {
+    justify-content: flex-start;
+}
+
+.shofi-nav.right-nav {
+    justify-content: flex-end;
+}
+
+.shofi-nav-link {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #2b2b2b;
+    transition: color var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.shofi-nav-link.back-btn {
+    background-color: #f3f4f6;
+    padding: 0.4rem 0.85rem;
+    border-radius: 4px;
+    color: #1f2937;
+    font-size: 0.75rem;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.shofi-nav-link.back-btn:hover {
+    background-color: #e5e7eb;
+    color: #000000;
+}
+
+.shofi-nav-link:hover {
+    color: var(--color-accent);
+}
+
+.shofi-nav-link.contact-highlight {
+    background-color: #1f1f1f;
+    color: #ffffff;
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+}
+
+.shofi-nav-link.contact-highlight:hover {
+    background-color: var(--color-accent);
+    color: #ffffff;
+}
+
+.shofi-brand-text {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-style: italic;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #1a1a1a;
+}
+
+/* Shofi Hero */
+.shofi-hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.shofi-hero-bg {
+    position: absolute;
+    inset: 0;
+}
+
+.shofi-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+}
+
+.shofi-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.75) 100%);
+}
+
+.shofi-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #ffffff;
+    padding: 2rem;
+    max-width: 850px;
+}
+
+.shofi-hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 7vw, 5.5rem);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.shofi-hero-subtitle {
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2.5rem;
+}
+
+.shofi-hero-btn {
+    display: inline-block;
+    padding: 0.85rem 2.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    background-color: #ffffff;
+    border-radius: 2px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.shofi-hero-btn:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-2px);
+}
+
+/* Beauty Section */
+.shofi-beauty-section {
+    padding: 6.5rem 2rem;
+    background-color: #ffffff;
+}
+
+.shofi-beauty-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.shofi-beauty-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.8vw, 2.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 1.75rem;
+    color: #1a1a1a;
+}
+
+.shofi-beauty-paragraph {
+    font-size: 0.95rem;
+    color: #5c6269;
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+}
+
+.shofi-beauty-img-frame {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.shofi-beauty-img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+}
+
+/* Services Section (Dark Theme) */
+.shofi-services-section {
+    padding: 6.5rem 2rem;
+    background-color: #1f1f1f;
+    color: #ffffff;
+}
+
+.shofi-services-container {
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.shofi-services-main-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+.shofi-services-sub-title {
+    font-size: 0.95rem;
+    color: #9ca3af;
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.shofi-services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+}
+
+.shofi-service-card {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+.shofi-service-img-wrap {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+}
+
+.shofi-service-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.shofi-service-card:hover .shofi-service-img {
+    transform: scale(1.05);
+}
+
+.shofi-service-body {
+    padding: 1.75rem 2rem 2.25rem;
+}
+
+.shofi-service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+}
+
+.shofi-service-title {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.shofi-service-price {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #d4af37;
+    letter-spacing: 0.05em;
+}
+
+.shofi-service-desc {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.65;
+}
+
+/* AI Hand & Nail Tone Analysis Section */
+.shofi-ai-section {
+    padding: 6.5rem 2rem;
+    background-color: #141414;
+    color: #ffffff;
+}
+
+.shofi-ai-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.shofi-ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #d4af37;
+    background-color: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+}
+
+.shofi-ai-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.8vw, 2.75rem);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+}
+
+.shofi-ai-subtitle {
+    font-size: 0.95rem;
+    color: #a3a3a3;
+    max-width: 680px;
+    margin-bottom: 3.5rem;
+    line-height: 1.6;
+}
+
+.shofi-ai-widget {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 3rem;
+    background-color: #1f1f1f;
+    border: 1px solid #333333;
+    border-radius: 8px;
+    padding: 2.25rem;
+}
+
+.shofi-ai-scanner-box {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.shofi-scanner-frame {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px dashed #444444;
+}
+
+.shofi-scanner-frame.scanning {
+    border-color: #d4af37;
+}
+
+.shofi-hand-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.shofi-scan-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shofi-scan-target {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.shofi-scan-icon {
+    color: #d4af37;
+}
+
+.shofi-scan-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+}
+
+.shofi-laser-beam {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    box-shadow: 0 0 15px #d4af37;
+    animation: scanLaser 1.5s infinite ease-in-out;
+}
+
+@keyframes scanLaser {
+    0% { top: 0%; }
+    50% { top: 100%; }
+    100% { top: 0%; }
+}
+
+.shofi-tone-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.selector-label {
+    font-size: 0.78125rem;
+    color: #a3a3a3;
+}
+
+.tone-btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tone-btn {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #cccccc;
+    background-color: #2a2a2a;
+    border: 1px solid #3d3d3d;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+}
+
+.tone-btn.active, .tone-btn:hover {
+    background-color: #d4af37;
+    color: #111111;
+    border-color: #d4af37;
+}
+
+.shofi-scan-trigger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #111111;
+    background-color: #d4af37;
+    border-radius: 4px;
+    transition: background-color var(--transition-fast);
+}
+
+.shofi-scan-trigger-btn:hover {
+    background-color: #c49a2c;
+}
+
+.shofi-scan-trigger-btn.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.shofi-ai-results-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.results-heading {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+}
+
+.results-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-card {
+    background-color: #262626;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #888888;
+    margin-bottom: 0.35rem;
+}
+
+.metric-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.metric-value.highlight {
+    color: #d4af37;
+}
+
+.shofi-ai-callout {
+    background-color: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 6px;
+    padding: 1.15rem;
+    margin-bottom: 1.75rem;
+}
+
+.callout-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #d4af37;
+    margin-bottom: 0.5rem;
+}
+
+.callout-text {
+    font-size: 0.85rem;
+    color: #d1d5db;
+    line-height: 1.6;
+}
+
+.shofi-ai-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    background-color: #ffffff;
+    color: #111827;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 4px;
+    transition: background-color var(--transition-fast);
+}
+
+.shofi-ai-action-btn:hover {
+    background-color: #e5e7eb;
+}
+
+/* Book Your Session Section */
+.shofi-book-section {
+    padding: 5.5rem 2rem;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.shofi-book-container {
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.shofi-book-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: #111827;
+}
+
+.shofi-book-subtitle {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+}
+
+.shofi-book-btn {
+    display: inline-block;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 0.9rem 2.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: background-color var(--transition-fast);
+}
+
+.shofi-book-btn:hover {
+    background-color: var(--color-accent);
+}
+
+/* Reviews Section */
+.shofi-reviews-section {
+    padding: 6.5rem 2rem;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.shofi-reviews-container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.shofi-reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+}
+
+.reviews-col-title {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin-bottom: 1.75rem;
+    color: #ffffff;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.8125rem;
+    color: #a3a3a3;
+}
+
+.form-input, .form-textarea {
+    background-color: #262626;
+    border: 1px solid #3d3d3d;
+    border-radius: 4px;
+    padding: 0.75rem 1rem;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: border-color var(--transition-fast);
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #d4af37;
+}
+
+.star-rating-select {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.star-btn {
+    padding: 0.2rem;
+    color: #555555;
+    transition: transform var(--transition-fast);
+}
+
+.star-btn:hover {
+    transform: scale(1.15);
+}
+
+.review-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #ffffff;
+    color: #111827;
+    padding: 0.8rem 1.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    transition: background-color var(--transition-fast);
+}
+
+.review-submit-btn:hover {
+    background-color: #d4af37;
+    color: #111111;
+}
+
+.submit-success-msg {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #10b981;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.review-card {
+    background-color: #242424;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    padding: 1.25rem;
+}
+
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.reviewer-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #d4af37;
+    color: #111111;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reviewer-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.review-date {
+    font-size: 0.75rem;
+    color: #737373;
+}
+
+.review-stars {
+    display: flex;
+    gap: 0.2rem;
+}
+
+.review-text {
+    font-size: 0.875rem;
+    color: #d1d5db;
+    line-height: 1.6;
+}
+
+/* Footer */
+.shofi-footer {
+    background-color: #111111;
+    color: #737373;
+    padding: 4rem 2rem 2.5rem;
+    border-top: 1px solid #222222;
+}
+
+.shofi-footer-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    text-align: center;
+}
+
+.shofi-footer-brand .footer-logo {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    font-style: italic;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.shofi-footer-brand .footer-tagline {
+    font-size: 0.85rem;
+    color: #a3a3a3;
+    margin-top: 0.25rem;
+}
+
+.shofi-footer-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-link-btn {
+    font-size: 0.8125rem;
+    color: #a3a3a3;
+    transition: color var(--transition-fast);
+}
+
+.footer-link-btn:hover {
+    color: #ffffff;
+}
+
+.shofi-footer-bottom {
+    font-size: 0.8125rem;
+    color: #525252;
+    border-top: 1px solid #222222;
+    width: 100%;
+    padding-top: 2rem;
+}
+
+/* Responsive Styles for Shofi Page */
+@media (max-width: 992px) {
+    .shofi-beauty-container,
+    .shofi-ai-widget,
+    .shofi-reviews-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .shofi-beauty-img {
+        height: 320px;
+    }
+
+    .shofi-services-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .shofi-header-container {
+        grid-template-columns: auto 1fr;
+        padding: 0.85rem 1.25rem;
+    }
+
+    .shofi-nav {
+        gap: 1rem;
+    }
+
+    .shofi-nav.left-nav .shofi-nav-link:not(.back-btn),
+    .shofi-nav.right-nav {
+        display: none;
+    }
+
+    .shofi-hero-section {
+        min-height: 65vh;
+    }
+
+    .shofi-beauty-section,
+    .shofi-services-section,
+    .shofi-ai-section,
+    .shofi-reviews-section {
+        padding: 4rem 1.25rem;
+    }
+}
+
