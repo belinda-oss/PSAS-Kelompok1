@@ -1,484 +1,412 @@
 import React, { useState } from 'react';
-import { Star, CheckCircle2, ArrowRight, Sparkles, Scan, ArrowLeft, Send } from 'lucide-react';
+import { Star, MessageCircle, Send, Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import ContactModal from './ContactModal';
 
-export default function ShofiEyelashPage({ onBackToHome }) {
-    // AI Analysis State
-    const [selectedTone, setSelectedTone] = useState('warm'); // 'warm' | 'cool' | 'deep'
-    const [isScanning, setIsScanning] = useState(false);
-    const [scanSuccess, setScanSuccess] = useState(false);
+export default function ShofiEyelashPage() {
+    const [isContactOpen, setIsContactOpen] = useState(false);
 
-    // Reviews State
+    // Reviews State with the 3 required 5-star testimonials
     const [reviews, setReviews] = useState([
         {
             id: 1,
-            name: 'Amanda R.',
+            name: 'Sarah Wijaya',
             rating: 5,
-            comment: 'Sangat puas dengan lash extension di Shofi Eyelash! Pengerjaannya rapi, ringan di mata, dan tahan lama lebih dari 4 minggu.',
+            comment: 'Hasilnya sangat natural dan tahan lama. Terapisnya sangat teliti dan detail saat pemasangan, sama sekali tidak terasa perih di mata!',
             date: '2 hari yang lalu'
         },
         {
             id: 2,
-            name: 'Citra Kirana',
+            name: 'Amanda Putri',
             rating: 5,
-            comment: 'Terapisnya ramah dan studio-nya sangat bersih & wangi. Hasil Nail Art sesuai dengan rekomendasi AI Tone Analysis!',
-            date: '1 minggu yang lalu'
+            comment: 'Tempatnya sangat nyaman dan bersih. Pelayanan bintang lima dari awal reservasi sampai treatment selesai. Pasti akan balik lagi!',
+            date: '5 hari yang lalu'
         },
         {
             id: 3,
-            name: 'Dian Sastrowardoyo',
+            name: 'Rina Kartika',
             rating: 5,
-            comment: 'Foot Spa dan Lash Lift di sini favorit banget. Tempat rileks terbaik untuk peremajaan diri di akhir pekan.',
-            date: '2 minggu yang lalu'
+            comment: 'Volume set-nya juara! Desain lash disesuaikan persis dengan bentuk mata saya. Sangat puas dengan hasilnya yang elegan.',
+            date: '1 minggu yang lalu'
         }
     ]);
 
-    const [newReview, setNewReview] = useState({
-        name: '',
-        rating: 5,
-        comment: ''
-    });
+    // Review Form State
+    const [reviewName, setReviewName] = useState('');
+    const [reviewRating, setReviewRating] = useState(5);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [reviewComment, setReviewComment] = useState('');
+    const [formSuccess, setFormSuccess] = useState(false);
 
-    const [hoveredStar, setHoveredStar] = useState(0);
-    const [submitSuccess, setSubmitSuccess] = useState(false);
-
-    // AI Analysis Preset Data
-    const toneData = {
-        warm: {
-            skinTone: 'Warm',
-            recommendedStyle: 'Hassle Style / Elegant Nude',
-            matchedColor: 'Warm Medium & Rose Gold',
-            serviceType: 'Nail Art & Eyelash Extension',
-            note: 'Berdasarkan skin tone hangat, warna nude hangat dan nail art dengan aksen gold sangat cocok untuk memberikan kesan elegan dan alami.',
-            image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=600&q=80'
-        },
-        cool: {
-            skinTone: 'Cool',
-            recommendedStyle: 'French Glam / Classic Pink',
-            matchedColor: 'Cool Berry & Silver Glow',
-            serviceType: 'Lash Lift & Cool Nails',
-            note: 'Berdasarkan skin tone dingin, nuansa pink pastel, berry lembut, dan detail silver akan memancarkan kilau kulit yang lebih cerah.',
-            image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=600&q=80'
-        },
-        deep: {
-            skinTone: 'Deep',
-            recommendedStyle: 'Bold Luxury / High Contrast',
-            matchedColor: 'Deep Burgundy & Champagne Gold',
-            serviceType: 'Volume Eyelash & Foot Spa',
-            note: 'Berdasarkan skin tone deep, pilihan warna burgundy intens, nude karamel, dan aksen emas memberikan tampilan mewah dan berkelas.',
-            image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80'
-        }
-    };
-
-    const handleRunAnalysis = () => {
-        setIsScanning(true);
-        setScanSuccess(false);
-        setTimeout(() => {
-            setIsScanning(false);
-            setScanSuccess(true);
-        }, 1500);
-    };
-
-    const handleAddReview = (e) => {
-        e.preventDefault();
-        if (!newReview.name.trim() || !newReview.comment.trim()) return;
-
-        const reviewObj = {
-            id: Date.now(),
-            name: newReview.name,
-            rating: newReview.rating,
-            comment: newReview.comment,
-            date: 'Baru saja'
-        };
-
-        setReviews([reviewObj, ...reviews]);
-        setNewReview({ name: '', rating: 5, comment: '' });
-        setSubmitSuccess(true);
-        setTimeout(() => setSubmitSuccess(false), 3000);
-    };
-
-    const currentAnalysis = toneData[selectedTone];
-
+    // 4 Services Data matching exact requirements
     const services = [
         {
-            id: 1,
-            title: 'Eyelash & Lip Extensions',
-            price: 'From $79',
-            image: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=600&q=80',
-            description: 'Kami menghadirkan aplikasi ekstensi bulu mata presisi yang menyatu sempurna dengan garis mata alami Anda, dipadukan dengan perawatan rona bibir segar.'
+            id: 'embroidery',
+            title: 'Eyebrow & Lip Embroidery',
+            price: 'From $150',
+            image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80',
+            description: 'Wake up effortlessly beautiful with our semi-permanent makeup solutions. Crafted with precision pigments that naturally enhance your facial features.'
         },
         {
-            id: 2,
-            title: 'Eyelash Extensions',
-            price: 'From $99',
+            id: 'eyelash',
+            title: 'Eyelash Extension',
+            price: 'From $80',
             image: 'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=format&fit=crop&w=600&q=80',
-            description: 'Pilihan ekstensi bulu mata yang disesuaikan secara khusus untuk panjang, volume, dan kenyamanan maksimal yang dirancang sesuai bentuk mata Anda.'
+            description: 'Customized lash designs tailored to your eye shape. Ultra-lightweight synthetic fibers that provide stunning length, volume, and natural curl.'
         },
         {
-            id: 3,
-            title: 'Nail Art (Manicure)',
-            price: 'From $49',
+            id: 'nail-art',
+            title: 'Nail Art (Motif, Plain, 3D)',
+            price: 'From $45',
             image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=600&q=80',
-            description: 'Perawatan kuku profesional, pemotongan presisi, dan desain nail art kustom dengan warna gel tahan lama yang mencerminkan gaya pribadi Anda.'
+            description: 'Express your style with our premium manicure services. From minimalist elegance and solid gloss to bespoke 3D motifs crafted by skilled nail artists.'
         },
         {
-            id: 4,
+            id: 'foot-spa',
             title: 'Foot Spa',
-            price: 'From $59',
+            price: 'From $60',
             image: 'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?auto=format&fit=crop&w=600&q=80',
-            description: 'Perawatan foot spa yang menenangkan dan menyegarkan untuk meremajakan kulit kaki, meredakan lelah, serta memanjakan diri Anda secara menyeluruh.'
+            description: 'A rejuvenating retreat for your feet. Gentle exfoliation, warm aromatic soaks, and therapeutic acupressure to restore vitality and softness.'
         }
     ];
 
+    const handleReviewSubmit = (e) => {
+        e.preventDefault();
+        if (!reviewName.trim() || !reviewComment.trim()) return;
+
+        const newEntry = {
+            id: Date.now(),
+            name: reviewName,
+            rating: reviewRating,
+            comment: reviewComment,
+            date: 'Baru saja'
+        };
+
+        setReviews([newEntry, ...reviews]);
+        setReviewName('');
+        setReviewComment('');
+        setReviewRating(5);
+        setFormSuccess(true);
+        setTimeout(() => setFormSuccess(false), 4000);
+    };
+
+    const handleBookClick = () => {
+        const ctaElement = document.getElementById('booking-cta');
+        if (ctaElement) {
+            ctaElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+
     return (
-        <div className="shofi-page-wrapper">
-            {/* Header Navbar */}
-            <header className="shofi-header">
-                <div className="shofi-header-container">
-                    <nav className="shofi-nav left-nav">
-                        <button onClick={onBackToHome} className="shofi-nav-link back-btn">
-                            <ArrowLeft size={16} />
-                            <span>KEMBALI</span>
+        <div className="min-h-screen bg-white text-charcoal flex flex-col">
+            {/* Global Navbar */}
+            <Navbar onOpenContact={() => setIsContactOpen(true)} />
+
+            <main className="flex-1">
+                {/* 1. HERO SECTION */}
+                <section className="relative w-full min-h-[75vh] flex items-center justify-center overflow-hidden bg-charcoal">
+                    <div className="absolute inset-0 z-0">
+                        <img 
+                            src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=2000&q=85" 
+                            alt="Shofi Eyelash Studio" 
+                            className="w-full h-full object-cover object-center filter brightness-[0.7]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/60"></div>
+                    </div>
+
+                    <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center">
+                        <span className="text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase text-nude mb-3">
+                            PREMIUM BEAUTY STUDIO
+                        </span>
+                        <h1 className="font-serif italic font-bold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-4 leading-tight">
+                            Shofi Eyelash
+                        </h1>
+                        <p className="text-sm sm:text-lg md:text-xl font-light text-neutral-200 tracking-wide mb-10 max-w-xl mx-auto leading-relaxed">
+                            Precision, Elegance, and the Art of Lashes.
+                        </p>
+                        <button 
+                            onClick={handleBookClick}
+                            className="px-8 sm:px-10 py-3.5 bg-nude hover:bg-nude-hover text-white text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-none transition-all duration-300 shadow-lg hover:shadow-xl"
+                        >
+                            BOOK AN APPOINTMENT
                         </button>
-                        <a href="#about-beauty" className="shofi-nav-link">ABOUT US</a>
-                        <a href="#services" className="shofi-nav-link">SERVICES</a>
-                    </nav>
-
-                    <div className="shofi-brand-logo" onClick={onBackToHome} style={{ cursor: 'pointer' }}>
-                        <span className="shofi-brand-text">GSU</span>
                     </div>
+                </section>
 
-                    <nav className="shofi-nav right-nav">
-                        <a href="#ai-analysis" className="shofi-nav-link">AI ANALYSIS</a>
-                        <a href="#reviews" className="shofi-nav-link">REVIEWS</a>
-                        <a href="#book" className="shofi-nav-link contact-highlight">BOOK NOW</a>
-                    </nav>
-                </div>
-            </header>
-
-            {/* Hero Section */}
-            <section className="shofi-hero-section">
-                <div className="shofi-hero-bg">
-                    <img 
-                        src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=1600&q=80" 
-                        alt="Shofi Eyelash Hero" 
-                        className="shofi-hero-img"
-                    />
-                    <div className="shofi-hero-overlay"></div>
-                </div>
-
-                <div className="shofi-hero-content">
-                    <h1 className="shofi-hero-title">Shofi Eyelash</h1>
-                    <p className="shofi-hero-subtitle">Precision Fingertip & Eyelash Studio</p>
-                    <a href="#services" className="shofi-hero-btn">
-                        EXPLORE ALL SERVICES
-                    </a>
-                </div>
-            </section>
-
-            {/* Elevating Your Natural Beauty Section */}
-            <section className="shofi-beauty-section" id="about-beauty">
-                <div className="shofi-beauty-container">
-                    <div className="shofi-beauty-text-col">
-                        <h2 className="shofi-beauty-title">Elevating Your Natural Beauty</h2>
-                        
-                        <p className="shofi-beauty-paragraph">
-                            At <strong>Shofi Eyelash</strong>, we believe that true beauty lies in the details. 
-                            Our expert technicians combine precision techniques with premium products to enhance 
-                            your natural eyelashes, creating a custom look that complements your unique facial features.
-                        </p>
-
-                        <p className="shofi-beauty-paragraph">
-                            Whether you're seeking a subtle boost or a dramatic transformation, our lash studio 
-                            provides a relaxing, luxurious atmosphere for all your eyelash and beauty needs. 
-                            Precision, comfort, and safety are our highest priorities.
-                        </p>
-                    </div>
-
-                    <div className="shofi-beauty-img-col">
-                        <div className="shofi-beauty-img-frame">
-                            <img 
-                                src="https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=800&q=80" 
-                                alt="Studio Interior" 
-                                className="shofi-beauty-img"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Our Services Section (Dark Theme) */}
-            <section className="shofi-services-section" id="services">
-                <div className="shofi-services-container">
-                    <h2 className="shofi-services-main-title">Our Services</h2>
-                    <p className="shofi-services-sub-title">Precision eyelash & beauty treatments tailored specifically for you</p>
-
-                    <div className="shofi-services-grid">
-                        {services.map((service) => (
-                            <div key={service.id} className="shofi-service-card">
-                                <div className="shofi-service-img-wrap">
-                                    <img src={service.image} alt={service.title} className="shofi-service-img" />
-                                </div>
-                                <div className="shofi-service-body">
-                                    <div className="shofi-service-header">
-                                        <h3 className="shofi-service-title">{service.title}</h3>
-                                        <span className="shofi-service-price">{service.price}</span>
+                {/* 2. ABOUT SECTION */}
+                <section className="py-20 md:py-28 bg-[#fbfbfb]">
+                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                            <div>
+                                <span className="text-xs font-semibold tracking-[0.2em] uppercase text-nude mb-3 block">
+                                    OUR PHILOSOPHY
+                                </span>
+                                <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal leading-tight mb-6">
+                                    Beauty Lies in the Details
+                                </h2>
+                                <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6">
+                                    At Shofi Eyelash, we believe that true beauty lies in the details. Our expert technicians use only premium materials, meticulous hygiene standards, and personalized consultations to accentuate your natural allure with effortless refinement.
+                                </p>
+                                <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8">
+                                    Whether you desire everyday natural lashes or a dramatic evening glamour, each set is handcrafted to complement your unique eye anatomy without causing damage to your natural lashes.
+                                </p>
+                                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200 text-center">
+                                    <div>
+                                        <p className="font-serif text-2xl font-bold text-charcoal">100%</p>
+                                        <p className="text-[11px] text-gray-500 uppercase tracking-wider mt-1">Sterilized & Safe</p>
                                     </div>
-                                    <p className="shofi-service-desc">{service.description}</p>
+                                    <div>
+                                        <p className="font-serif text-2xl font-bold text-charcoal">5,000+</p>
+                                        <p className="text-[11px] text-gray-500 uppercase tracking-wider mt-1">Happy Clients</p>
+                                    </div>
+                                    <div>
+                                        <p className="font-serif text-2xl font-bold text-charcoal">Certified</p>
+                                        <p className="text-[11px] text-gray-500 uppercase tracking-wider mt-1">Lash Artists</p>
+                                    </div>
                                 </div>
                             </div>
-                        ))}
+
+                            <div className="relative">
+                                <div className="aspect-[4/5] rounded-sm overflow-hidden shadow-lg">
+                                    <img 
+                                        src="https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=800&q=80" 
+                                        alt="Eyelash Technician at Work" 
+                                        className="w-full h-full object-cover object-center"
+                                        loading="lazy"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* AI Hand & Nail Tone Analysis Section (Interactive) */}
-            <section className="shofi-ai-section" id="ai-analysis">
-                <div className="shofi-ai-container">
-                    <div className="shofi-ai-badge">
-                        <Sparkles size={14} />
-                        <span>AI-Powered Personalization</span>
+                {/* 3. OUR SERVICES SECTION (GRID LAYOUT 4 CARDS) */}
+                <section className="py-20 md:py-28 bg-white" id="services">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center max-w-2xl mx-auto mb-16">
+                            <span className="text-xs font-semibold tracking-[0.2em] uppercase text-nude mb-2 block">
+                                SIGNATURE TREATMENTS
+                            </span>
+                            <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">
+                                Our Services
+                            </h2>
+                            <p className="text-gray-500 text-sm mt-3">
+                                Curated aesthetic treatments performed with surgical precision and supreme comfort.
+                            </p>
+                        </div>
+
+                        {/* Grid: 1 col on mobile, 2 cols on tablet (md:grid-cols-2), 4 cols on desktop (lg:grid-cols-4) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                            {services.map((service) => (
+                                <div 
+                                    key={service.id}
+                                    className="bg-[#fcfcfc] border border-gray-100 rounded-sm overflow-hidden flex flex-col shadow-sm hover:shadow-lg transition-all duration-300 group hover:-translate-y-1"
+                                >
+                                    {/* Image */}
+                                    <div className="w-full h-52 overflow-hidden relative">
+                                        <img 
+                                            src={service.image} 
+                                            alt={service.title} 
+                                            className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                                            loading="lazy"
+                                        />
+                                        <div className="absolute top-3 right-3 bg-charcoal/90 backdrop-blur-xs text-white text-[11px] font-semibold tracking-wider px-3 py-1 uppercase">
+                                            {service.price}
+                                        </div>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="p-6 flex flex-col justify-between flex-1">
+                                        <div>
+                                            <h3 className="font-serif text-lg font-semibold text-charcoal mb-2 leading-snug">
+                                                {service.title}
+                                            </h3>
+                                            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6">
+                                                {service.description}
+                                            </p>
+                                        </div>
+
+                                        <button 
+                                            onClick={handleBookClick}
+                                            className="w-full py-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase border border-charcoal/30 text-charcoal hover:bg-charcoal hover:text-white transition-colors duration-200 text-center"
+                                        >
+                                            RESERVE
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+                </section>
 
-                    <h2 className="shofi-ai-title">AI Hand & Nail Tone Analysis</h2>
-                    <p className="shofi-ai-subtitle">
-                        Teknologi AI kami menganalisis warna kulit tangan Anda untuk memberikan rekomendasi warna 
-                        dan desain nail art paling cocok secara presisi.
-                    </p>
+                {/* 4. BOOKING CTA */}
+                <section className="py-16 md:py-20 bg-charcoal text-white text-center" id="booking-cta">
+                    <div className="max-w-3xl mx-auto px-4 sm:px-6">
+                        <span className="text-xs font-semibold tracking-[0.2em] uppercase text-nude mb-3 block">
+                            GET IN TOUCH
+                        </span>
+                        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal mb-6">
+                            Ready to transform your look?
+                        </h2>
+                        <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-10 max-w-xl mx-auto">
+                            Ready to transform your look? Contact us via WhatsApp to consult with our master artists and secure your preferred schedule today.
+                        </p>
+                        <a 
+                            href="https://wa.me/6281234567890?text=Halo%20Shofi%20Eyelash,%20saya%20ingin%20reservasi%20treatment."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-3 px-8 sm:px-10 py-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-none transition-all duration-300 shadow-lg hover:shadow-xl"
+                        >
+                            <MessageCircle size={18} />
+                            <span>WHATSAPP RESERVATION</span>
+                        </a>
+                    </div>
+                </section>
 
-                    <div className="shofi-ai-widget">
-                        {/* Left: Hand Scan Frame */}
-                        <div className="shofi-ai-scanner-box">
-                            <div className={`shofi-scanner-frame ${isScanning ? 'scanning' : ''}`}>
-                                <img src={currentAnalysis.image} alt="Hand Tone Preview" className="shofi-hand-img" />
-                                
-                                <div className="shofi-scan-overlay">
-                                    <div className="shofi-scan-target">
-                                        <Scan size={36} className="shofi-scan-icon" />
-                                        <span className="shofi-scan-text">
-                                            {isScanning ? 'MENGANALISIS KULIT...' : 'TARGET SCAN KULIT TANGAN'}
+                {/* 5. REVIEWS / TESTIMONIAL SECTION */}
+                <section className="py-20 md:py-28 bg-[#fafafa]">
+                    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                        
+                        <div className="text-center max-w-2xl mx-auto mb-16">
+                            <span className="text-xs font-semibold tracking-[0.2em] uppercase text-nude mb-2 block">
+                                CLIENT STORIES
+                            </span>
+                            <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">
+                                What Our Clients Say
+                            </h2>
+                            <p className="text-gray-500 text-sm mt-3">
+                                Real experiences from our valued customers who trusted their beauty to Shofi Eyelash.
+                            </p>
+                        </div>
+
+                        {/* Testimonials Cards: 1 col on mobile, 2 cols on tablet (md:grid-cols-2), 3 cols on desktop (lg:grid-cols-3) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                            {reviews.map((rev) => (
+                                <div 
+                                    key={rev.id}
+                                    className="bg-white p-7 rounded-sm border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
+                                >
+                                    <div>
+                                        {/* Star Rating Display */}
+                                        <div className="flex items-center gap-1 text-amber-400 mb-4">
+                                            {[...Array(rev.rating)].map((_, i) => (
+                                                <Star key={i} size={16} fill="currentColor" />
+                                            ))}
+                                        </div>
+
+                                        <p className="text-gray-700 text-sm leading-relaxed italic mb-6">
+                                            "{rev.comment}"
+                                        </p>
+                                    </div>
+
+                                    <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+                                        <span className="font-serif font-semibold text-charcoal text-sm">
+                                            {rev.name}
+                                        </span>
+                                        <span className="text-xs text-gray-400">
+                                            {rev.date}
                                         </span>
                                     </div>
-                                    {isScanning && <div className="shofi-laser-beam"></div>}
                                 </div>
-                            </div>
-
-                            <div className="shofi-tone-selector">
-                                <span className="selector-label">Pilih Preview Skin Tone:</span>
-                                <div className="tone-btn-group">
-                                    <button 
-                                        className={`tone-btn ${selectedTone === 'warm' ? 'active' : ''}`}
-                                        onClick={() => setSelectedTone('warm')}
-                                    >
-                                        Warm Skin
-                                    </button>
-                                    <button 
-                                        className={`tone-btn ${selectedTone === 'cool' ? 'active' : ''}`}
-                                        onClick={() => setSelectedTone('cool')}
-                                    >
-                                        Cool Skin
-                                    </button>
-                                    <button 
-                                        className={`tone-btn ${selectedTone === 'deep' ? 'active' : ''}`}
-                                        onClick={() => setSelectedTone('deep')}
-                                    >
-                                        Deep Skin
-                                    </button>
-                                </div>
-                            </div>
-
-                            <button 
-                                className={`shofi-scan-trigger-btn ${isScanning ? 'disabled' : ''}`}
-                                onClick={handleRunAnalysis}
-                                disabled={isScanning}
-                            >
-                                <Sparkles size={16} />
-                                <span>{isScanning ? 'Menganalisis...' : 'MULAI ANALISIS (SCAN)'}</span>
-                            </button>
+                            ))}
                         </div>
 
-                        {/* Right: Results Dashboard */}
-                        <div className="shofi-ai-results-box">
-                            <h3 className="results-heading">1. Hasil Analisis Kulit & Nail Art</h3>
+                        {/* Form Ulasan: "Berikan Ulasan Anda" */}
+                        <div className="max-w-xl mx-auto bg-white p-8 sm:p-10 rounded-sm border border-gray-200 shadow-md">
+                            <h3 className="font-serif text-2xl font-semibold text-charcoal text-center mb-2">
+                                Berikan Ulasan Anda
+                            </h3>
+                            <p className="text-xs text-gray-500 text-center mb-8">
+                                Bagikan pengalaman Anda melakukan treatment di Shofi Eyelash.
+                            </p>
 
-                            <div className="results-metrics-grid">
-                                <div className="metric-card">
-                                    <span className="metric-label">SKIN TONE</span>
-                                    <span className="metric-value highlight">{currentAnalysis.skinTone}</span>
+                            {formSuccess && (
+                                <div className="mb-6 p-4 bg-green-50 border border-green-200 text-emerald-700 rounded text-xs sm:text-sm flex items-center gap-3">
+                                    <CheckCircle2 size={20} className="flex-shrink-0" />
+                                    <span>Ulasan Anda berhasil dikirim dan ditambahkan ke daftar testimoni!</span>
                                 </div>
+                            )}
 
-                                <div className="metric-card">
-                                    <span className="metric-label">GAYA REKOMENDASI</span>
-                                    <span className="metric-value">{currentAnalysis.recommendedStyle}</span>
-                                </div>
-
-                                <div className="metric-card">
-                                    <span className="metric-label">WARNA COCOK</span>
-                                    <span className="metric-value">{currentAnalysis.matchedColor}</span>
-                                </div>
-
-                                <div className="metric-card">
-                                    <span className="metric-label">TIPE SERVIS</span>
-                                    <span className="metric-value">{currentAnalysis.serviceType}</span>
-                                </div>
-                            </div>
-
-                            <div className="shofi-ai-callout">
-                                <div className="callout-header">
-                                    <Sparkles size={16} className="callout-icon" />
-                                    <span>Rekomendasi Khusus AI</span>
-                                </div>
-                                <p className="callout-text">{currentAnalysis.note}</p>
-                            </div>
-
-                            <a href="#book" className="shofi-ai-action-btn">
-                                <span>BOOKING REKOMENDASI INI</span>
-                                <ArrowRight size={16} />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Book Your Session Section */}
-            <section className="shofi-book-section" id="book">
-                <div className="shofi-book-container">
-                    <h2 className="shofi-book-title">Book Your Session</h2>
-                    <p className="shofi-book-subtitle">
-                        Ready to enhance your style? Book an appointment or consult with our experts for custom eyelash & beauty solutions.
-                    </p>
-
-                    <a 
-                        href="https://wa.me/6281234567890?text=Halo%20Shofi%20Eyelash,%20saya%20ingin%20booking%20sesi%20perawatan." 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="shofi-book-btn"
-                    >
-                        BOOK AN APPOINTMENT
-                    </a>
-                </div>
-            </section>
-
-            {/* Reviews Section */}
-            <section className="shofi-reviews-section" id="reviews">
-                <div className="shofi-reviews-container">
-                    <div className="shofi-reviews-grid">
-                        {/* Form Col */}
-                        <div className="review-form-col">
-                            <h3 className="reviews-col-title">Berikan Ulasan Anda</h3>
-                            
-                            <form onSubmit={handleAddReview} className="review-form">
-                                <div className="form-group">
-                                    <label htmlFor="rev-name">Nama Anda</label>
+                            <form onSubmit={handleReviewSubmit} className="space-y-5">
+                                <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                                        Nama Anda *
+                                    </label>
                                     <input 
-                                        type="text" 
-                                        id="rev-name"
-                                        className="form-input"
-                                        placeholder="Masukkan nama lengkap"
-                                        value={newReview.name}
-                                        onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                                        type="text"
                                         required
+                                        value={reviewName}
+                                        onChange={(e) => setReviewName(e.target.value)}
+                                        placeholder="Contoh: Sarah Wijaya"
+                                        className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-none focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
                                     />
                                 </div>
 
-                                <div className="form-group">
-                                    <label>Rating Anda</label>
-                                    <div className="star-rating-select">
+                                <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                                        Rating Bintang *
+                                    </label>
+                                    <div className="flex items-center gap-1.5 py-1">
                                         {[1, 2, 3, 4, 5].map((star) => (
                                             <button
-                                                type="button"
                                                 key={star}
-                                                className={`star-btn ${star <= (hoveredStar || newReview.rating) ? 'active' : ''}`}
-                                                onClick={() => setNewReview({ ...newReview, rating: star })}
-                                                onMouseEnter={() => setHoveredStar(star)}
-                                                onMouseLeave={() => setHoveredStar(0)}
+                                                type="button"
+                                                onClick={() => setReviewRating(star)}
+                                                onMouseEnter={() => setHoverRating(star)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                className="p-1 text-amber-400 hover:scale-110 transition-transform"
+                                                aria-label={`Beri bintang ${star}`}
                                             >
-                                                <Star size={22} fill={star <= (hoveredStar || newReview.rating) ? "#d4af37" : "none"} />
+                                                <Star 
+                                                    size={24} 
+                                                    fill={(hoverRating || reviewRating) >= star ? "currentColor" : "none"} 
+                                                    className={(hoverRating || reviewRating) >= star ? "text-amber-400" : "text-gray-300"}
+                                                />
                                             </button>
                                         ))}
+                                        <span className="text-xs text-gray-500 ml-2 font-medium">
+                                            {hoverRating || reviewRating} / 5 Bintang
+                                        </span>
                                     </div>
                                 </div>
 
-                                <div className="form-group">
-                                    <label htmlFor="rev-comment">Ulasan Anda</label>
+                                <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-gray-700 mb-1.5">
+                                        Komentar / Ulasan *
+                                    </label>
                                     <textarea 
-                                        id="rev-comment"
-                                        rows="4"
-                                        className="form-textarea"
-                                        placeholder="Bagikan pengalaman perawatan Anda di Shofi Eyelash..."
-                                        value={newReview.comment}
-                                        onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                                        rows={4}
                                         required
-                                    ></textarea>
+                                        value={reviewComment}
+                                        onChange={(e) => setReviewComment(e.target.value)}
+                                        placeholder="Tuliskan ulasan Anda tentang hasil, pelayanan, kenyamanan tempat..."
+                                        className="w-full p-4 text-sm border border-gray-200 rounded-none focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition resize-none"
+                                    />
                                 </div>
 
-                                <button type="submit" className="review-submit-btn">
-                                    <span>KIRIM ULASAN</span>
+                                <button 
+                                    type="submit"
+                                    className="w-full py-3.5 bg-charcoal hover:bg-nude text-white text-xs font-semibold tracking-[0.2em] uppercase transition-colors duration-200 flex items-center justify-center gap-2"
+                                >
                                     <Send size={15} />
+                                    <span>KIRIM ULASAN</span>
                                 </button>
-
-                                {submitSuccess && (
-                                    <div className="submit-success-msg">
-                                        <CheckCircle2 size={16} />
-                                        <span>Terima kasih! Ulasan Anda berhasil ditambahkan.</span>
-                                    </div>
-                                )}
                             </form>
                         </div>
 
-                        {/* List Col */}
-                        <div className="review-list-col">
-                            <h3 className="reviews-col-title">Ulasan Pelanggan</h3>
-
-                            <div className="reviews-list">
-                                {reviews.map((rev) => (
-                                    <div key={rev.id} className="review-card">
-                                        <div className="review-card-header">
-                                            <div className="reviewer-info">
-                                                <div className="reviewer-avatar">
-                                                    {rev.name.charAt(0).toUpperCase()}
-                                                </div>
-                                                <div>
-                                                    <h4 className="reviewer-name">{rev.name}</h4>
-                                                    <span className="review-date">{rev.date}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="review-stars">
-                                                {[...Array(rev.rating)].map((_, i) => (
-                                                    <Star key={i} size={15} fill="#d4af37" color="#d4af37" />
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <p className="review-text">{rev.comment}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
 
-            {/* Footer */}
-            <footer className="shofi-footer">
-                <div className="shofi-footer-container">
-                    <div className="shofi-footer-brand">
-                        <span className="footer-logo">GSU</span>
-                        <p className="footer-tagline">Beauty Solution for Your Everyday Life</p>
-                    </div>
+            {/* Global Footer */}
+            <Footer onOpenContact={() => setIsContactOpen(true)} />
 
-                    <div className="shofi-footer-links">
-                        <button onClick={onBackToHome} className="footer-link-btn">Main Landing Page</button>
-                        <a href="#about-beauty" className="footer-link-btn">About Shofi Eyelash</a>
-                        <a href="#services" className="footer-link-btn">Our Services</a>
-                        <a href="#ai-analysis" className="footer-link-btn">AI Tone Analysis</a>
-                    </div>
-
-                    <div className="shofi-footer-bottom">
-                        <p>&copy; {new Date().getFullYear()} PT GSU - Shofi Eyelash Studio. All Rights Reserved.</p>
-                    </div>
-                </div>
-            </footer>
+            {/* Contact Modal */}
+            <ContactModal 
+                isOpen={isContactOpen}
+                onClose={() => setIsContactOpen(false)}
+            />
         </div>
     );
 }

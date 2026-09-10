@@ -1,112 +1,90 @@
 import './bootstrap';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import AboutSection from './components/AboutSection';
 import BusinessUnitsSection from './components/BusinessUnitsSection';
 import JoinTeamSection from './components/JoinTeamSection';
 import Footer from './components/Footer';
-import ExploreModal from './components/ExploreModal';
+import ContactModal from './components/ContactModal';
 import ShofiEyelashPage from './components/ShofiEyelashPage';
+import LogisticsDistributionPage from './components/LogisticsDistributionPage';
+import RecruitPage from './components/RecruitPage';
 
-const UNIT_DETAILS = {
-    'shofi-eyelash': {
-        id: 'shofi-eyelash',
-        category: 'Beauty Salon & Eyelash Studio',
-        title: 'Shofi Eyelash',
-        description: 'Layanan spesialis perawatan bulu mata dan alis profesional dengan standar kecantikan modern.',
-        image: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=800&q=80',
-        details: [
-            'Lash Extension premium dengan bulu sintetis ultra-ringan & lembut.',
-            'Lash Lift & Tint bernutrisi untuk kelenturan bulu mata alami.',
-            'Teknik aplikasi higienis dan terapis bersertifikasi resmi.',
-            'Konsultasi bentuk mata untuk hasil riasan personal dan mempesona.'
-        ]
-    },
-    'cosmetic-distribution': {
-        id: 'cosmetic-distribution',
-        category: 'Supply Chain & Distribution',
-        title: 'Cosmetic Distribution',
-        description: 'Jaringan distribusi kosmetik dan produk perawatan kecantikan terpercaya di seluruh Indonesia.',
-        image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
-        details: [
-            'Distributor resmi berbagai brand kosmetik & skincare terkemuka.',
-            'Kapasitas pergudangan modern berstandar kontrol suhu terjaga.',
-            'Layanan pemenuhan pesanan B2B untuk klinik kecantikan, salon, dan reseller.',
-            'Integrasi logistik cepat ke puluhan kota besar di Indonesia.'
-        ]
-    }
-};
+// Scroll to top helper on route change
+function ScrollToTop() {
+    const { pathname, hash } = useLocation();
 
-function App() {
-    const [currentView, setCurrentView] = useState('home'); // 'home' | 'shofi-eyelash'
-    const [modalData, setModalData] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleOpenExplore = (data) => {
-        if (data.id === 'shofi-eyelash') {
-            setCurrentView('shofi-eyelash');
+    useEffect(() => {
+        if (!hash) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-            setModalData(data);
-            setIsModalOpen(true);
+            const id = hash.replace('#', '');
+            const element = document.getElementById(id);
+            if (element) {
+                const navOffset = 70;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - navOffset;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
         }
-    };
+    }, [pathname, hash]);
 
-    const handleCloseExplore = () => {
-        setIsModalOpen(false);
-    };
+    return null;
+}
 
-    const handleExploreUnitById = (unitId) => {
-        if (unitId === 'shofi-eyelash') {
-            setCurrentView('shofi-eyelash');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (UNIT_DETAILS[unitId]) {
-            setModalData(UNIT_DETAILS[unitId]);
-            setIsModalOpen(true);
-        }
-    };
-
-    const handleBackToHome = () => {
-        setCurrentView('home');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    if (currentView === 'shofi-eyelash') {
-        return <ShofiEyelashPage onBackToHome={handleBackToHome} />;
-    }
+// Home Page Component
+function HomePage() {
+    const [isContactOpen, setIsContactOpen] = useState(false);
 
     return (
-        <div className="site-wrapper">
+        <div className="min-h-screen bg-white text-charcoal flex flex-col">
             {/* Sticky Navigation Bar with Center Logo & Mobile Drawer */}
-            <Navbar />
+            <Navbar onOpenContact={() => setIsContactOpen(true)} />
 
             {/* Main Content Area */}
-            <main className="main-content">
-                {/* Hero Section */}
+            <main className="flex-1">
+                {/* 1. Hero Section */}
                 <Hero />
 
-                {/* About Us / Our Goals Section (Vision & Mission) */}
+                {/* 2. About Us / Our Goals Section (Vision & Mission) */}
                 <AboutSection />
 
-                {/* Our Business Units Section */}
-                <BusinessUnitsSection onExplore={handleOpenExplore} />
+                {/* 3. Our Business Units Section */}
+                <BusinessUnitsSection />
 
-                {/* Join Our Team Section */}
-                <JoinTeamSection onExplore={handleOpenExplore} />
+                {/* 4. Join Our Team Section */}
+                <JoinTeamSection />
             </main>
 
-            {/* Footer */}
-            <Footer onExploreUnit={handleExploreUnitById} />
+            {/* 3-Column Footer */}
+            <Footer onOpenContact={() => setIsContactOpen(true)} />
 
-            {/* Interactive Detail Modal */}
-            <ExploreModal 
-                isOpen={isModalOpen}
-                onClose={handleCloseExplore}
-                data={modalData}
+            {/* Contact Modal */}
+            <ContactModal 
+                isOpen={isContactOpen} 
+                onClose={() => setIsContactOpen(false)} 
             />
         </div>
+    );
+}
+
+function App() {
+    return (
+        <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/shofi-eyelash" element={<ShofiEyelashPage />} />
+                <Route path="/logistics-distribution" element={<LogisticsDistributionPage />} />
+                <Route path="/recruit" element={<RecruitPage />} />
+                {/* Fallback route */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
