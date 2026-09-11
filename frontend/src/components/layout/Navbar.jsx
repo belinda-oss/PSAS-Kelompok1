@@ -111,7 +111,7 @@ export default function Navbar({ onOpenContact }) {
                             className="text-xs font-medium tracking-[0.18em] uppercase text-[#2b2b2b] hover:text-black transition-colors relative group py-1"
                         >
                             RECRUIT
-                            <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-charcoal transition-all duration-300 group-hover:w-full"></span>
+                            <span className={`absolute bottom-0 left-0 h-[1.5px] bg-charcoal transition-all duration-300 ${location.pathname === '/recruit' ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
                         </Link>
                         <button 
                             onClick={() => {

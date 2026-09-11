@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Truck, Layers, Boxes } from 'lucide-react';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import ContactModal from './ContactModal';
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import ContactModal from "../components/modals/ContactModal";
 
 export default function LogisticsDistributionPage() {
     const [isContactOpen, setIsContactOpen] = useState(false);
