@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function AboutSection() {
-    const [activeTab, setActiveTab] = useState('goals'); // default to 'goals' as shown in mockup with underline
+    const [activeTab, setActiveTab] = useState('goals');
 
     const missions = [
         "Duis aute irure dolor in reprehenderit in voluptate velit esse",
@@ -10,30 +10,32 @@ export default function AboutSection() {
     ];
 
     return (
-        <section className="py-20 md:py-28 bg-white" id="about">
+        <section className="py-12 md:py-20 lg:py-24 bg-white font-sans" id="about">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Responsive Grid: Mobile 1 column, Desktop 2 columns */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                {/* Responsive Grid: Mobile 1 column, Tablet/Desktop 2 columns */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
                     
-                    {/* Left Column: Portrait Consultation/Clinic Image matching mockup */}
+                    {/* Left Column: Portrait Consultation/Clinic Image */}
                     <div className="w-full flex justify-center">
-                        <div className="relative w-full max-w-md overflow-hidden rounded-sm shadow-md group">
+                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-sm group">
                             <img 
                                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
-                                alt="GSU Beauty Consultation" 
-                                className="w-full h-auto aspect-[3/4] object-cover transition-transform duration-700 group-hover:scale-105"
+                                alt="GSU Beauty Consultant" 
+                                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                 loading="lazy"
                             />
                         </div>
                     </div>
 
-                    {/* Right Column: About Us / Our Goals Content */}
+                    {/* Right Column: About Us & Our Goals */}
                     <div className="flex flex-col">
                         {/* Tab Headers */}
                         <div className="flex items-center gap-8 mb-8 border-b border-gray-100 pb-2">
                             <button 
                                 onClick={() => setActiveTab('about')}
-                                className={`font-serif text-xl sm:text-2xl transition-colors relative pb-2 ${activeTab === 'about' ? 'text-charcoal font-semibold' : 'text-gray-400 hover:text-gray-700'}`}
+                                className={`font-serif text-xl sm:text-2xl transition-colors relative pb-2 cursor-pointer ${
+                                    activeTab === 'about' ? 'text-charcoal font-semibold' : 'text-gray-400 hover:text-gray-700'
+                                }`}
                             >
                                 About Us
                                 {activeTab === 'about' && (
@@ -42,7 +44,9 @@ export default function AboutSection() {
                             </button>
                             <button 
                                 onClick={() => setActiveTab('goals')}
-                                className={`font-serif text-xl sm:text-2xl transition-colors relative pb-2 ${activeTab === 'goals' ? 'text-charcoal font-semibold' : 'text-gray-400 hover:text-gray-700'}`}
+                                className={`font-serif text-xl sm:text-2xl transition-colors relative pb-2 cursor-pointer ${
+                                    activeTab === 'goals' ? 'text-charcoal font-semibold' : 'text-gray-400 hover:text-gray-700'
+                                }`}
                             >
                                 Our Goals
                                 {activeTab === 'goals' && (
@@ -53,11 +57,11 @@ export default function AboutSection() {
 
                         {/* Content Area */}
                         {activeTab === 'goals' ? (
-                            <div className="space-y-6 text-[#333333] text-sm sm:text-base leading-relaxed animate-fadeIn">
+                            <div className="space-y-6 text-[#2b2b2b] text-sm sm:text-base leading-relaxed animate-fadeIn">
                                 <div>
                                     <p className="leading-relaxed">
-                                        <span className="font-semibold text-charcoal">Vision: </span>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                        <strong className="font-semibold text-charcoal">Vision: </strong>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                                     </p>
                                 </div>
 
@@ -66,7 +70,7 @@ export default function AboutSection() {
                                     <ul className="space-y-3 list-none pl-0">
                                         {missions.map((mission, idx) => (
                                             <li key={idx} className="flex items-start text-neutral-700">
-                                                <span className="mr-2 text-charcoal font-bold select-none">-</span>
+                                                <span className="mr-2.5 text-charcoal font-bold select-none">-</span>
                                                 <span>{mission}</span>
                                             </li>
                                         ))}
@@ -74,16 +78,16 @@ export default function AboutSection() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="space-y-4 text-[#333333] text-sm sm:text-base leading-relaxed animate-fadeIn">
+                            <div className="space-y-4 text-[#2b2b2b] text-sm sm:text-base leading-relaxed animate-fadeIn">
                                 <p>
-                                    <span className="font-semibold text-charcoal">PT GSU</span> adalah grup kecantikan dan distribusi terintegrasi yang menghadirkan solusi estetika premium serta rantai pasok profesional di Indonesia.
+                                    <strong className="font-semibold text-charcoal">PT GSU</strong> adalah entitas kecantikan dan distribusi terkemuka yang berdedikasi untuk memberikan solusi kecantikan terbaik dalam kehidupan sehari-hari.
                                 </p>
-                                <p className="text-gray-600">
-                                    Melalui unit bisnis utama seperti <strong>Shofi Eyelash</strong> dan <strong>Cosmetic Distribution</strong>, kami berkomitmen menghadirkan sentuhan elegan, presisi tinggi, dan produk berstandar internasional untuk kepuasan pelanggan serta mitra bisnis kami.
+                                <p className="text-neutral-600">
+                                    Melalui unit bisnis utama kami, <strong>Shofi Eyelash</strong> dan <strong>Cosmetic Distribution</strong>, kami menggabungkan keahlian estetika tingkat lanjut dengan keandalan rantai pasok modern yang telah dipercaya di berbagai penjuru Indonesia.
                                 </p>
-                                <div className="pt-2 border-l-2 border-nude pl-4 italic text-sm text-gray-700">
-                                    "Beauty Solution for Your Everyday Life — menggabungkan seni kecantikan, inovasi higienis, dan keandalan distribusi nasional."
-                                </div>
+                                <p className="text-neutral-600 italic border-l-2 border-charcoal pl-3 text-xs sm:text-sm">
+                                    "Beauty Solution for Your Everyday Life."
+                                </p>
                             </div>
                         )}
                     </div>

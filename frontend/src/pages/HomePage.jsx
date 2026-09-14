@@ -6,11 +6,11 @@ import JoinTeamSection from '../components/sections/JoinTeamSection';
 
 export default function HomePage() {
     return (
-        <main className="main-content">
+        <div className="w-full">
             <Hero />
             <AboutSection />
             <BusinessUnitsSection />
             <JoinTeamSection />
-        </main>
+        </div>
     );
 }
