@@ -19,7 +19,7 @@ class ReviewController extends Controller
     {
         $reviews = Review::where('status', 'published')
             ->latest('created_at')
-            ->simplePaginate(6);
+            ->get();
 
         return response()->json([
             'success' => true,
