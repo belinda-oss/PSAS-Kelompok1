@@ -23,8 +23,8 @@ export default function LogisticsDistributionPage() {
 
                 {/* Centered Hero Content */}
                 <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center">
-                    <h1 className="font-serif italic font-bold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-4 leading-tight drop-shadow-md">
-                        Logistics & Distribution
+                    <h1 className="font-serif font-light tracking-widest uppercase text-3xl sm:text-5xl md:text-6xl mb-4 leading-tight drop-shadow-md">
+                        Logistics &amp; Distribution
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light text-neutral-200 tracking-wide max-w-2xl mx-auto leading-relaxed">
                         Precision supply chain solutions for the premium beauty industry. Delivering excellence at scale.
