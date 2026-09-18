@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Star, MessageCircle, CheckCircle2, ShieldCheck, Sparkles, Camera, Upload, RefreshCw } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Star, MessageCircle, CheckCircle2, ShieldCheck, Sparkles, Camera, Upload, RefreshCw, Loader2 } from 'lucide-react';
 import { aiApi } from '../services/api';
 
 export default function ShofiEyelashPage() {
@@ -10,98 +10,124 @@ export default function ShofiEyelashPage() {
             name: 'Warm Golden',
             undertoneLabel: 'WARM PEACHY UNDERTONE',
             image: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=800&q=80',
-            nailBed: 'Oval',
-            nailBaseColor: 'Pinkish Nude',
-            skinColor: 'Warm Medium',
-            recommendationType: 'Nail Art',
-            aiMatch: '98.4%',
-            recommendationText: 'Desain French Manicure modern dengan sentuhan garis tipis berwarna emas atau aksen foil halus. Kombinasi warna warm nude, beige, atau terracotta sangat ideal untuk mempercantik bentuk kuku oval dan melengkapi warna kulit Anda.',
-            waMessage: 'Halo Shofi Eyelash, saya tertarik dengan rekomendasi AI: Desain French Manicure Modern (Gold/Nude) untuk kulit Warm Medium (Oval). Bisa reservasi jadwal?'
         },
         cool: {
             id: 'cool',
             name: 'Cool Fair Rosé',
             undertoneLabel: 'COOL ROSY UNDERTONE',
             image: 'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&w=800&q=80',
-            nailBed: 'Almond',
-            nailBaseColor: 'Soft Rosé',
-            skinColor: 'Cool Fair',
-            recommendationType: 'Nail Art & Lashes',
-            aiMatch: '97.8%',
-            recommendationText: 'Desain Glazed Chrome atau Pearl Sheen dengan sentuhan warna lilac lembut atau blush pink. Kombinasi warna cool berry dan detail silver glitter memberikan kilau elegan dan mencerahkan warna kulit tangan Anda.',
-            waMessage: 'Halo Shofi Eyelash, saya tertarik dengan rekomendasi AI: Desain Glazed Chrome Cool Rosé untuk kulit Cool Fair (Almond). Bisa reservasi jadwal?'
         },
         deep: {
             id: 'deep',
             name: 'Deep / Olive',
             undertoneLabel: 'RICH OLIVE UNDERTONE',
             image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80',
-            nailBed: 'Squoval',
-            nailBaseColor: 'Warm Caramel',
-            skinColor: 'Deep / Olive',
-            recommendationType: 'Premium Nail Art',
-            aiMatch: '99.1%',
-            recommendationText: 'Desain Modern Ombre atau Marmer Mewah dengan aksen champagne gold dan cat eye burgundy. Nuansa rich espresso, terracotta gelap, dan emas metalik memberikan kontras memukau dan daya tarik berkelas tinggi.',
-            waMessage: 'Halo Shofi Eyelash, saya tertarik dengan rekomendasi AI: Desain Ombre Rich Terracotta & Gold untuk kulit Deep/Olive (Squoval). Bisa reservasi jadwal?'
         }
     };
 
     const [selectedPresetKey, setSelectedPresetKey] = useState('warm');
     const [customImage, setCustomImage] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [currentResult, setCurrentResult] = useState(tonePresets.warm);
+    const [analysisResult, setAnalysisResult] = useState(null);
+    const [analysisError, setAnalysisError] = useState(null);
     const fileInputRef = useRef(null);
 
     // Handle preset selection
     const handleSelectPreset = (key) => {
         setSelectedPresetKey(key);
         setCustomImage(null);
-        setCurrentResult(tonePresets[key]);
+        setSelectedFile(null);
+        setAnalysisError(null);
     };
 
     // Handle custom image upload
     const handleFileUpload = (e) => {
         const file = e.target.files?.[0];
         if (file) {
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onload = (uploadEvent) => {
                 setCustomImage(uploadEvent.target.result);
-                // Trigger auto-analysis on custom upload
-                triggerAnalysis(uploadEvent.target.result, selectedPresetKey);
+                setAnalysisError(null);
             };
             reader.readAsDataURL(file);
         }
     };
 
-    // Trigger AI analysis with simulated / backend integration
-    const triggerAnalysis = async (uploadedImg = null, presetKey = selectedPresetKey) => {
+    // Trigger AI analysis calling real backend API
+    const triggerAnalysis = async () => {
         setIsAnalyzing(true);
+        setAnalysisError(null);
 
         try {
-            // Attempt backend call to AI service
-            const response = await aiApi.post('/analyze-hand', {
-                tone_preset: presetKey
+            let imageFileToUpload = selectedFile;
+
+            // If no custom uploaded file, convert selected sample preset image URL into a File object
+            if (!imageFileToUpload) {
+                const sampleUrl = tonePresets[selectedPresetKey]?.image;
+                if (!sampleUrl) {
+                    throw new Error('Silakan pilih foto kuku atau sampel tone terlebih dahulu.');
+                }
+                const fetchRes = await fetch(sampleUrl);
+                if (!fetchRes.ok) {
+                    throw new Error('Gagal memuat foto sampel. Silakan unggah foto tangan Anda.');
+                }
+                const blob = await fetchRes.blob();
+                imageFileToUpload = new File([blob], `${selectedPresetKey}_sample.jpg`, { type: blob.type || 'image/jpeg' });
+            }
+
+            const formData = new FormData();
+            formData.append('image', imageFileToUpload);
+
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+            const targetUrl = `${baseUrl.replace(/\/$/, '')}/api/nail-analysis`;
+
+            console.log('[AI Analysis] Sending request to:', targetUrl);
+            console.log('[AI Analysis] File to upload:', imageFileToUpload.name, imageFileToUpload.type, imageFileToUpload.size, 'bytes');
+
+            const response = await fetch(targetUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                body: formData
             });
 
-            if (response.data && response.data.status === 'success') {
-                const apiData = response.data;
-                const basePreset = tonePresets[presetKey] || tonePresets.warm;
-                setCurrentResult({
-                    ...basePreset,
-                    skinColor: apiData.skin_tone || basePreset.skinColor,
-                    recommendationType: apiData.service_type || basePreset.recommendationType,
-                    recommendationText: apiData.recommendation_note || basePreset.recommendationText
-                });
-            } else {
-                setCurrentResult(tonePresets[presetKey]);
+            console.log('[AI Analysis] Response HTTP status:', response.status);
+
+            const rawText = await response.text();
+            console.log('[AI Analysis] Raw response body:', rawText);
+
+            let data;
+            try {
+                data = JSON.parse(rawText);
+            } catch (parseErr) {
+                console.error('[AI Analysis] JSON parse error:', parseErr);
+                throw new Error(`Response backend bukan JSON (HTTP ${response.status}): ${rawText.substring(0, 150)}`);
             }
-        } catch {
-            // Smooth client-side fallback if AI service is offline
-            setCurrentResult(tonePresets[presetKey]);
+
+            if (!response.ok || !data.success) {
+                const errMsg = data.message || (data.errors ? Object.values(data.errors).flat().join(' ') : 'Gagal memproses analisis kuku.');
+                throw new Error(errMsg);
+            }
+
+            const resultData = data.data;
+            setAnalysisResult({
+                nailBedShape: resultData.nail_bed_shape || 'N/A',
+                nailColor: resultData.nail_color || 'N/A',
+                skinTone: resultData.skin_tone || 'N/A',
+                recommendationType: resultData.recommendation_type || 'N/A',
+                designRecommendation: resultData.design_recommendation || 'Tidak ada rekomendasi khusus.',
+                aiMatchPercentage: resultData.ai_match_percentage ?? null,
+            });
+            setAnalysisError(null);
+
+        } catch (err) {
+            setAnalysisError(err.message || 'Gagal menghubungkan ke service AI backend. Silakan coba beberapa saat lagi.');
+            setAnalysisResult(null);
         } finally {
-            setTimeout(() => {
-                setIsAnalyzing(false);
-            }, 600);
+            setIsAnalyzing(false);
         }
     };
 
@@ -137,30 +163,10 @@ export default function ShofiEyelashPage() {
         }
     ];
 
-    // 3. Reviews State with the 3 required 5-star testimonials
-    const [reviews, setReviews] = useState([
-        {
-            id: 1,
-            name: 'Sarah Wijaya',
-            rating: 5,
-            comment: 'Hasilnya sangat natural dan tahan lama. Teknisi sangat profesional!',
-            date: '2 hari yang lalu'
-        },
-        {
-            id: 2,
-            name: 'Amanda Putri',
-            rating: 5,
-            comment: 'Tempatnya sangat nyaman dan bersih. Sangat merekomendasikan Shofi Eyelash.',
-            date: '1 minggu yang lalu'
-        },
-        {
-            id: 3,
-            name: 'Rina Kartika',
-            rating: 5,
-            comment: 'Volume set-nya juara! Mata jadi terlihat lebih hidup tapi tetap ringan.',
-            date: '2 minggu yang lalu'
-        }
-    ]);
+    // 3. Reviews State fetched from backend API
+    const [reviews, setReviews] = useState([]);
+    const [reviewsLoading, setReviewsLoading] = useState(true);
+    const [reviewsError, setReviewsError] = useState(null);
 
     // Review Form State
     const [reviewName, setReviewName] = useState('');
@@ -169,24 +175,86 @@ export default function ShofiEyelashPage() {
     const [reviewComment, setReviewComment] = useState('');
     const [formSuccess, setFormSuccess] = useState(false);
 
-    const handleReviewSubmit = (e) => {
+    const fetchReviews = async () => {
+        setReviewsLoading(true);
+        setReviewsError(null);
+        try {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+            const res = await fetch(`${baseUrl.replace(/\/$/, '')}/api/reviews`, {
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.message || 'Gagal memuat ulasan pelanggan.');
+            }
+            const reviewList = Array.isArray(data.data) 
+                ? data.data 
+                : (data.data?.data || []);
+            setReviews(reviewList);
+        } catch (err) {
+            console.error('[Fetch Reviews Error]:', err);
+            setReviewsError(err.message || 'Gagal memuat ulasan pelanggan.');
+        } finally {
+            setReviewsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchReviews();
+    }, []);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        
+        if (diffInSeconds < 60) return 'Baru saja';
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit yang lalu`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam yang lalu`;
+        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} hari yang lalu`;
+        if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 604800)} minggu yang lalu`;
+        
+        return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
+    };
+
+    const handleReviewSubmit = async (e) => {
         e.preventDefault();
         if (!reviewName.trim() || !reviewComment.trim()) return;
 
-        const newEntry = {
-            id: Date.now(),
-            name: reviewName,
-            rating: reviewRating,
-            comment: reviewComment,
-            date: 'Baru saja'
-        };
+        try {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+            const response = await fetch(`${baseUrl.replace(/\/$/, '')}/api/reviews`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: reviewName,
+                    rating: reviewRating,
+                    comment: reviewComment,
+                }),
+            });
 
-        setReviews([newEntry, ...reviews]);
-        setReviewName('');
-        setReviewComment('');
-        setReviewRating(5);
-        setFormSuccess(true);
-        setTimeout(() => setFormSuccess(false), 4000);
+            const data = await response.json();
+            if (response.ok && data.success) {
+                setReviewName('');
+                setReviewComment('');
+                setReviewRating(5);
+                setFormSuccess(true);
+                setTimeout(() => setFormSuccess(false), 4000);
+            } else {
+                alert(data.message || 'Gagal mengirim ulasan.');
+            }
+        } catch (err) {
+            console.error('Submit review error:', err);
+            alert('Gagal menghubungkan ke server.');
+        }
     };
 
     const scrollToBooking = () => {
@@ -214,7 +282,7 @@ export default function ShofiEyelashPage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/75"></div>
                 </div>
 
-                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center">
+                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="900">
                     <h1 className="font-serif font-normal text-4xl sm:text-6xl md:text-7xl tracking-wide mb-3 leading-tight drop-shadow-md">
                         Shofi Eyelash
                     </h1>
@@ -236,7 +304,7 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                         
                         {/* Left Column: Text */}
-                        <div className="lg:col-span-6 space-y-6">
+                        <div className="lg:col-span-6 space-y-6" data-aos="fade-right">
                             <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal leading-tight">
                                 Elevating Your Natural Beauty
                             </h2>
@@ -249,7 +317,7 @@ export default function ShofiEyelashPage() {
                         </div>
 
                         {/* Right Column: Serene Salon Interior Image (portrait aspect ratio matching screenshot) */}
-                        <div className="lg:col-span-6 flex justify-center lg:justify-end">
+                        <div className="lg:col-span-6 flex justify-center lg:justify-end" data-aos="fade-left" data-aos-delay="100">
                             <div className="relative w-full max-w-md aspect-[3/4] rounded-none overflow-hidden shadow-md group">
                                 <img 
                                     src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1000&q=80" 
@@ -269,7 +337,7 @@ export default function ShofiEyelashPage() {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Centered Heading */}
-                    <div className="text-center mb-12 sm:mb-16">
+                    <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
                         <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal mb-3">
                             Our Services
                         </h2>
@@ -283,6 +351,8 @@ export default function ShofiEyelashPage() {
                         {services.map((srv) => (
                             <div 
                                 key={srv.id} 
+                                data-aos="fade-up"
+                                data-aos-delay={srv.id === 'embroidery' || srv.id === 'eyelash' ? 0 : 150}
                                 className="bg-white rounded-none border border-gray-100 overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                             >
                                 <div className="h-56 sm:h-64 overflow-hidden bg-neutral-100">
@@ -320,7 +390,7 @@ export default function ShofiEyelashPage() {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Header */}
-                    <div className="text-center mb-12 sm:mb-16">
+                    <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
                         <span className="text-[11px] sm:text-xs font-semibold tracking-[0.3em] uppercase text-neutral-400 block mb-2">
                             AI VIRTUAL BEAUTY ADVISOR
                         </span>
@@ -336,7 +406,7 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
                         
                         {/* Card 1: INPUT VISUAL */}
-                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between">
+                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between" data-aos="fade-up" data-aos-delay="100">
                             <div>
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-4">
@@ -352,7 +422,7 @@ export default function ShofiEyelashPage() {
                                 {/* Uploaded Hand Image Preview */}
                                 <div className="relative aspect-[16/10] sm:aspect-[16/10] w-full rounded-none overflow-hidden bg-neutral-900 border border-neutral-700/60 mb-4 group">
                                     <img 
-                                        src={customImage || currentResult.image} 
+                                        src={customImage || tonePresets[selectedPresetKey]?.image} 
                                         alt="Uploaded Hand Sample" 
                                         className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                                     />
@@ -361,7 +431,7 @@ export default function ShofiEyelashPage() {
                                     {/* Undertone badge overlay */}
                                     <div className="absolute bottom-3 left-3 right-3">
                                         <span className="inline-block text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-200 bg-black/70 backdrop-blur-xs px-2.5 py-1 uppercase border border-neutral-700/80">
-                                            {customImage ? 'FOTO TANGAN ANDA TERUNGGAH' : currentResult.undertoneLabel}
+                                            {customImage ? 'FOTO TANGAN ANDA TERUNGGAH' : tonePresets[selectedPresetKey]?.undertoneLabel}
                                         </span>
                                     </div>
                                 </div>
@@ -415,14 +485,14 @@ export default function ShofiEyelashPage() {
                             <div className="pt-6">
                                 <button
                                     type="button"
-                                    onClick={() => triggerAnalysis(customImage, selectedPresetKey)}
+                                    onClick={triggerAnalysis}
                                     disabled={isAnalyzing}
                                     className="w-full py-3.5 bg-white text-charcoal hover:bg-neutral-200 text-xs font-bold tracking-[0.2em] uppercase transition shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                                 >
                                     {isAnalyzing ? (
                                         <>
                                             <RefreshCw size={15} className="animate-spin text-charcoal" />
-                                            <span>MENGANALISIS UNDERTONE...</span>
+                                            <span>MENGANALISIS HAND & NAIL TONE...</span>
                                         </>
                                     ) : (
                                         <>
@@ -435,7 +505,7 @@ export default function ShofiEyelashPage() {
                         </div>
 
                         {/* Card 2: DIAGNOSIS PINTAR */}
-                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between">
+                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between" data-aos="fade-up" data-aos-delay="250">
                             <div>
                                 {/* Subtitle & Header */}
                                 <div className="mb-4">
@@ -446,65 +516,93 @@ export default function ShofiEyelashPage() {
                                         <h3 className="font-serif text-xl sm:text-2xl text-white font-medium">
                                             2. Hasil Analisis Kuku
                                         </h3>
-                                        <span className="bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-mono text-xs px-2.5 py-1 rounded-full font-semibold">
-                                            AI Match: {currentResult.aiMatch}
-                                        </span>
+                                        {analysisResult && analysisResult.aiMatchPercentage !== null && (
+                                            <span className="bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 font-mono text-xs px-2.5 py-1 rounded-full font-semibold">
+                                                AI Match: {analysisResult.aiMatchPercentage}%
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* 4 Parameter Metrics Grid */}
-                                <div className="grid grid-cols-2 gap-3 mb-5">
-                                    {/* Metric 1 */}
-                                    <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
-                                        <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
-                                            BENTUK NAIL BED
-                                        </span>
-                                        <p className="text-sm sm:text-base font-semibold text-white">
-                                            {currentResult.nailBed}
+                                {/* State Render Logic */}
+                                {isAnalyzing ? (
+                                    <div className="py-12 text-center space-y-3">
+                                        <RefreshCw size={28} className="animate-spin text-amber-500 mx-auto" />
+                                        <p className="text-sm text-neutral-200 font-medium">Memproses Analisis Kuku dengan Gemini AI...</p>
+                                        <p className="text-xs text-neutral-400 font-light">Mendeteksi bentuk nail bed, tone kulit, dan warna kuku</p>
+                                    </div>
+                                ) : analysisError ? (
+                                    <div className="py-8 px-4 bg-red-950/40 border border-red-800/60 rounded text-center space-y-2 mb-4">
+                                        <p className="text-sm font-semibold text-red-300">Gagal Memproses Analisis</p>
+                                        <p className="text-xs text-red-400 font-light">{analysisError}</p>
+                                    </div>
+                                ) : !analysisResult ? (
+                                    <div className="py-12 px-4 border border-dashed border-neutral-700/80 text-center space-y-3 mb-4 bg-neutral-900/40">
+                                        <Sparkles size={24} className="text-neutral-500 mx-auto" />
+                                        <p className="text-sm text-neutral-300 font-medium">
+                                            Unggah foto kuku/tangan dan tekan "ANALISIS HAND & NAIL TONE" untuk melihat hasil analisis.
+                                        </p>
+                                        <p className="text-xs text-neutral-500 font-light">
+                                            Hasil analisis AI akan menampilkan bentuk nail bed, warna dasar kuku, tone kulit, dan rekomendasi desain.
                                         </p>
                                     </div>
+                                ) : (
+                                    <>
+                                        {/* 4 Parameter Metrics Grid */}
+                                        <div className="grid grid-cols-2 gap-3 mb-5">
+                                            {/* Metric 1 */}
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                                <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
+                                                    BENTUK NAIL BED
+                                                </span>
+                                                <p className="text-sm sm:text-base font-semibold text-white capitalize">
+                                                    {analysisResult.nailBedShape}
+                                                </p>
+                                            </div>
 
-                                    {/* Metric 2 */}
-                                    <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
-                                        <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
-                                            WARNA DASAR KUKU
-                                        </span>
-                                        <p className="text-sm sm:text-base font-semibold text-white">
-                                            {currentResult.nailBaseColor}
-                                        </p>
-                                    </div>
+                                            {/* Metric 2 */}
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                                <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
+                                                    WARNA DASAR KUKU
+                                                </span>
+                                                <p className="text-sm sm:text-base font-semibold text-white capitalize">
+                                                    {analysisResult.nailColor}
+                                                </p>
+                                            </div>
 
-                                    {/* Metric 3 */}
-                                    <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
-                                        <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
-                                            WARNA KULIT
-                                        </span>
-                                        <p className="text-sm sm:text-base font-semibold text-white">
-                                            {currentResult.skinColor}
-                                        </p>
-                                    </div>
+                                            {/* Metric 3 */}
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                                <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
+                                                    WARNA KULIT
+                                                </span>
+                                                <p className="text-sm sm:text-base font-semibold text-white capitalize">
+                                                    {analysisResult.skinTone}
+                                                </p>
+                                            </div>
 
-                                    {/* Metric 4 */}
-                                    <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
-                                        <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
-                                            TIPE REKOMENDASI
-                                        </span>
-                                        <p className="text-sm sm:text-base font-semibold text-white">
-                                            {currentResult.recommendationType}
-                                        </p>
-                                    </div>
-                                </div>
+                                            {/* Metric 4 */}
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                                <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
+                                                    TIPE REKOMENDASI
+                                                </span>
+                                                <p className="text-sm sm:text-base font-semibold text-white capitalize">
+                                                    {analysisResult.recommendationType}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                {/* Callout: Rekomendasi Desain */}
-                                <div className="bg-neutral-800/60 border border-neutral-700/80 p-4 rounded-none mb-6">
-                                    <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-200 mb-2">
-                                        <span className="text-base">🎨</span>
-                                        <span className="tracking-wide">REKOMENDASI DESAIN:</span>
-                                    </div>
-                                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-light">
-                                        {currentResult.recommendationText}
-                                    </p>
-                                </div>
+                                        {/* Callout: Rekomendasi Desain */}
+                                        <div className="bg-neutral-800/60 border border-neutral-700/80 p-4 rounded-none mb-6">
+                                            <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-200 mb-2">
+                                                <span className="text-base">🎨</span>
+                                                <span className="tracking-wide">REKOMENDASI DESAIN:</span>
+                                            </div>
+                                            <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-light">
+                                                {analysisResult.designRecommendation}
+                                            </p>
+                                        </div>
+                                    </>
+                                )}
                             </div>
 
                             {/* Card Footer with CTA */}
@@ -518,7 +616,11 @@ export default function ShofiEyelashPage() {
                                     </p>
                                 </div>
                                 <a 
-                                    href={`https://wa.me/6281234567890?text=${encodeURIComponent(currentResult.waMessage)}`}
+                                    href={`https://wa.me/6281234567890?text=${encodeURIComponent(
+                                        analysisResult 
+                                            ? `Halo Shofi Eyelash, saya tertarik dengan rekomendasi AI: Desain ${analysisResult.designRecommendation} untuk kulit ${analysisResult.skinTone} (${analysisResult.nailBedShape}). Bisa reservasi jadwal?`
+                                            : 'Halo Shofi Eyelash, saya ingin berkonsultasi mengenai analisis kuku dan reservasi jadwal.'
+                                    )}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full sm:w-auto px-5 py-3 bg-white text-charcoal hover:bg-neutral-200 text-xs font-semibold tracking-wider uppercase transition text-center cursor-pointer shrink-0"
@@ -535,7 +637,7 @@ export default function ShofiEyelashPage() {
 
             {/* 5. BOOK YOUR SESSION */}
             <section className="py-16 md:py-20 bg-white border-y border-gray-100" id="booking-cta">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5" data-aos="fade-up">
                     <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">
                         Book Your Session
                     </h2>
@@ -562,7 +664,7 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
                         
                         {/* Left Col: Form "Berikan Ulasan Anda" */}
-                        <div className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl">
+                        <div className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl" data-aos="fade-right">
                             <h3 className="font-serif text-2xl text-white font-normal mb-6">
                                 Berikan Ulasan Anda
                             </h3>
@@ -643,42 +745,57 @@ export default function ShofiEyelashPage() {
                             )}
                         </div>
 
-                        {/* Right Col: "Ulasan Pelanggan" with 3 Review cards horizontally */}
-                        <div className="lg:col-span-8 space-y-6">
+                        {/* Right Col: "Ulasan Pelanggan" */}
+                        <div className="lg:col-span-8 space-y-6" data-aos="fade-left" data-aos-delay="100">
                             <div>
                                 <h3 className="font-serif text-2xl text-white font-normal mb-2">
                                     Ulasan Pelanggan
                                 </h3>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                {reviews.slice(0, 3).map((item) => (
-                                    <div 
-                                        key={item.id} 
-                                        className="p-5 bg-neutral-900/60 border border-neutral-800 rounded-none flex flex-col justify-between"
-                                    >
-                                        <div>
-                                            <div className="flex items-center gap-1 text-amber-400 mb-3">
-                                                {[...Array(item.rating)].map((_, i) => (
-                                                    <Star key={i} size={14} className="fill-amber-400" />
-                                                ))}
+                            {reviewsLoading ? (
+                                <div className="p-8 text-center bg-neutral-900/60 border border-neutral-800 text-neutral-400 text-sm flex items-center justify-center gap-2">
+                                    <Loader2 className="animate-spin text-amber-400" size={18} />
+                                    <span>Memuat ulasan pelanggan...</span>
+                                </div>
+                            ) : reviewsError ? (
+                                <div className="p-6 bg-red-950/40 border border-red-800/60 text-red-200 text-sm text-center">
+                                    {reviewsError}
+                                </div>
+                            ) : reviews.length === 0 ? (
+                                <div className="p-10 bg-neutral-900/40 border border-neutral-800 text-neutral-400 text-sm text-center font-light leading-relaxed">
+                                    Belum ada ulasan, jadilah yang pertama untuk memberikan ulasan!
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    {reviews.slice(0, 6).map((item) => (
+                                        <div 
+                                            key={item.id} 
+                                            className="p-5 bg-neutral-900/60 border border-neutral-800 rounded-none flex flex-col justify-between"
+                                        >
+                                            <div>
+                                                <div className="flex items-center gap-1 text-amber-400 mb-3">
+                                                    {[...Array(item.rating)].map((_, i) => (
+                                                        <Star key={i} size={14} className="fill-amber-400" />
+                                                    ))}
+                                                </div>
+                                                <p className="text-neutral-200 text-xs sm:text-sm leading-relaxed italic mb-6">
+                                                    "{item.comment}"
+                                                </p>
                                             </div>
-                                            <p className="text-neutral-200 text-xs sm:text-sm leading-relaxed italic mb-6">
-                                                "{item.comment}"
-                                            </p>
-                                        </div>
 
-                                        <div>
-                                            <p className="font-medium text-white text-xs sm:text-sm">
-                                                {item.name}
-                                            </p>
-                                            <p className="text-[11px] text-neutral-500 mt-0.5">
-                                                {item.date}
-                                            </p>
+                                            <div>
+                                                <p className="font-medium text-white text-xs sm:text-sm">
+                                                    {item.name}
+                                                </p>
+                                                <p className="text-[11px] text-neutral-500 mt-0.5">
+                                                    {formatDate(item.created_at || item.published_at || item.date)}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                     </div>

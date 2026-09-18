@@ -28,3 +28,5 @@ yarn-error.log
 /ai-service/venv/
 /ai-service/__pycache__/
 *.pt
+frontend/dist/
+backend/test_nail.jpg

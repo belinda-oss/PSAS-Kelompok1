@@ -32,7 +32,7 @@ export default function Hero() {
             </div>
 
             {/* Hero Centered Content */}
-            <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center">
+            <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="1000">
                 {/* Center text: "GSU" */}
                 <h1 className="font-serif italic font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-wider leading-none mb-4 drop-shadow-lg">
                     GSU

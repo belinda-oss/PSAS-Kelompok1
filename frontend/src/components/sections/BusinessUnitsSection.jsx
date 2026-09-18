@@ -27,7 +27,7 @@ export default function BusinessUnitsSection() {
         <section className="py-12 md:py-20 lg:py-24 bg-[#1f1f1f] text-white font-sans overflow-hidden" id="units">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Title */}
-                <h2 className="font-serif text-3xl sm:text-4xl text-center font-normal tracking-wide mb-12 sm:mb-16 text-white">
+                <h2 className="font-serif text-3xl sm:text-4xl text-center font-normal tracking-wide mb-12 sm:mb-16 text-white" data-aos="fade-up">
                     Our Business Units
                 </h2>
 
@@ -37,6 +37,8 @@ export default function BusinessUnitsSection() {
                         <div 
                             key={unit.id}
                             className={`bg-white text-charcoal rounded-none overflow-hidden shadow-lg flex flex-col transition-all duration-300 hover:shadow-2xl ${unit.animClass} h-full`}
+                            data-aos="fade-up"
+                            data-aos-delay={unit.id === 'shofi-eyelash' ? 100 : 250}
                         >
                             {/* Card Image: Full bleed */}
                             <div className="w-full h-60 sm:h-64 overflow-hidden shrink-0">

@@ -22,7 +22,7 @@ export default function LogisticsDistributionPage() {
                 </div>
 
                 {/* Centered Hero Content */}
-                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center">
+                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="900">
                     <h1 className="font-serif font-light tracking-widest uppercase text-3xl sm:text-5xl md:text-6xl mb-4 leading-tight drop-shadow-md">
                         Logistics &amp; Distribution
                     </h1>
@@ -36,7 +36,7 @@ export default function LogisticsDistributionPage() {
             <section className="py-12 md:py-20 lg:py-24 bg-[#fbfbfb]">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Centered Main Title */}
-                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-normal text-center mb-12 sm:mb-16">
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-normal text-center mb-12 sm:mb-16" data-aos="fade-up">
                         Our Operations
                     </h2>
 
@@ -44,7 +44,7 @@ export default function LogisticsDistributionPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch max-w-5xl mx-auto">
                         
                         {/* Left Column: Seamless Integration (with B2B PARTNERSHIPS badge & inspection image) */}
-                        <div className="lg:col-span-7 bg-white p-8 sm:p-10 border border-gray-100 rounded-none shadow-sm flex flex-col justify-between">
+                        <div className="lg:col-span-7 bg-white p-8 sm:p-10 border border-gray-100 rounded-none shadow-sm flex flex-col justify-between" data-aos="fade-right">
                             <div>
                                 <span className="text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-gray-400 mb-3 block">
                                     B2B PARTNERSHIPS
@@ -69,7 +69,7 @@ export default function LogisticsDistributionPage() {
                         </div>
 
                         {/* Right Column: 2 stacked cards (Inventory Management & National Reach) */}
-                        <div className="lg:col-span-5 flex flex-col gap-8 justify-between">
+                        <div className="lg:col-span-5 flex flex-col gap-8 justify-between" data-aos="fade-left" data-aos-delay="150">
                             
                             {/* Card 1: Inventory Management */}
                             <div className="bg-white p-8 sm:p-10 border border-gray-100 rounded-none shadow-sm flex-1 flex flex-col justify-center">
@@ -108,7 +108,7 @@ export default function LogisticsDistributionPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                         
                         {/* Left Column: Cosmetic Products Array */}
-                        <div className="lg:col-span-6">
+                        <div className="lg:col-span-6" data-aos="fade-right">
                             <div className="relative aspect-[4/3] sm:aspect-square w-full rounded-none overflow-hidden shadow-2xl bg-neutral-800 group">
                                 <img 
                                     src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1000&q=80" 
@@ -121,7 +121,7 @@ export default function LogisticsDistributionPage() {
                         </div>
 
                         {/* Right Column: Text & PARTNER WITH US CTA */}
-                        <div className="lg:col-span-6 space-y-6">
+                        <div className="lg:col-span-6 space-y-6" data-aos="fade-left" data-aos-delay="150">
                             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-white leading-tight">
                                 Product Readiness
                             </h2>

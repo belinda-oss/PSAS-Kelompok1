@@ -19,6 +19,9 @@ export default function AboutSection() {
                     {/* Left Column: Portrait Consultation/Clinic Image with Antigravity Floating Animation */}
                     <div className="w-full flex justify-center">
                         <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-md group border border-gray-100 animate-float">
+                    {/* Left Column: Portrait Consultation/Clinic Image */}
+                    <div className="w-full flex justify-center" data-aos="fade-right">
+                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-sm group">
                             <img 
                                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
                                 alt="GSU Beauty Service & Consultation" 
@@ -39,6 +42,8 @@ export default function AboutSection() {
 
                     {/* Right Column: Flexbox Parent (display: flex; flex-direction: column; justify-content: center; align-items: center;) */}
                     <div className="flex flex-col justify-center items-center w-full">
+                    {/* Right Column: About Us & Our Goals */}
+                    <div className="flex flex-col" data-aos="fade-left" data-aos-delay="100">
                         {/* Tab Headers */}
                         <div className="flex items-center gap-8 mb-8 border-b border-gray-100 pb-2">
                             <button 

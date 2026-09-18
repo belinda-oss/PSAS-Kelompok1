@@ -20,18 +20,6 @@ Route::get('/', function () {
     ], 200);
 });
 
-// Public API Routes
-Route::post('/nail-analysis', [NailAnalysisController::class, 'analyze'])
-    ->middleware(['web', 'throttle:10,1'])
-    ->name('nail-analysis.analyze');
-
-Route::get('/reviews', [ReviewController::class, 'index'])
-    ->middleware('web')
-    ->name('reviews.index');
-
-Route::post('/reviews', [ReviewController::class, 'store'])
-    ->middleware(['web', 'throttle:10,1'])
-    ->name('reviews.store');
 
 // Admin Auth Routes (Unprotected)
 Route::middleware(['web'])->prefix('admin')->group(function () {

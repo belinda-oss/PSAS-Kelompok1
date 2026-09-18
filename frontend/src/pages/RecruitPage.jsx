@@ -25,7 +25,7 @@ export default function RecruitPage() {
                 </div>
 
                 {/* Centered Hero Content */}
-                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center">
+                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="900">
                     <h1 className="font-serif italic font-bold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-4 leading-tight drop-shadow-md">
                         Join Our Team
                     </h1>
@@ -41,7 +41,7 @@ export default function RecruitPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
                         
                         {/* Left Col: Title "Grow With Us", 3 paragraphs, Button "APPLY NOW" */}
-                        <div className="flex flex-col justify-center">
+                        <div className="flex flex-col justify-center" data-aos="fade-right">
                             <h2 className="font-serif italic text-3xl sm:text-4xl text-charcoal font-normal leading-tight mb-6">
                                 Grow With Us
                             </h2>
@@ -69,7 +69,7 @@ export default function RecruitPage() {
                         </div>
 
                         {/* Right Col: Image of a professional woman reviewing documents */}
-                        <div className="w-full">
+                        <div className="w-full" data-aos="fade-left" data-aos-delay="150">
                             <div className="aspect-[4/3] rounded-none overflow-hidden shadow-md group">
                                 <img 
                                     src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1000&q=80" 
@@ -88,7 +88,7 @@ export default function RecruitPage() {
             <section className="py-12 md:py-20 lg:py-24 bg-[#1f1f1f] text-white" id="culture">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header */}
-                    <div className="text-center mb-14 sm:mb-16">
+                    <div className="text-center mb-14 sm:mb-16" data-aos="fade-up">
                         <h2 className="font-serif italic text-3xl sm:text-4xl md:text-5xl text-white font-normal mb-4">
                             Our Culture
                         </h2>
@@ -100,7 +100,7 @@ export default function RecruitPage() {
                     {/* 3 Culture Cards: Grid md:grid-cols-3 */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Card 1: Innovation */}
-                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1">
+                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="0">
                             <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-charcoal mb-6">
                                 <Lightbulb size={24} strokeWidth={2} />
                             </div>
@@ -113,7 +113,7 @@ export default function RecruitPage() {
                         </div>
 
                         {/* Card 2: Collaboration */}
-                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1">
+                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="150">
                             <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-charcoal mb-6">
                                 <Users size={24} strokeWidth={2} />
                             </div>
@@ -126,7 +126,7 @@ export default function RecruitPage() {
                         </div>
 
                         {/* Card 3: Growth */}
-                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1">
+                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="300">
                             <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-charcoal mb-6">
                                 <TrendingUp size={24} strokeWidth={2} />
                             </div>
