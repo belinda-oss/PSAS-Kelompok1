@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
 export default function AboutSection() {
-    const [activeTab, setActiveTab] = useState('goals');
+    const [activeTab, setActiveTab] = useState('about');
 
     const missions = [
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse",
-        "Illum dolore eu fugiat nulla pariatur. Excepteur sint occaecat",
-        "Cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        { title: "(1) Layanan Profesional", desc: "Menghadirkan jasa perawatan berkualitas dan higienis." },
+        { title: "(2) Distribusi Terpercaya", desc: "Menyediakan alat/bahan premium, bersertifikasi, dan aman." },
+        { title: "(3) Komitmen Eco-Friendly", desc: "Praktik ramah lingkungan menjaga kelestarian & kesehatan." },
+        { title: "(4) Kemitraan", desc: "Membangun jaringan untuk pemberdayaan industri kecantikan." }
     ];
 
     return (
@@ -15,20 +16,29 @@ export default function AboutSection() {
                 {/* Responsive Grid: Mobile 1 column, Tablet/Desktop 2 columns */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
                     
-                    {/* Left Column: Portrait Consultation/Clinic Image */}
+                    {/* Left Column: Portrait Consultation/Clinic Image with Antigravity Floating Animation */}
                     <div className="w-full flex justify-center">
-                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-sm group">
+                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-md group border border-gray-100 animate-float">
                             <img 
                                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
-                                alt="GSU Beauty Consultant" 
+                                alt="GSU Beauty Service & Consultation" 
                                 className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                 loading="lazy"
                             />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80" />
+                            <div className="absolute bottom-4 left-4 right-4 text-white">
+                                <span className="text-[10px] tracking-widest uppercase font-semibold bg-black/60 px-2.5 py-1 backdrop-blur-xs rounded-xs">
+                                    Est. 2017
+                                </span>
+                                <p className="text-xs font-serif italic mt-2 text-white/90">
+                                    Beauty Solution for Your Everyday Life
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Right Column: About Us & Our Goals */}
-                    <div className="flex flex-col">
+                    {/* Right Column: Flexbox Parent (display: flex; flex-direction: column; justify-content: center; align-items: center;) */}
+                    <div className="flex flex-col justify-center items-center w-full">
                         {/* Tab Headers */}
                         <div className="flex items-center gap-8 mb-8 border-b border-gray-100 pb-2">
                             <button 
@@ -55,41 +65,36 @@ export default function AboutSection() {
                             </button>
                         </div>
 
-                        {/* Content Area */}
-                        {activeTab === 'goals' ? (
-                            <div className="space-y-6 text-[#2b2b2b] text-sm sm:text-base leading-relaxed animate-fadeIn">
-                                <div>
-                                    <p className="leading-relaxed">
-                                        <strong className="font-semibold text-charcoal">Vision: </strong>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna. aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        {/* Content Area with Fixed Min Height & Smooth Transition */}
+                        <div className="w-full min-h-[320px] sm:min-h-[290px] flex flex-col justify-center items-center">
+                            {activeTab === 'about' ? (
+                                <div className="w-full text-[#2b2b2b] text-xs sm:text-sm md:text-base leading-relaxed text-justify animate-fadeIn transition-all duration-300">
+                                    <p className="leading-relaxed text-justify">
+                                        Berawal dari layanan kecantikan rumahan pada 2017, kepercayaan pelanggan mendorong kami berekspansi ke studio profesional di tahun 2020. Pada 2022, PT Giandra Sadawira Utama resmi berdiri sebagai entitas induk berskala nasional dengan pendekatan aman dan ramah lingkungan (eco-friendly). Saat ini, kami berfokus pada dua pilar utama: <strong>Beauty Services</strong> (Layanan estetika premium seperti sulam, eyelash, nail art, foot spa) dan <strong>Beauty Distribution</strong> (Rantai pasok alat dan bahan kecantikan terpercaya).
                                     </p>
                                 </div>
+                            ) : (
+                                <div className="w-full text-[#2b2b2b] text-xs sm:text-sm leading-relaxed text-justify animate-fadeIn transition-all duration-300 space-y-4">
+                                    <div>
+                                        <p className="text-justify leading-relaxed">
+                                            <strong className="font-semibold text-charcoal">Vision: </strong>
+                                            Menjadi ekosistem dan distributor bisnis kecantikan terdepan di Indonesia yang mengintegrasikan layanan estetika profesional serta distribusi produk terpercaya, dengan tetap mengedepankan prinsip eco-friendly demi mendukung kecantikan autentik yang aman dan berkelanjutan.
+                                        </p>
+                                    </div>
 
-                                <div className="space-y-3 pt-2">
-                                    <p className="font-semibold text-charcoal">Mission:</p>
-                                    <ul className="space-y-3 list-none pl-0">
-                                        {missions.map((mission, idx) => (
-                                            <li key={idx} className="flex items-start text-neutral-700">
-                                                <span className="mr-2.5 text-charcoal font-bold select-none">-</span>
-                                                <span>{mission}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <div className="space-y-2 pt-1">
+                                        <p className="font-semibold text-charcoal">Mission:</p>
+                                        <ul className="space-y-2 list-none pl-0">
+                                            {missions.map((m, idx) => (
+                                                <li key={idx} className="text-justify leading-normal text-neutral-700 text-xs sm:text-sm">
+                                                    <strong className="text-charcoal font-semibold">{m.title}:</strong> {m.desc}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-4 text-[#2b2b2b] text-sm sm:text-base leading-relaxed animate-fadeIn">
-                                <p>
-                                    <strong className="font-semibold text-charcoal">PT GSU</strong> adalah entitas kecantikan dan distribusi terkemuka yang berdedikasi untuk memberikan solusi kecantikan terbaik dalam kehidupan sehari-hari.
-                                </p>
-                                <p className="text-neutral-600">
-                                    Melalui unit bisnis utama kami, <strong>Shofi Eyelash</strong> dan <strong>Cosmetic Distribution</strong>, kami menggabungkan keahlian estetika tingkat lanjut dengan keandalan rantai pasok modern yang telah dipercaya di berbagai penjuru Indonesia.
-                                </p>
-                                <p className="text-neutral-600 italic border-l-2 border-charcoal pl-3 text-xs sm:text-sm">
-                                    "Beauty Solution for Your Everyday Life."
-                                </p>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
 
                 </div>

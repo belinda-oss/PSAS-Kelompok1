@@ -99,10 +99,15 @@ export default function Navbar({ onOpenContact }) {
                         <a 
                             href="/" 
                             onClick={handleLogoClick}
-                            className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-wider text-charcoal select-none transition hover:opacity-85 inline-block"
+                            className="inline-block transition hover:opacity-85 select-none"
                             aria-label="PT GSU Home"
                         >
-                            GSU
+                            <img 
+                                src="/gsu-logo.jpg" 
+                                alt="GSU Cosmetics" 
+                                style={{ maxHeight: '40px', width: 'auto', objectFit: 'contain' }}
+                                className="mix-blend-multiply transition-all duration-300"
+                            />
                         </a>
                     </div>
 
@@ -157,7 +162,7 @@ export default function Navbar({ onOpenContact }) {
                 aria-label="Mobile Navigation Drawer"
             >
                 <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                    <span className="font-serif text-3xl font-bold italic text-charcoal tracking-wide">GSU</span>
+                    <img src="/gsu-logo.jpg" alt="GSU Logo" className="h-12 sm:h-14 w-auto object-contain" />
                     <button 
                         className="p-2 text-gray-500 hover:text-charcoal hover:bg-gray-100 rounded-full transition"
                         onClick={() => setIsOpen(false)}
@@ -194,14 +199,14 @@ export default function Navbar({ onOpenContact }) {
                             className="block px-3 py-2 text-xs font-medium text-gray-600 hover:text-charcoal hover:bg-neutral-50 rounded transition"
                             onClick={() => setIsOpen(false)}
                         >
-                            • Shofi Eyelash
+                            ï¿½ Shofi Eyelash
                         </Link>
                         <Link 
                             to="/distribution"
                             className="block px-3 py-2 text-xs font-medium text-gray-600 hover:text-charcoal hover:bg-neutral-50 rounded transition"
                             onClick={() => setIsOpen(false)}
                         >
-                            • Cosmetic Distribution
+                            ï¿½ Cosmetic Distribution
                         </Link>
                     </div>
 
