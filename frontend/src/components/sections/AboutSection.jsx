@@ -16,12 +16,9 @@ export default function AboutSection() {
                 {/* Responsive Grid: Mobile 1 column, Tablet/Desktop 2 columns */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
                     
-                    {/* Left Column: Portrait Consultation/Clinic Image with Antigravity Floating Animation */}
-                    <div className="w-full flex justify-center">
-                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-md group border border-gray-100 animate-float">
                     {/* Left Column: Portrait Consultation/Clinic Image */}
                     <div className="w-full flex justify-center" data-aos="fade-right">
-                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-sm group">
+                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-md group border border-gray-100 animate-float">
                             <img 
                                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
                                 alt="GSU Beauty Service & Consultation" 
@@ -40,10 +37,8 @@ export default function AboutSection() {
                         </div>
                     </div>
 
-                    {/* Right Column: Flexbox Parent (display: flex; flex-direction: column; justify-content: center; align-items: center;) */}
-                    <div className="flex flex-col justify-center items-center w-full">
                     {/* Right Column: About Us & Our Goals */}
-                    <div className="flex flex-col" data-aos="fade-left" data-aos-delay="100">
+                    <div className="flex flex-col justify-center items-center w-full" data-aos="fade-left" data-aos-delay="100">
                         {/* Tab Headers */}
                         <div className="flex items-center gap-8 mb-8 border-b border-gray-100 pb-2">
                             <button 
@@ -70,7 +65,7 @@ export default function AboutSection() {
                             </button>
                         </div>
 
-                        {/* Content Area with Fixed Min Height & Smooth Transition */}
+                        {/* Content Area */}
                         <div className="w-full min-h-[320px] sm:min-h-[290px] flex flex-col justify-center items-center">
                             {activeTab === 'about' ? (
                                 <div className="w-full text-[#2b2b2b] text-xs sm:text-sm md:text-base leading-relaxed text-justify animate-fadeIn transition-all duration-300">

@@ -8,7 +8,7 @@ import './styles/app.css';
 AOS.init({
     duration: 800,
     easing: 'ease-out-cubic',
-    once: true,
+    once: false,
     offset: 60
 });
 
