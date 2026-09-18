@@ -282,7 +282,7 @@ export default function ShofiEyelashPage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/75"></div>
                 </div>
 
-                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center">
+                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="900">
                     <h1 className="font-serif font-normal text-4xl sm:text-6xl md:text-7xl tracking-wide mb-3 leading-tight drop-shadow-md">
                         Shofi Eyelash
                     </h1>
@@ -304,7 +304,7 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                         
                         {/* Left Column: Text */}
-                        <div className="lg:col-span-6 space-y-6">
+                        <div className="lg:col-span-6 space-y-6" data-aos="fade-right">
                             <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal leading-tight">
                                 Elevating Your Natural Beauty
                             </h2>
@@ -317,7 +317,7 @@ export default function ShofiEyelashPage() {
                         </div>
 
                         {/* Right Column: Serene Salon Interior Image (portrait aspect ratio matching screenshot) */}
-                        <div className="lg:col-span-6 flex justify-center lg:justify-end">
+                        <div className="lg:col-span-6 flex justify-center lg:justify-end" data-aos="fade-left" data-aos-delay="100">
                             <div className="relative w-full max-w-md aspect-[3/4] rounded-none overflow-hidden shadow-md group">
                                 <img 
                                     src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1000&q=80" 
@@ -337,7 +337,7 @@ export default function ShofiEyelashPage() {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Centered Heading */}
-                    <div className="text-center mb-12 sm:mb-16">
+                    <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
                         <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal mb-3">
                             Our Services
                         </h2>
@@ -351,6 +351,8 @@ export default function ShofiEyelashPage() {
                         {services.map((srv) => (
                             <div 
                                 key={srv.id} 
+                                data-aos="fade-up"
+                                data-aos-delay={srv.id === 'embroidery' || srv.id === 'eyelash' ? 0 : 150}
                                 className="bg-white rounded-none border border-gray-100 overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                             >
                                 <div className="h-56 sm:h-64 overflow-hidden bg-neutral-100">
@@ -388,7 +390,7 @@ export default function ShofiEyelashPage() {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Header */}
-                    <div className="text-center mb-12 sm:mb-16">
+                    <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
                         <span className="text-[11px] sm:text-xs font-semibold tracking-[0.3em] uppercase text-neutral-400 block mb-2">
                             AI VIRTUAL BEAUTY ADVISOR
                         </span>
@@ -404,7 +406,7 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
                         
                         {/* Card 1: INPUT VISUAL */}
-                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between">
+                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between" data-aos="fade-up" data-aos-delay="100">
                             <div>
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-4">
@@ -503,7 +505,7 @@ export default function ShofiEyelashPage() {
                         </div>
 
                         {/* Card 2: DIAGNOSIS PINTAR */}
-                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between">
+                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between" data-aos="fade-up" data-aos-delay="250">
                             <div>
                                 {/* Subtitle & Header */}
                                 <div className="mb-4">
@@ -635,7 +637,7 @@ export default function ShofiEyelashPage() {
 
             {/* 5. BOOK YOUR SESSION */}
             <section className="py-16 md:py-20 bg-white border-y border-gray-100" id="booking-cta">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5" data-aos="fade-up">
                     <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">
                         Book Your Session
                     </h2>
@@ -662,7 +664,7 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
                         
                         {/* Left Col: Form "Berikan Ulasan Anda" */}
-                        <div className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl">
+                        <div className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl" data-aos="fade-right">
                             <h3 className="font-serif text-2xl text-white font-normal mb-6">
                                 Berikan Ulasan Anda
                             </h3>
@@ -744,7 +746,7 @@ export default function ShofiEyelashPage() {
                         </div>
 
                         {/* Right Col: "Ulasan Pelanggan" */}
-                        <div className="lg:col-span-8 space-y-6">
+                        <div className="lg:col-span-8 space-y-6" data-aos="fade-left" data-aos-delay="100">
                             <div>
                                 <h3 className="font-serif text-2xl text-white font-normal mb-2">
                                     Ulasan Pelanggan

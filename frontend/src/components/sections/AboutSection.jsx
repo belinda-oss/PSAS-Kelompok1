@@ -16,7 +16,7 @@ export default function AboutSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
                     
                     {/* Left Column: Portrait Consultation/Clinic Image */}
-                    <div className="w-full flex justify-center">
+                    <div className="w-full flex justify-center" data-aos="fade-right">
                         <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-sm group">
                             <img 
                                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
@@ -28,7 +28,7 @@ export default function AboutSection() {
                     </div>
 
                     {/* Right Column: About Us & Our Goals */}
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" data-aos="fade-left" data-aos-delay="100">
                         {/* Tab Headers */}
                         <div className="flex items-center gap-8 mb-8 border-b border-gray-100 pb-2">
                             <button 

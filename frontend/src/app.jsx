@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import AOS from 'aos';
 
 // Layout Component (wrapping Navbar, Outlet, and Footer)
 import Layout from './components/layout/Layout';
@@ -27,6 +28,11 @@ function ScrollToTop() {
                 window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
             }
         }
+    }, [pathname, hash]);
+
+    // Refresh AOS positions after route change
+    useEffect(() => {
+        AOS.refreshHard();
     }, [pathname, hash]);
 
     return null;
