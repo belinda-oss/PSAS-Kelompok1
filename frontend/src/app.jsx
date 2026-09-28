@@ -2,16 +2,23 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import AOS from 'aos';
 
-// Layout Component (wrapping Navbar, Outlet, and Footer)
+// Public Layout Component (wrapping Navbar, Outlet, and Footer)
 import Layout from './components/layout/Layout';
 
-// Page Views
+// Public Page Views
 import HomePage from './pages/HomePage';
 import ShofiEyelashPage from './pages/ShofiEyelashPage';
 import LogisticsDistributionPage from './pages/LogisticsDistributionPage';
 import RecruitPage from './pages/RecruitPage';
 
-// Scroll to top helper on route change
+// Admin Layout & Page Views
+import AdminLayout from './components/layout/AdminLayout';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
+import AdminUlasanPage from './pages/admin/AdminUlasanPage';
+import AdminLayananPage from './pages/admin/AdminLayananPage';
+import AdminPengaturanPage from './pages/admin/AdminPengaturanPage';
+
+// Scroll to top helper on route change & refresh AOS animations
 function ScrollToTop() {
     const { pathname, hash } = useLocation();
 
@@ -30,9 +37,18 @@ function ScrollToTop() {
         }
     }, [pathname, hash]);
 
-    // Refresh AOS positions after route change
+    // Re-initialize & refresh AOS positions on every route change
     useEffect(() => {
-        AOS.refreshHard();
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: false,
+            offset: 40,
+            disableMutationObserver: false
+        });
+        setTimeout(() => {
+            AOS.refresh();
+        }, 100);
     }, [pathname, hash]);
 
     return null;
@@ -43,7 +59,20 @@ export default function App() {
         <BrowserRouter>
             <ScrollToTop />
             <Routes>
-                {/* Main persistent layout wrapping Navbar, Outlet, and Footer */}
+                {/* 1. Admin Standalone Login Route */}
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+
+                {/* 2. Admin Root Redirect */}
+                <Route path="/admin" element={<Navigate to="/admin/ulasan" replace />} />
+
+                {/* 3. Admin Pages Wrapped in AdminLayout */}
+                <Route path="/admin" element={<AdminLayout />}>
+                    <Route path="ulasan" element={<AdminUlasanPage />} />
+                    <Route path="layanan" element={<AdminLayananPage />} />
+                    <Route path="pengaturan" element={<AdminPengaturanPage />} />
+                </Route>
+
+                {/* 4. Public Pages Wrapped in Layout */}
                 <Route element={<Layout />}>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/shofi-eyelash" element={<ShofiEyelashPage />} />

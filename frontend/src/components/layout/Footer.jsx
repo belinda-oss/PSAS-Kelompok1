@@ -71,7 +71,7 @@ export default function Footer({ onOpenContact }) {
         <footer className="bg-[#151515] text-neutral-400 py-16 border-t border-white/5 font-sans" id="contact">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div>
-                    <div className="flex flex-col gap-10 lg:grid lg:grid-cols-4 lg:gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
                         
                         {/* Col 1: Brand & Socials */}
                         <div className="flex flex-col">

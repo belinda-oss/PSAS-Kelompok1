@@ -23,8 +23,8 @@ export default {
         offwhite: '#fbfbfb',
       },
       fontFamily: {
-        serif: ['Lora', 'Georgia', 'Cambria', 'serif'],
-        sans: ['Poppins', 'Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'Inter', '-apple-system', 'sans-serif'],
       },
       letterSpacing: {
         widest: '.2em',

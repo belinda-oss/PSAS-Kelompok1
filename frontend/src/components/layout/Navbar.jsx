@@ -199,14 +199,14 @@ export default function Navbar({ onOpenContact }) {
                             className="block px-3 py-2 text-xs font-medium text-gray-600 hover:text-charcoal hover:bg-neutral-50 rounded transition"
                             onClick={() => setIsOpen(false)}
                         >
-                            � Shofi Eyelash
+                            �• Shofi Eyelash
                         </Link>
                         <Link 
                             to="/distribution"
                             className="block px-3 py-2 text-xs font-medium text-gray-600 hover:text-charcoal hover:bg-neutral-50 rounded transition"
                             onClick={() => setIsOpen(false)}
                         >
-                            � Cosmetic Distribution
+                            �• Cosmetic Distribution
                         </Link>
                     </div>
 
