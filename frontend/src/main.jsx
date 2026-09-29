@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import AOS from 'aos';
-import App from './App.jsx';
+import App from './app.jsx';
 import 'aos/dist/aos.css';
 import './styles/app.css';
 

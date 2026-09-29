@@ -9,6 +9,7 @@ export default function Navbar({ onOpenContact }) {
     const [isOpen, setIsOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     const lastScrollY = useRef(0);
 
     const location = useLocation();
@@ -55,6 +56,20 @@ export default function Navbar({ onOpenContact }) {
         return () => { document.body.style.overflow = 'unset'; };
     }, [isOpen]);
 
+    // ── Mouse hover detection at top of viewport ──────────────────────────────
+    React.useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (e.clientY <= 65) {
+                setIsHovered(true);
+            } else if (e.clientY > 90) {
+                setIsHovered(false);
+            }
+        };
+
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
     // ── Section scroller ──────────────────────────────────────────────────────
     const scrollToSection = (sectionId) => {
         setIsOpen(false);
@@ -87,38 +102,37 @@ export default function Navbar({ onOpenContact }) {
     };
 
     // ── Scroll State Logic ───────────────────────────────────────────────────
-    // At the very top (scrollY === 0): fully transparent with white text so the
-    // logo melts into the dark hero image.
-    // Once scrolled (and therefore visible again while scrolling UP): strictly
-    // solid white + shadow so nothing collides with the page content below.
-    const isSolid = isScrolled || isOpen;
+    // Always use solid white background, dark text, and original colored logo
+    // so the navbar is clearly visible both at the top (not scrolled) and when scrolled.
+    const isSolid = true;
 
-    const headerClass = isSolid
-        ? 'bg-white shadow-md text-gray-900 transition-colors duration-300'
-        : 'bg-transparent text-white transition-colors duration-300';
+    const headerClass = `bg-white/95 backdrop-blur-sm text-gray-900 transition-all duration-300 ${
+        isScrolled ? 'shadow-md' : 'border-b border-gray-100 shadow-sm'
+    }`;
 
-    // Nav link text colour — white on transparent, dark gray-900 on solid white
-    const linkColour = isSolid
-        ? 'text-gray-900 hover:text-black'
-        : 'text-white/90 hover:text-white';
+    // Nav link text colour — dark gray-900 on solid white
+    const linkColour = 'text-gray-900 hover:text-black';
 
     const navLinkClass = `text-xs font-semibold tracking-[0.2em] uppercase transition-colors duration-300 relative group py-1 cursor-pointer ${linkColour}`;
 
     // Underline colour
-    const underlineClass = isSolid ? 'bg-gray-900' : 'bg-white';
+    const underlineClass = 'bg-gray-900';
 
     // Hamburger icon colour
-    const hamburgerClass = isSolid
-        ? 'text-gray-900 hover:bg-gray-100'
-        : 'text-white hover:bg-white/10';
+    const hamburgerClass = 'text-gray-900 hover:bg-gray-100';
 
-    // Logo visibility — crisp contrast against dark transparent / solid white
-    const logoClass = isSolid
-        ? 'h-12 w-auto object-contain mix-blend-multiply transition-all duration-300'
-        : 'h-12 w-auto object-contain brightness-0 invert transition-all duration-300';
+    // Logo visibility — crisp contrast against white background
+    const logoClass = 'h-12 w-auto object-contain mix-blend-multiply transition-all duration-300';
 
     return (
         <>
+            {/* Sensor area at top edge so hovering near the top reveals the hidden navbar */}
+            <div
+                className="fixed top-0 left-0 right-0 h-4 z-40 pointer-events-auto"
+                onMouseEnter={() => setIsHovered(true)}
+                aria-hidden="true"
+            />
+
             {/* ── Fixed Navbar ─────────────────────────────────────────────── */}
             <motion.header
                 variants={{
@@ -126,8 +140,12 @@ export default function Navbar({ onOpenContact }) {
                     hidden:  { y: '-100%' },
                 }}
                 initial={false}
-                animate={isVisible ? 'visible' : 'hidden'}
+                animate={(isVisible || isHovered || isOpen) ? 'visible' : 'hidden'}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={(e) => {
+                    if (e.clientY > 85) setIsHovered(false);
+                }}
                 className={`fixed top-0 left-0 right-0 z-50 w-full py-2.5 sm:py-3 ${headerClass}`}
             >
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
