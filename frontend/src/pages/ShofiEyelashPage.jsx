@@ -1,6 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Star, MessageCircle, CheckCircle2, ShieldCheck, Sparkles, Camera, Upload, RefreshCw, Loader2 } from 'lucide-react';
 import { aiApi } from '../services/api';
+import { fetchApprovedReviews, submitReview } from '../services/reviewsService';
+import { fetchActiveServices } from '../services/servicesService';
+
+// Stagger reveal variants for card grids (one-by-one pop-up)
+const gridVariants = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.12 } },
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 40 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
 
 export default function ShofiEyelashPage() {
     // 1. AI Hand & Nail Tone Analysis Presets & State
@@ -131,42 +145,25 @@ export default function ShofiEyelashPage() {
         }
     };
 
-    // 2. Services Data (Matching PDF screenshot)
-    const services = [
-        {
-            id: 'embroidery',
-            title: 'Eyebrow & Lip Embroidery',
-            price: 'From $150',
-            image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
-            description: 'Wake up effortlessly beautiful with our semi-permanent makeup solutions. Precision techniques for natural-looking enhancement.'
-        },
-        {
-            id: 'eyelash',
-            title: 'Eyelash Extension',
-            price: 'From $80',
-            image: 'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=format&fit=crop&w=800&q=80',
-            description: 'Customized lash designs tailored to your eye shape. Choose from classic, volume, or hybrid sets for the perfect flutter.'
-        },
-        {
-            id: 'nail-art',
-            title: 'Nail Art (Motif, Plain, 3D)',
-            price: 'From $45',
-            image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80',
-            description: 'Express your style with our premium manicure services. Featuring intricate motifs, classic solids, and stunning 3D designs.'
-        },
-        {
-            id: 'foot-spa',
-            title: 'Foot Spa',
-            price: 'From $60',
-            image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
-            description: 'A rejuvenating retreat for your feet. Includes deep exfoliation, soothing massage, and a restorative hydrating mask.'
-        }
-    ];
+    // 2. Services State — dynamically loaded from servicesService (localStorage ↔ API)
+    const [services, setServices] = useState([]);
+    const [servicesLoading, setServicesLoading] = useState(true);
 
-    // 3. Reviews State fetched from backend API
+    const loadServices = async () => {
+        setServicesLoading(true);
+        try {
+            const data = await fetchActiveServices();
+            setServices(data);
+        } catch (err) {
+            console.error('Failed to load services:', err);
+        } finally {
+            setServicesLoading(false);
+        }
+    };
+
+    // 3. Reviews State — powered by reviewsService (localStorage ↔ API)
     const [reviews, setReviews] = useState([]);
     const [reviewsLoading, setReviewsLoading] = useState(true);
-    const [reviewsError, setReviewsError] = useState(null);
 
     // Review Form State
     const [reviewName, setReviewName] = useState('');
@@ -174,86 +171,69 @@ export default function ShofiEyelashPage() {
     const [hoverRating, setHoverRating] = useState(0);
     const [reviewComment, setReviewComment] = useState('');
     const [formSuccess, setFormSuccess] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const fetchReviews = async () => {
+    // Only load approved reviews for the public page
+    const loadReviews = async () => {
         setReviewsLoading(true);
-        setReviewsError(null);
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-            const res = await fetch(`${baseUrl.replace(/\/$/, '')}/api/reviews`, {
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-            const data = await res.json();
-            if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Gagal memuat ulasan pelanggan.');
-            }
-            const reviewList = Array.isArray(data.data) 
-                ? data.data 
-                : (data.data?.data || []);
-            setReviews(reviewList);
+            const approved = await fetchApprovedReviews();
+            setReviews(approved);
         } catch (err) {
-            console.error('[Fetch Reviews Error]:', err);
-            setReviewsError(err.message || 'Gagal memuat ulasan pelanggan.');
+            console.error('Failed to load reviews:', err);
         } finally {
             setReviewsLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchReviews();
+        loadReviews();
+        loadServices();
+
+        const handleReviewsUpdate = () => loadReviews();
+        const handleServicesUpdate = () => loadServices();
+
+        window.addEventListener('gsu_reviews_updated', handleReviewsUpdate);
+        window.addEventListener('gsu_services_updated', handleServicesUpdate);
+        window.addEventListener('storage', handleReviewsUpdate);
+        window.addEventListener('storage', handleServicesUpdate);
+
+        return () => {
+            window.removeEventListener('gsu_reviews_updated', handleReviewsUpdate);
+            window.removeEventListener('gsu_services_updated', handleServicesUpdate);
+            window.removeEventListener('storage', handleReviewsUpdate);
+            window.removeEventListener('storage', handleServicesUpdate);
+        };
     }, []);
 
     const formatDate = (dateString) => {
-        if (!dateString) return '';
+        if (!dateString) return 'Baru saja';
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return dateString;
-        
         const now = new Date();
         const diffInSeconds = Math.floor((now - date) / 1000);
-        
         if (diffInSeconds < 60) return 'Baru saja';
         if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit yang lalu`;
         if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam yang lalu`;
         if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} hari yang lalu`;
         if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 604800)} minggu yang lalu`;
-        
         return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' });
     };
 
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
-        if (!reviewName.trim() || !reviewComment.trim()) return;
-
+        if (!reviewName.trim() || !reviewComment.trim() || isSubmitting) return;
+        setIsSubmitting(true);
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
-            const response = await fetch(`${baseUrl.replace(/\/$/, '')}/api/reviews`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: reviewName,
-                    rating: reviewRating,
-                    comment: reviewComment,
-                }),
-            });
-
-            const data = await response.json();
-            if (response.ok && data.success) {
-                setReviewName('');
-                setReviewComment('');
-                setReviewRating(5);
-                setFormSuccess(true);
-                setTimeout(() => setFormSuccess(false), 4000);
-            } else {
-                alert(data.message || 'Gagal mengirim ulasan.');
-            }
-        } catch (err) {
-            console.error('Submit review error:', err);
-            alert('Gagal menghubungkan ke server.');
+            // submitReview saves with status 'pending' to backend/localStorage
+            await submitReview({ name: reviewName, rating: reviewRating, comment: reviewComment });
+            setReviewName('');
+            setReviewComment('');
+            setReviewRating(5);
+            setFormSuccess(true);
+            setTimeout(() => setFormSuccess(false), 6000);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -282,20 +262,28 @@ export default function ShofiEyelashPage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/75"></div>
                 </div>
 
-                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="900">
+                <motion.div 
+                    className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                >
                     <h1 className="font-serif font-normal text-4xl sm:text-6xl md:text-7xl tracking-wide mb-3 leading-tight drop-shadow-md">
                         Shofi Eyelash
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light tracking-wide text-neutral-200 mb-8 sm:mb-10 max-w-xl mx-auto">
                         Precision, Elegance, and the Art of Lashes.
                     </p>
-                    <button 
+                    <motion.button
+                        type="button"
                         onClick={scrollToBooking}
-                        className="px-8 sm:px-10 py-3.5 bg-white text-charcoal hover:bg-neutral-100 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-none transition-all duration-300 shadow-md cursor-pointer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-8 sm:px-10 py-3.5 bg-white text-charcoal hover:bg-neutral-100 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-full transition-all duration-300 shadow-md cursor-pointer"
                     >
                         BOOK AN APPOINTMENT
-                    </button>
-                </div>
+                    </motion.button>
+                </motion.div>
             </section>
 
             {/* 2. ABOUT: Elevating Your Natural Beauty */}
@@ -304,7 +292,13 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                         
                         {/* Left Column: Text */}
-                        <div className="lg:col-span-6 space-y-6" data-aos="fade-right">
+                        <motion.div
+                            className="lg:col-span-6 space-y-6"
+                            initial={{ opacity: 0, x: -40 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                        >
                             <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal leading-tight">
                                 Elevating Your Natural Beauty
                             </h2>
@@ -314,11 +308,17 @@ export default function ShofiEyelashPage() {
                             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
                                 Whether you seek a subtle lift or dramatic volume, our tailored services ensure a flawless finish that complements your unique features and lifestyle. Experience the pinnacle of lash artistry in a serene, professional environment.
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Right Column: Serene Salon Interior Image (portrait aspect ratio matching screenshot) */}
-                        <div className="lg:col-span-6 flex justify-center lg:justify-end" data-aos="fade-left" data-aos-delay="100">
-                            <div className="relative w-full max-w-md aspect-[3/4] rounded-none overflow-hidden shadow-md group">
+                        <motion.div
+                            className="lg:col-span-6 flex justify-center lg:justify-end"
+                            initial={{ opacity: 0, x: 40 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+                        >
+                            <div className="relative w-full max-w-md aspect-[3/4] rounded-3xl overflow-hidden shadow-xl group">
                                 <img 
                                     src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1000&q=80" 
                                     alt="Shofi Eyelash Serene Studio Interior" 
@@ -326,7 +326,7 @@ export default function ShofiEyelashPage() {
                                     loading="lazy"
                                 />
                             </div>
-                        </div>
+                        </motion.div>
 
                     </div>
                 </div>
@@ -337,50 +337,72 @@ export default function ShofiEyelashPage() {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Centered Heading */}
-                    <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
+                    <motion.div
+                        className="text-center mb-12 sm:mb-16"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
                         <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal mb-3">
                             Our Services
                         </h2>
                         <p className="text-gray-500 text-sm sm:text-base font-light">
                             Curated treatments for the perfect look.
                         </p>
-                    </div>
+                    </motion.div>
 
                     {/* Services 2x2 Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                        {services.map((srv) => (
-                            <div 
-                                key={srv.id} 
-                                data-aos="fade-up"
-                                data-aos-delay={srv.id === 'embroidery' || srv.id === 'eyelash' ? 0 : 150}
-                                className="bg-white rounded-none border border-gray-100 overflow-hidden shadow-sm flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                            >
-                                <div className="h-56 sm:h-64 overflow-hidden bg-neutral-100">
-                                    <img 
-                                        src={srv.image} 
-                                        alt={srv.title} 
-                                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                                        loading="lazy"
-                                    />
-                                </div>
-                                <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
-                                    <div>
-                                        <div className="flex items-baseline justify-between gap-4 mb-2.5">
-                                            <h3 className="font-serif text-lg sm:text-xl font-medium text-charcoal">
-                                                {srv.title}
-                                            </h3>
-                                            <span className="text-xs sm:text-sm font-semibold text-charcoal tracking-wide whitespace-nowrap">
-                                                {srv.price}
-                                            </span>
-                                        </div>
-                                        <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
-                                            {srv.description}
-                                        </p>
+                    {servicesLoading && services.length === 0 ? (
+                        <div className="py-16 text-center text-xs text-gray-400 flex items-center justify-center gap-2 rounded-2xl">
+                            <Loader2 className="animate-spin text-amber-500" size={18} />
+                            <span>Memuat katalog layanan...</span>
+                        </div>
+                    ) : services.length === 0 ? (
+                        <div className="py-16 text-center text-xs text-gray-400 bg-white border border-dashed border-gray-200 max-w-xl mx-auto rounded-2xl">
+                            Layanan belum tersedia saat ini.
+                        </div>
+                    ) : (
+                        <motion.div
+                            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto"
+                            variants={gridVariants}
+                            initial="hidden"
+                            whileInView="show"
+                            viewport={{ once: true, amount: 0.2 }}
+                        >
+                            {services.map((srv, idx) => (
+                                <motion.div 
+                                    key={srv.id || idx}
+                                    variants={cardVariants}
+                                    className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm group flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                                >
+                                    <div className="h-56 sm:h-64 overflow-hidden bg-neutral-100">
+                                        <img 
+                                            src={srv.image} 
+                                            alt={srv.title} 
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            loading="lazy"
+                                        />
                                     </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                    <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
+                                        <div>
+                                            <div className="flex items-baseline justify-between gap-4 mb-2.5">
+                                                <h3 className="font-serif text-lg sm:text-xl font-medium text-charcoal">
+                                                    {srv.title}
+                                                </h3>
+                                                <span className="text-xs sm:text-sm font-semibold text-[#b08556] tracking-wide whitespace-nowrap">
+                                                    {srv.price}
+                                                </span>
+                                            </div>
+                                            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed font-light">
+                                                {srv.description}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
 
                 </div>
             </section>
@@ -390,7 +412,13 @@ export default function ShofiEyelashPage() {
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Header */}
-                    <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
+                    <motion.div
+                        className="text-center mb-12 sm:mb-16"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
                         <span className="text-[11px] sm:text-xs font-semibold tracking-[0.3em] uppercase text-neutral-400 block mb-2">
                             AI VIRTUAL BEAUTY ADVISOR
                         </span>
@@ -400,13 +428,19 @@ export default function ShofiEyelashPage() {
                         <p className="text-neutral-300 text-xs sm:text-sm md:text-base max-w-3xl mx-auto leading-relaxed font-light">
                             Unggah foto tangan atau kuku Anda. Algoritma cerdas kami mendeteksi undertone kulit serta tone dasar kuku Anda, kemudian mengurasi palet warna & gaya nail art Shofi Eyelash yang paling flattering.
                         </p>
-                    </div>
+                    </motion.div>
 
                     {/* 2-Card Container */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
                         
                         {/* Card 1: INPUT VISUAL */}
-                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between" data-aos="fade-up" data-aos-delay="100">
+                        <motion.div
+                            className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+                        >
                             <div>
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-4">
@@ -420,7 +454,7 @@ export default function ShofiEyelashPage() {
                                 </div>
 
                                 {/* Uploaded Hand Image Preview */}
-                                <div className="relative aspect-[16/10] sm:aspect-[16/10] w-full rounded-none overflow-hidden bg-neutral-900 border border-neutral-700/60 mb-4 group">
+                                <div className="relative aspect-[16/10] sm:aspect-[16/10] w-full rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-700/60 mb-4 group">
                                     <img 
                                         src={customImage || tonePresets[selectedPresetKey]?.image} 
                                         alt="Uploaded Hand Sample" 
@@ -430,7 +464,7 @@ export default function ShofiEyelashPage() {
                                     
                                     {/* Undertone badge overlay */}
                                     <div className="absolute bottom-3 left-3 right-3">
-                                        <span className="inline-block text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-200 bg-black/70 backdrop-blur-xs px-2.5 py-1 uppercase border border-neutral-700/80">
+                                        <span className="inline-block text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-200 bg-black/70 backdrop-blur-xs px-2.5 py-1 uppercase border border-neutral-700/80 rounded-full">
                                             {customImage ? 'FOTO TANGAN ANDA TERUNGGAH' : tonePresets[selectedPresetKey]?.undertoneLabel}
                                         </span>
                                     </div>
@@ -444,14 +478,16 @@ export default function ShofiEyelashPage() {
                                     accept="image/*" 
                                     className="hidden" 
                                 />
-                                <button 
+                                <motion.button
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-full py-2.5 px-4 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold tracking-wider uppercase border border-neutral-700 transition flex items-center justify-center gap-2 cursor-pointer mb-5"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="w-full py-2.5 px-4 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-semibold tracking-wider uppercase border border-neutral-700 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer mb-5"
                                 >
                                     <Camera size={14} className="text-neutral-300" />
                                     <span>UNGGAH FOTO TANGAN ANDA</span>
-                                </button>
+                                </motion.button>
 
                                 {/* Presets Selector */}
                                 <div className="space-y-2">
@@ -463,18 +499,19 @@ export default function ShofiEyelashPage() {
                                             const preset = tonePresets[key];
                                             const isActive = !customImage && selectedPresetKey === key;
                                             return (
-                                                <button
+                                                <motion.button
                                                     key={key}
                                                     type="button"
                                                     onClick={() => handleSelectPreset(key)}
-                                                    className={`py-2 px-2 text-[11px] sm:text-xs font-medium tracking-wide transition border text-center cursor-pointer ${
+                                                    whileTap={{ scale: 0.95 }}
+                                                    className={`py-2 px-2 text-[11px] sm:text-xs font-medium tracking-wide transition border rounded-xl text-center cursor-pointer ${
                                                         isActive 
                                                             ? 'bg-neutral-700/80 border-white text-white font-semibold' 
                                                             : 'bg-neutral-800/60 border-neutral-700 text-neutral-300 hover:border-neutral-500 hover:text-white'
                                                     }`}
                                                 >
                                                     {preset.name}
-                                                </button>
+                                                </motion.button>
                                             );
                                         })}
                                     </div>
@@ -483,11 +520,13 @@ export default function ShofiEyelashPage() {
 
                             {/* Analyze Action Button */}
                             <div className="pt-6">
-                                <button
+                                <motion.button
                                     type="button"
                                     onClick={triggerAnalysis}
                                     disabled={isAnalyzing}
-                                    className="w-full py-3.5 bg-white text-charcoal hover:bg-neutral-200 text-xs font-bold tracking-[0.2em] uppercase transition shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="w-full py-3.5 bg-white text-charcoal hover:bg-neutral-200 text-xs font-bold tracking-[0.2em] uppercase transition rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                                 >
                                     {isAnalyzing ? (
                                         <>
@@ -500,12 +539,18 @@ export default function ShofiEyelashPage() {
                                             <span>ANALISIS HAND & NAIL TONE</span>
                                         </>
                                     )}
-                                </button>
+                                </motion.button>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Card 2: DIAGNOSIS PINTAR */}
-                        <div className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl flex flex-col justify-between" data-aos="fade-up" data-aos-delay="250">
+                        <motion.div
+                            className="bg-[#222222] border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
+                        >
                             <div>
                                 {/* Subtitle & Header */}
                                 <div className="mb-4">
@@ -532,12 +577,12 @@ export default function ShofiEyelashPage() {
                                         <p className="text-xs text-neutral-400 font-light">Mendeteksi bentuk nail bed, tone kulit, dan warna kuku</p>
                                     </div>
                                 ) : analysisError ? (
-                                    <div className="py-8 px-4 bg-red-950/40 border border-red-800/60 rounded text-center space-y-2 mb-4">
+                                    <div className="py-8 px-4 bg-red-950/40 border border-red-800/60 rounded-2xl text-center space-y-2 mb-4">
                                         <p className="text-sm font-semibold text-red-300">Gagal Memproses Analisis</p>
                                         <p className="text-xs text-red-400 font-light">{analysisError}</p>
                                     </div>
                                 ) : !analysisResult ? (
-                                    <div className="py-12 px-4 border border-dashed border-neutral-700/80 text-center space-y-3 mb-4 bg-neutral-900/40">
+                                    <div className="py-12 px-4 border border-dashed border-neutral-700/80 rounded-2xl text-center space-y-3 mb-4 bg-neutral-900/40">
                                         <Sparkles size={24} className="text-neutral-500 mx-auto" />
                                         <p className="text-sm text-neutral-300 font-medium">
                                             Unggah foto kuku/tangan dan tekan "ANALISIS HAND & NAIL TONE" untuk melihat hasil analisis.
@@ -551,7 +596,7 @@ export default function ShofiEyelashPage() {
                                         {/* 4 Parameter Metrics Grid */}
                                         <div className="grid grid-cols-2 gap-3 mb-5">
                                             {/* Metric 1 */}
-                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-2xl">
                                                 <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
                                                     BENTUK NAIL BED
                                                 </span>
@@ -561,7 +606,7 @@ export default function ShofiEyelashPage() {
                                             </div>
 
                                             {/* Metric 2 */}
-                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-2xl">
                                                 <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
                                                     WARNA DASAR KUKU
                                                 </span>
@@ -571,7 +616,7 @@ export default function ShofiEyelashPage() {
                                             </div>
 
                                             {/* Metric 3 */}
-                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-2xl">
                                                 <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
                                                     WARNA KULIT
                                                 </span>
@@ -581,7 +626,7 @@ export default function ShofiEyelashPage() {
                                             </div>
 
                                             {/* Metric 4 */}
-                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-none">
+                                            <div className="bg-[#1c1c1c] border border-neutral-800 p-3 sm:p-3.5 rounded-2xl">
                                                 <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-neutral-400 uppercase block mb-1">
                                                     TIPE REKOMENDASI
                                                 </span>
@@ -592,7 +637,7 @@ export default function ShofiEyelashPage() {
                                         </div>
 
                                         {/* Callout: Rekomendasi Desain */}
-                                        <div className="bg-neutral-800/60 border border-neutral-700/80 p-4 rounded-none mb-6">
+                                        <div className="bg-neutral-800/60 border border-neutral-700/80 p-4 rounded-2xl mb-6">
                                             <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-neutral-200 mb-2">
                                                 <span className="text-base">🎨</span>
                                                 <span className="tracking-wide">REKOMENDASI DESAIN:</span>
@@ -615,7 +660,7 @@ export default function ShofiEyelashPage() {
                                         Terapkan langsung saat treatment di salon kami.
                                     </p>
                                 </div>
-                                <a 
+                                <motion.a
                                     href={`https://wa.me/6281234567890?text=${encodeURIComponent(
                                         analysisResult 
                                             ? `Halo Shofi Eyelash, saya tertarik dengan rekomendasi AI: Desain ${analysisResult.designRecommendation} untuk kulit ${analysisResult.skinTone} (${analysisResult.nailBedShape}). Bisa reservasi jadwal?`
@@ -623,12 +668,14 @@ export default function ShofiEyelashPage() {
                                     )}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-full sm:w-auto px-5 py-3 bg-white text-charcoal hover:bg-neutral-200 text-xs font-semibold tracking-wider uppercase transition text-center cursor-pointer shrink-0"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="w-full sm:w-auto px-5 py-3 bg-white text-charcoal hover:bg-neutral-200 text-xs font-semibold tracking-wider uppercase transition rounded-full text-center cursor-pointer shrink-0 inline-block"
                                 >
                                     BOOKING DESAIN INI VIA WA
-                                </a>
+                                </motion.a>
                             </div>
-                        </div>
+                        </motion.div>
 
                     </div>
 
@@ -637,7 +684,14 @@ export default function ShofiEyelashPage() {
 
             {/* 5. BOOK YOUR SESSION */}
             <section className="py-16 md:py-20 bg-white border-y border-gray-100" id="booking-cta">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5" data-aos="fade-up">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5">
+                    <motion.div
+                        className="space-y-5"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
                     <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">
                         Book Your Session
                     </h2>
@@ -645,16 +699,19 @@ export default function ShofiEyelashPage() {
                         Ready to transform your look? Contact us via WhatsApp to schedule an appointment or consultation.
                     </p>
                     <div className="pt-2">
-                        <a 
-                            href="https://wa.me/6281234567890?text=Halo%20Shofi%20Eyelash%2C%20saya%20ingin%20booking%20appointment" 
-                            target="_blank" 
+                        <motion.a
+                            href="https://wa.me/6281234567890?text=Halo%20Shofi%20Eyelash%2C%20saya%20ingin%20booking%20appointment"
+                            target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 bg-charcoal text-white hover:bg-neutral-800 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-none transition-all duration-300 shadow-md"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 bg-charcoal text-white hover:bg-neutral-800 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-full transition-all duration-300 shadow-md"
                         >
                             <MessageCircle size={18} />
                             <span>WHATSAPP RESERVATION</span>
-                        </a>
+                        </motion.a>
                     </div>
+                    </motion.div>
                 </div>
             </section>
 
@@ -664,17 +721,25 @@ export default function ShofiEyelashPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
                         
                         {/* Left Col: Form "Berikan Ulasan Anda" */}
-                        <div className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-none shadow-xl" data-aos="fade-right">
+                        <motion.div
+                            className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
+                        >
                             <h3 className="font-serif text-2xl text-white font-normal mb-6">
                                 Berikan Ulasan Anda
                             </h3>
 
                             {formSuccess ? (
-                                <div className="p-5 bg-emerald-950/60 border border-emerald-700/50 rounded text-emerald-200 text-sm flex items-start gap-3 animate-fadeIn">
-                                    <CheckCircle2 size={20} className="flex-shrink-0 mt-0.5" />
+                                <div className="p-5 bg-emerald-950/60 border border-emerald-700/50 rounded-2xl text-emerald-200 text-sm flex items-start gap-3 animate-fadeIn">
+                                    <CheckCircle2 size={20} className="flex-shrink-0 mt-0.5 text-emerald-400" />
                                     <div>
-                                        <p className="font-semibold">Terima kasih atas ulasan Anda!</p>
-                                        <p className="text-xs text-emerald-300 mt-1">Ulasan Anda telah berhasil ditambahkan ke daftar ulasan pelanggan.</p>
+                                        <p className="font-semibold text-white">Terima kasih atas ulasan Anda!</p>
+                                        <p className="text-xs text-emerald-300 mt-1 leading-relaxed">
+                                            Ulasan Anda telah berhasil dikirim dan akan ditinjau oleh admin sebelum ditampilkan di website.
+                                        </p>
                                     </div>
                                 </div>
                             ) : (
@@ -689,7 +754,7 @@ export default function ShofiEyelashPage() {
                                             value={reviewName}
                                             onChange={(e) => setReviewName(e.target.value)}
                                             placeholder="Nama Lengkap" 
-                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition"
+                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition"
                                         />
                                     </div>
 
@@ -699,13 +764,14 @@ export default function ShofiEyelashPage() {
                                         </label>
                                         <div className="flex items-center gap-1.5 py-1">
                                             {[1, 2, 3, 4, 5].map((star) => (
-                                                <button
+                                                <motion.button
                                                     key={star}
                                                     type="button"
                                                     onClick={() => setReviewRating(star)}
                                                     onMouseEnter={() => setHoverRating(star)}
                                                     onMouseLeave={() => setHoverRating(0)}
-                                                    className="p-1 text-neutral-600 hover:text-amber-400 transition cursor-pointer"
+                                                    whileTap={{ scale: 0.9 }}
+                                                    className="p-1 text-neutral-600 hover:text-amber-400 rounded-lg transition cursor-pointer"
                                                     aria-label={`Beri bintang ${star}`}
                                                 >
                                                     <Star 
@@ -716,7 +782,7 @@ export default function ShofiEyelashPage() {
                                                                 : 'text-neutral-600'
                                                         }`}
                                                     />
-                                                </button>
+                                                </motion.button>
                                             ))}
                                         </div>
                                     </div>
@@ -731,51 +797,64 @@ export default function ShofiEyelashPage() {
                                             value={reviewComment}
                                             onChange={(e) => setReviewComment(e.target.value)}
                                             placeholder="Tulis ulasan Anda di sini..." 
-                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition resize-none"
+                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition resize-none"
                                         ></textarea>
                                     </div>
 
-                                    <button 
+                                    <motion.button 
                                         type="submit"
-                                        className="w-full px-8 py-3 bg-white text-charcoal hover:bg-neutral-200 text-xs font-semibold tracking-[0.2em] uppercase rounded-none transition duration-200 cursor-pointer"
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className="w-full px-8 py-3 bg-white text-charcoal hover:bg-neutral-200 text-xs font-semibold tracking-[0.2em] uppercase rounded-full transition duration-200 cursor-pointer"
                                     >
                                         KIRIM ULASAN
-                                    </button>
+                                    </motion.button>
                                 </form>
                             )}
-                        </div>
+                        </motion.div>
 
                         {/* Right Col: "Ulasan Pelanggan" */}
-                        <div className="lg:col-span-8 space-y-6" data-aos="fade-left" data-aos-delay="100">
-                            <div>
-                                <h3 className="font-serif text-2xl text-white font-normal mb-2">
+                        <div className="lg:col-span-8 space-y-6">
+                            <motion.div
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, amount: 0.2 }}
+                                transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+                            >
+                                <h3 className="font-serif text-2xl text-white font-normal mb-1">
                                     Ulasan Pelanggan
                                 </h3>
-                            </div>
+                                <p className="text-xs text-neutral-400 font-light">
+                                    Testimoni terkurasi dari pelanggan setia Shofi Eyelash.
+                                </p>
+                            </motion.div>
 
                             {reviewsLoading ? (
-                                <div className="p-8 text-center bg-neutral-900/60 border border-neutral-800 text-neutral-400 text-sm flex items-center justify-center gap-2">
+                                <div className="p-8 text-center bg-neutral-900/60 border border-neutral-800 rounded-2xl text-neutral-400 text-sm flex items-center justify-center gap-2">
                                     <Loader2 className="animate-spin text-amber-400" size={18} />
                                     <span>Memuat ulasan pelanggan...</span>
                                 </div>
-                            ) : reviewsError ? (
-                                <div className="p-6 bg-red-950/40 border border-red-800/60 text-red-200 text-sm text-center">
-                                    {reviewsError}
-                                </div>
                             ) : reviews.length === 0 ? (
-                                <div className="p-10 bg-neutral-900/40 border border-neutral-800 text-neutral-400 text-sm text-center font-light leading-relaxed">
+                                <div className="p-10 bg-neutral-900/40 border border-neutral-800 rounded-2xl text-neutral-400 text-sm text-center font-light leading-relaxed">
                                     Belum ada ulasan, jadilah yang pertama untuk memberikan ulasan!
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    {reviews.slice(0, 6).map((item) => (
-                                        <div 
-                                            key={item.id} 
-                                            className="p-5 bg-neutral-900/60 border border-neutral-800 rounded-none flex flex-col justify-between"
+                                <motion.div
+                                    className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+                                    variants={gridVariants}
+                                    initial="hidden"
+                                    whileInView="show"
+                                    viewport={{ once: true, amount: 0.2 }}
+                                >
+                                    {reviews.slice(0, 6).map((item, idx) => (
+                                        <motion.div 
+                                            key={item.id}
+                                            variants={cardVariants}
+                                            className="p-5 bg-neutral-900/60 border border-neutral-800 rounded-2xl shadow-sm flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-neutral-700"
                                         >
                                             <div>
                                                 <div className="flex items-center gap-1 text-amber-400 mb-3">
-                                                    {[...Array(item.rating)].map((_, i) => (
+                                                    {[...Array(Math.max(1, Math.min(5, Number(item.rating) || 5)))].map((_, i) => (
                                                         <Star key={i} size={14} className="fill-amber-400" />
                                                     ))}
                                                 </div>
@@ -792,9 +871,9 @@ export default function ShofiEyelashPage() {
                                                     {formatDate(item.created_at || item.published_at || item.date)}
                                                 </p>
                                             </div>
-                                        </div>
+                                        </motion.div>
                                     ))}
-                                </div>
+                                </motion.div>
                             )}
                         </div>
 

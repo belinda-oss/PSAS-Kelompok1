@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Lightbulb, Users, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
 import JobApplicationModal from '../components/modals/JobApplicationModal';
 
 export default function RecruitPage() {
@@ -8,6 +9,12 @@ export default function RecruitPage() {
     const handleApplyClick = () => {
         setIsAppModalOpen(true);
     };
+
+    const cultureCards = [
+        { icon: Lightbulb, title: 'Innovation', desc: 'We encourage creative thinking and continuous improvement in all our processes.' },
+        { icon: Users, title: 'Collaboration', desc: 'Success is built together. We value open communication and teamwork across all units.' },
+        { icon: TrendingUp, title: 'Growth', desc: 'We provide opportunities for personal and professional development at every career stage.' },
+    ];
 
     return (
         <div className="w-full font-sans">
@@ -25,14 +32,19 @@ export default function RecruitPage() {
                 </div>
 
                 {/* Centered Hero Content */}
-                <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="900">
+                <motion.div
+                    className="relative z-10 text-center text-white px-4 sm:px-6 max-w-3xl mx-auto flex flex-col items-center"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                >
                     <h1 className="font-serif italic font-bold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-4 leading-tight drop-shadow-md">
                         Join Our Team
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light text-neutral-200 tracking-wide max-w-xl mx-auto leading-relaxed">
                         Shape the future of beauty and distribution with PT GSU.
                     </p>
-                </div>
+                </motion.div>
             </section>
 
             {/* 2. GROW WITH US SECTION: Grid md:grid-cols-2 */}
@@ -41,36 +53,51 @@ export default function RecruitPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
                         
                         {/* Left Col: Title "Grow With Us", 3 paragraphs, Button "APPLY NOW" */}
-                        <div className="flex flex-col justify-center" data-aos="fade-right">
+                        <motion.div 
+                            className="flex flex-col justify-center"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                        >
                             <h2 className="font-serif italic text-3xl sm:text-4xl text-charcoal font-normal leading-tight mb-6">
                                 Grow With Us
                             </h2>
                             
                             <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
-                                Tertarik untuk menjadi bagian dari superteam KMP? KMP menawarkan peluang berharga bagi seluruh anggota tim kami untuk tumbuh dan berkembang dalam lingkungan kerja yang fun namun profesional.
+                                Tertarik untuk menjadi bagian dari superteam Shofi Eyelash? PT GSU menawarkan peluang berharga bagi seluruh anggota tim kami untuk tumbuh dan berkembang dalam lingkungan kerja kecantikan yang seru, kreatif, dan profesional.
                             </p>
                             
                             <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
-                                Kami juga senantiasa membuka kesempatan bagi individu yang berminat dengan budaya KMP serta memiliki tekad untuk bersama-sama tumbuh.
+                                Kami senantiasa membuka kesempatan bagi individu yang berdedikasi, menyukai dunia kecantikan, serta memiliki semangat tinggi untuk bersama-sama berkembang meraih kesuksesan.
                             </p>
                             
                             <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8">
-                                Program magang (internship) juga tersedia di berbagai divisi, termasuk Human Capital, Finance & Accounting, dan Digital Marketing. Jangan ragu untuk mendaftar dan menjadi bagian integral dari Superteam KMP!
+                                Program magang (internship) juga tersedia di berbagai divisi, termasuk Human Capital, Finance & Accounting, dan Digital Marketing. Jangan ragu untuk mendaftar dan menjadi bagian integral dari Superteam Shofi Eyelash & PT GSU!
                             </p>
 
                             <div>
-                                <button 
+                                <motion.button
+                                    type="button"
                                     onClick={handleApplyClick}
-                                    className="px-8 sm:px-10 py-3.5 bg-charcoal hover:bg-neutral-800 text-white text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-none transition-all duration-300 shadow-sm cursor-pointer inline-block"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="px-8 sm:px-10 py-3.5 bg-charcoal hover:bg-neutral-800 text-white text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-full transition-all duration-300 shadow-sm cursor-pointer inline-block"
                                 >
                                     APPLY NOW
-                                </button>
+                                </motion.button>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Right Col: Image of a professional woman reviewing documents */}
-                        <div className="w-full" data-aos="fade-left" data-aos-delay="150">
-                            <div className="aspect-[4/3] rounded-none overflow-hidden shadow-md group">
+                        <motion.div 
+                            className="w-full"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+                        >
+                            <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-xl group">
                                 <img 
                                     src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1000&q=80" 
                                     alt="Professional woman reviewing documents" 
@@ -78,7 +105,7 @@ export default function RecruitPage() {
                                     loading="lazy"
                                 />
                             </div>
-                        </div>
+                        </motion.div>
 
                     </div>
                 </div>
@@ -88,55 +115,46 @@ export default function RecruitPage() {
             <section className="py-12 md:py-20 lg:py-24 bg-[#1f1f1f] text-white" id="culture">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header */}
-                    <div className="text-center mb-14 sm:mb-16" data-aos="fade-up">
+                    <motion.div
+                        className="text-center mb-14 sm:mb-16"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
                         <h2 className="font-serif italic text-3xl sm:text-4xl md:text-5xl text-white font-normal mb-4">
                             Our Culture
                         </h2>
                         <p className="text-neutral-300 text-sm sm:text-base max-w-xl mx-auto font-light">
                             Discover the environment that drives our success and fosters your growth.
                         </p>
-                    </div>
+                    </motion.div>
 
                     {/* 3 Culture Cards: Grid md:grid-cols-3 */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Card 1: Innovation */}
-                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="0">
-                            <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-charcoal mb-6">
-                                <Lightbulb size={24} strokeWidth={2} />
-                            </div>
-                            <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal mb-3">
-                                Innovation
-                            </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                                We encourage creative thinking and continuous improvement in all our processes.
-                            </p>
-                        </div>
-
-                        {/* Card 2: Collaboration */}
-                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="150">
-                            <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-charcoal mb-6">
-                                <Users size={24} strokeWidth={2} />
-                            </div>
-                            <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal mb-3">
-                                Collaboration
-                            </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                                Success is built together. We value open communication and teamwork across all units.
-                            </p>
-                        </div>
-
-                        {/* Card 3: Growth */}
-                        <div className="bg-white text-charcoal p-8 sm:p-10 rounded-none shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="300">
-                            <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-charcoal mb-6">
-                                <TrendingUp size={24} strokeWidth={2} />
-                            </div>
-                            <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal mb-3">
-                                Growth
-                            </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                                We provide opportunities for personal and professional development at every career stage.
-                            </p>
-                        </div>
+                        {cultureCards.map((card, idx) => {
+                            const Icon = card.icon;
+                            return (
+                                <motion.div 
+                                    key={card.title}
+                                    initial={{ opacity: 0, y: 40 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.2 }}
+                                    transition={{ duration: 0.6, delay: idx * 0.15, ease: "easeOut" }}
+                                    className="bg-white text-charcoal p-8 sm:p-10 rounded-2xl shadow-lg flex flex-col justify-start transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-charcoal mb-6">
+                                        <Icon size={24} strokeWidth={2} />
+                                    </div>
+                                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-charcoal mb-3">
+                                        {card.title}
+                                    </h3>
+                                    <p className="text-gray-600 text-sm leading-relaxed">
+                                        {card.desc}
+                                    </p>
+                                </motion.div>
+                            );
+                        })}
                     </div>
 
                 </div>
@@ -146,7 +164,7 @@ export default function RecruitPage() {
             <JobApplicationModal 
                 isOpen={isAppModalOpen}
                 onClose={() => setIsAppModalOpen(false)}
-                initialRole="Superteam KMP"
+                initialRole="Superteam Shofi Eyelash & PT GSU"
             />
         </div>
     );

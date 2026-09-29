@@ -25,7 +25,7 @@ const VARIANTS = {
 
 const BASE_CLASSES =
     'inline-flex items-center justify-center gap-2.5 px-8 sm:px-10 py-3.5 ' +
-    'text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-none ' +
+    'text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-full ' +
     'transition-colors duration-300 whitespace-nowrap select-none';
 
 /**

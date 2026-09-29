@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { X, Phone, Mail, MapPin, Send, CheckCircle2 } from 'lucide-react';
 
 export default function ContactModal({ isOpen, onClose }) {
@@ -20,7 +20,7 @@ export default function ContactModal({ isOpen, onClose }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-            <div className="relative w-full max-w-lg bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-100 animate-slideUp">
+            <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 animate-slideUp">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#fafafa]">
                     <div>
                         <span className="text-xs font-semibold tracking-widest text-nude uppercase">PT GSU</span>
@@ -48,7 +48,7 @@ export default function ContactModal({ isOpen, onClose }) {
                         </div>
                     ) : (
                         <>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 p-4 bg-[#f9fafb] rounded border border-gray-100 text-xs">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 p-4 bg-[#f9fafb] rounded-2xl border border-gray-100 text-xs">
                                 <div className="flex items-center gap-2 text-gray-700">
                                     <Phone size={16} className="text-nude flex-shrink-0" />
                                     <span>+62 xxx - xxxx - xxxx</span>
@@ -70,7 +70,7 @@ export default function ContactModal({ isOpen, onClose }) {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Nama Anda"
-                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
+                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
                                     />
                                 </div>
                                 <div>
@@ -83,7 +83,7 @@ export default function ContactModal({ isOpen, onClose }) {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="email@anda.com atau +628..."
-                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
+                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
                                     />
                                 </div>
                                 <div>
@@ -96,12 +96,12 @@ export default function ContactModal({ isOpen, onClose }) {
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
                                         placeholder="Bagaimana kami dapat membantu Anda?"
-                                        className="w-full p-3 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition resize-none"
+                                        className="w-full p-3 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition resize-none"
                                     />
                                 </div>
                                 <button 
                                     type="submit"
-                                    className="w-full py-3 px-6 bg-charcoal hover:bg-nude text-white text-xs font-semibold tracking-widest uppercase rounded transition flex items-center justify-center gap-2"
+                                    className="w-full py-3 px-6 bg-charcoal hover:bg-nude text-white text-xs font-semibold tracking-widest uppercase rounded-full transition flex items-center justify-center gap-2"
                                 >
                                     <Send size={15} />
                                     <span>KIRIM PESAN</span>

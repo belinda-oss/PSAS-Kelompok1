@@ -106,6 +106,17 @@ export default function Footer({ onOpenContact }) {
                                     </svg>
                                 </a>
                                 <a 
+                                    href="https://www.tiktok.com/@shofieyelash" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="rounded-full border border-white/20 p-2.5 text-neutral-300 hover:text-white hover:border-white hover:bg-white/10 transition-all duration-300 flex items-center justify-center" 
+                                    aria-label="TikTok @shofieyelash"
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+                                    </svg>
+                                </a>
+                                <a 
                                     href="https://wa.me/6281234567890" 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
@@ -124,7 +135,7 @@ export default function Footer({ onOpenContact }) {
                             </div>
                             
                             <p className="text-[11px] text-neutral-500 mt-8 tracking-wide">
-                                © 2024 PT GSU. All rights reserved.
+                                © {new Date().getFullYear()} PT GSU. All rights reserved.
                             </p>
                         </div>
 
@@ -173,7 +184,7 @@ export default function Footer({ onOpenContact }) {
                                 <li>
                                     <button 
                                         type="button" 
-                                        onClick={() => handleQuickLink('/logistics-distribution')}
+                                        onClick={() => handleQuickLink('/distribution')}
                                         className="group inline-flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors duration-200 cursor-pointer"
                                     >
                                         <span className="relative">
@@ -225,11 +236,11 @@ export default function Footer({ onOpenContact }) {
                                     const isActive = activeBranchId === b.id;
                                     return (
                                         <li key={b.id}>
-                                            <button 
+                                             <button 
                                                 type="button" 
                                                 onClick={() => setActiveBranchId(b.id)}
                                                 aria-pressed={isActive}
-                                                className={`w-full text-left px-3.5 py-2.5 border rounded-sm transition-all duration-300 cursor-pointer ${
+                                                className={`w-full text-left px-3.5 py-2.5 border rounded-2xl transition-all duration-300 cursor-pointer ${
                                                     isActive 
                                                         ? 'border-white/40 bg-white/10 text-white shadow-sm' 
                                                         : 'border-white/10 text-neutral-400 hover:text-white hover:border-white/25 hover:bg-white/[0.04]'
@@ -256,7 +267,7 @@ export default function Footer({ onOpenContact }) {
                             <h4 className="text-xs font-semibold tracking-[0.2em] uppercase text-white mb-5">
                                 {activeBranch.name}
                             </h4>
-                            <div className="relative w-full h-56 md:h-64 bg-neutral-900 border border-white/10 rounded-sm overflow-hidden">
+                            <div className="relative w-full h-56 md:h-64 bg-neutral-900 border border-white/10 rounded-2xl overflow-hidden">
                                 <div className="absolute inset-0">
                                     <iframe 
                                         title={`${activeBranch.name} - Google Maps`} 
@@ -271,7 +282,7 @@ export default function Footer({ onOpenContact }) {
                                         href={activeBranch.externalUrl} 
                                         target="_blank" 
                                         rel="noopener noreferrer" 
-                                        className="absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 bg-neutral-950/90 backdrop-blur-md text-white text-[10px] font-semibold tracking-widest uppercase px-3.5 py-2 border border-white/20 hover:bg-neutral-900 transition-colors duration-300 whitespace-nowrap rounded-sm"
+                                        className="absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 bg-neutral-950/90 backdrop-blur-md text-white text-[10px] font-semibold tracking-widest uppercase px-3.5 py-2 border border-white/20 hover:bg-neutral-900 transition-colors duration-300 whitespace-nowrap rounded-full"
                                     >
                                         <ExternalLink size={12} />
                                         <span>Open in Maps</span>

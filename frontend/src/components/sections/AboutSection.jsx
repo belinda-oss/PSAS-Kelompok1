@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function AboutSection() {
     const [activeTab, setActiveTab] = useState('about');
@@ -17,17 +18,23 @@ export default function AboutSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
                     
                     {/* Left Column: Portrait Consultation/Clinic Image */}
-                    <div className="w-full flex justify-center" data-aos="fade-right">
-                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-none shadow-md group border border-gray-100 animate-float">
+                    <motion.div 
+                        className="w-full flex justify-center" 
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                    >
+                        <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-3xl shadow-xl group border border-gray-100 animate-float">
                             <img 
                                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
                                 alt="GSU Beauty Service & Consultation" 
-                                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                                className="relative w-full h-full object-cover object-center rounded-3xl transition-transform duration-700 group-hover:scale-105"
                                 loading="lazy"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80" />
                             <div className="absolute bottom-4 left-4 right-4 text-white">
-                                <span className="text-[10px] tracking-widest uppercase font-semibold bg-black/60 px-2.5 py-1 backdrop-blur-xs rounded-xs">
+                                <span className="text-[10px] tracking-widest uppercase font-semibold bg-black/60 px-3 py-1 backdrop-blur-xs rounded-full">
                                     Est. 2017
                                 </span>
                                 <p className="text-xs font-serif italic mt-2 text-white/90">
@@ -35,10 +42,16 @@ export default function AboutSection() {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Right Column: About Us & Our Goals */}
-                    <div className="flex flex-col justify-center items-center w-full" data-aos="fade-left" data-aos-delay="100">
+                    <motion.div 
+                        className="flex flex-col justify-center items-center w-full"
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+                    >
                         {/* Tab Headers */}
                         <div className="flex items-center gap-8 mb-8 border-b border-gray-100 pb-2">
                             <button 
@@ -95,7 +108,7 @@ export default function AboutSection() {
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
 
                 </div>
             </div>

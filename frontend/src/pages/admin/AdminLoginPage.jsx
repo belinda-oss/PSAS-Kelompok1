@@ -1,14 +1,9 @@
-import AOS from 'aos';
-import { useEffect } from 'react';
+﻿import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function AdminLoginPage() {
-  useEffect(() => {
-    AOS.init({ duration: 800, easing: 'ease-out-cubic', once: false });
-    AOS.refresh();
-  }, []);
   const navigate = useNavigate();
   const [email, setEmail] = useState('admin@ptgsu.co.id');
   const [password, setPassword] = useState('password123');
@@ -44,19 +39,28 @@ export default function AdminLoginPage() {
         aria-hidden="true"
       />
 
-      <div className="w-full max-w-[460px]" data-aos="fade-up" data-aos-duration="700">
-        <div className="bg-white border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-8 sm:p-12">
+      <motion.div
+        className="w-full max-w-[460px]"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
+        <div className="bg-white border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-8 sm:p-12 rounded-3xl">
           {/* Brand Header */}
           <div className="text-center">
-            <div data-aos="fade-down" data-aos-duration="600">
+            <motion.div
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+            >
               <img
                 src="/gsu-logo.jpg"
                 alt="PT GSU"
                 className="h-12 sm:h-14 w-auto object-contain mx-auto mix-blend-multiply"
               />
-            </div>
+            </motion.div>
             <p className="text-[10px] tracking-[0.25em] text-gray-400 uppercase font-medium mt-3 mb-6">
-              • SHOFI EYELASH ADMIN •
+              â€¢ SHOFI EYELASH ADMIN â€¢
             </p>
 
             <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#1f2421] tracking-wide mb-2">
@@ -86,7 +90,7 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@ptgsu.co.id"
-                  className="w-full pl-10 pr-4 py-2.5 text-xs text-gray-900 bg-[#fbfbfb] border border-gray-200 rounded-none focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.12)] transition-all placeholder:text-gray-400"
+                  className="w-full pl-10 pr-4 py-2.5 text-xs text-gray-900 bg-[#fbfbfb] border border-gray-200 rounded-xl focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.12)] transition-all placeholder:text-gray-400"
                 />
               </div>
             </div>
@@ -104,8 +108,8 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 text-xs text-gray-900 bg-[#fbfbfb] border border-gray-200 rounded-none focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.12)] transition-all placeholder:text-gray-400 font-sans"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                  className="w-full pl-10 pr-10 py-2.5 text-xs text-gray-900 bg-[#fbfbfb] border border-gray-200 rounded-xl focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.12)] transition-all placeholder:text-gray-400 font-sans"
                 />
                 <button
                   type="button"
@@ -129,7 +133,7 @@ export default function AdminLoginPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-gray-300 text-[#1f2421] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                  className="rounded-md border-gray-300 text-[#1f2421] focus:ring-0 focus:ring-offset-0 cursor-pointer"
                 />
                 <span className="text-[11px] text-gray-600 group-hover:text-gray-900 transition-colors">
                   Ingat Sesi Ini
@@ -149,7 +153,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#1f2421] text-white text-xs font-semibold py-3.5 tracking-widest uppercase hover:bg-[#c49a6c] active:scale-[0.99] transition-all flex items-center justify-center gap-2 focus:outline-none disabled:opacity-75"
+              className="w-full bg-[#1f2421] text-white text-xs font-semibold py-3.5 tracking-widest uppercase hover:bg-[#c49a6c] active:scale-[0.99] transition-all rounded-full flex items-center justify-center gap-2 focus:outline-none disabled:opacity-75"
             >
               {isLoading ? (
                 <span className="animate-pulse">MEMPROSES...</span>
@@ -187,7 +191,7 @@ export default function AdminLoginPage() {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

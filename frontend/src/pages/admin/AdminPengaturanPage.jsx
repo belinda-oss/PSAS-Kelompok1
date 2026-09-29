@@ -1,13 +1,8 @@
-import AOS from 'aos';
-import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { Check, KeyRound } from 'lucide-react';
 
 export default function AdminPengaturanPage() {
-  useEffect(() => {
-    AOS.init({ duration: 800, easing: 'ease-out-cubic', once: false });
-    AOS.refresh();
-  }, []);
   const [whatsappNumber, setWhatsappNumber] = useState('+62 812-3456-7890');
   const [autoPublishReviews, setAutoPublishReviews] = useState(true);
   const [adminEmail, setAdminEmail] = useState('admin@gsu-eyelash.com');
@@ -45,28 +40,36 @@ export default function AdminPengaturanPage() {
     <div className="space-y-8">
       {/* Toast Alert */}
       {notification && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#1f2421] text-white text-xs px-5 py-3 rounded-sm shadow-xl flex items-center gap-2.5">
+        <div className="fixed bottom-6 right-6 z-50 bg-[#1f2421] text-white text-xs px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2.5">
           <Check className="w-4 h-4 text-emerald-400" />
           <span>{notification}</span>
         </div>
       )}
 
       {/* Page Header */}
-      <div data-aos="fade-up">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
         <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-[#1f2421] tracking-wide mb-2.5">
           Pengaturan Salon &amp; Website
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 font-light">
           Konfigurasi informasi kontak reservasi, jam operasional, dan akun admin.
         </p>
-      </div>
+      </motion.div>
 
       {/* Settings Form */}
       <form onSubmit={handleSaveSettings} className="space-y-5">
         {/* Section 1: Kontak WhatsApp Reservasi */}
-        <div
-          data-aos="fade-up"
-          className="border border-gray-100 bg-white p-6 sm:p-8 rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.01)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#e8ded2]"
+        <motion.div
+          className="border border-gray-100 bg-white p-6 sm:p-8 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#e8ded2]"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
             {/* Left Info */}
@@ -89,20 +92,22 @@ export default function AdminPengaturanPage() {
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 placeholder="+62 8xx-xxxx-xxxx"
-                className="w-full py-2.5 px-3.5 bg-[#fbfbfb] border border-gray-200 text-xs text-gray-900 rounded-sm focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-colors"
+                className="w-full py-2.5 px-3.5 bg-[#fbfbfb] border border-gray-200 text-xs text-gray-900 rounded-xl focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-colors"
               />
               <p className="text-[11px] text-gray-400 font-light pt-0.5">
                 Nomor ini akan otomatis dihubungi ketika pengunjung menekan tombol 'Reservasi' di website.
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Section 2: Moderasi Ulasan */}
-        <div
-          data-aos="fade-up"
-          data-aos-delay="100"
-          className="border border-gray-100 bg-white p-6 sm:p-8 rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.01)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#e8ded2]"
+        <motion.div
+          className="border border-gray-100 bg-white p-6 sm:p-8 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#e8ded2]"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.08, ease: 'easeOut' }}
         >
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
             {/* Left Info */}
@@ -140,17 +145,19 @@ export default function AdminPengaturanPage() {
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
                     autoPublishReviews ? 'translate-x-5' : 'translate-x-0'
                   }`}
-                />
+                /> 
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Section 3: Akun Administrator */}
-        <div
-          data-aos="fade-up"
-          data-aos-delay="200"
-          className="border border-gray-100 bg-white p-6 sm:p-8 rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.01)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#e8ded2]"
+        <motion.div
+          className="border border-gray-100 bg-white p-6 sm:p-8 rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.01)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-[#e8ded2]"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.16, ease: 'easeOut' }}
         >
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
             {/* Left Info */}
@@ -173,7 +180,7 @@ export default function AdminPengaturanPage() {
                   type="email"
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
-                  className="w-full py-2.5 px-3.5 bg-[#fbfbfb] border border-gray-200 text-xs text-gray-900 rounded-sm focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-colors"
+className="w-full py-2.5 px-3.5 bg-[#fbfbfb] border border-gray-200 text-xs text-gray-900 rounded-xl focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-colors"
                 />
               </div>
 
@@ -189,17 +196,23 @@ export default function AdminPengaturanPage() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Footer Action */}
-        <div className="flex justify-end pt-4" data-aos="fade-up" data-aos-delay="300">
+        <motion.div
+          className="flex justify-end pt-4"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+        >
           <button
             type="submit"
-            className="bg-[#1f2421] text-white text-xs font-medium px-8 py-3 rounded-none uppercase tracking-widest hover:bg-[#c49a6c] active:scale-[0.99] transition-all shadow-sm focus:outline-none"
+            className="bg-[#1f2421] text-white text-xs font-medium px-8 py-3 rounded-full uppercase tracking-widest hover:bg-[#c49a6c] active:scale-[0.99] transition-all shadow-sm focus:outline-none"
           >
             Simpan Perubahan
           </button>
-        </div>
+        </motion.div>
       </form>
 
       {/* Change Password Modal */}
@@ -226,7 +239,7 @@ export default function AdminPengaturanPage() {
                     onChange={(e) =>
                       setPasswordForm({ ...passwordForm, oldPassword: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-all rounded-none"
+                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-all rounded-xl"
                   />
                 </div>
 
@@ -241,7 +254,7 @@ export default function AdminPengaturanPage() {
                     onChange={(e) =>
                       setPasswordForm({ ...passwordForm, newPassword: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-all rounded-none"
+                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-all rounded-xl"
                   />
                 </div>
 
@@ -256,7 +269,7 @@ export default function AdminPengaturanPage() {
                     onChange={(e) =>
                       setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-all rounded-none"
+                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-all rounded-xl"
                   />
                 </div>
 
@@ -264,13 +277,13 @@ export default function AdminPengaturanPage() {
                   <button
                     type="button"
                     onClick={() => setIsPasswordModalOpen(false)}
-                    className="px-4 py-2 border border-gray-200 text-gray-600 hover:text-[#1f2421] hover:border-[#1f2421] transition-colors"
+                    className="px-4 py-2 border border-gray-200 text-gray-600 hover:text-[#1f2421] hover:border-[#1f2421] rounded-full transition-colors"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-[#1f2421] text-white hover:bg-[#c49a6c] transition-colors font-medium"
+                    className="px-6 py-2 bg-[#1f2421] text-white hover:bg-[#c49a6c] rounded-full transition-colors font-medium"
                   >
                     Simpan Kata Sandi
                   </button>

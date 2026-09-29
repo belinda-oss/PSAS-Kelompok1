@@ -31,7 +31,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-            <div className="relative w-full max-w-lg bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-100 animate-slideUp">
+            <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 animate-slideUp">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#fafafa]">
                     <div>
@@ -73,7 +73,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                         value={formData.fullName}
                                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                         placeholder="Contoh: Amanda Putri"
-                                        className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
+                                        className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
                                     />
                                 </div>
                             </div>
@@ -91,7 +91,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             placeholder="nama@email.com"
-                                            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
+                                            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
                                         />
                                     </div>
                                 </div>
@@ -108,7 +108,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                             value={formData.phone}
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                             placeholder="+62 812-xxxx-xxxx"
-                                            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
+                                            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
                                         />
                                     </div>
                                 </div>
@@ -124,7 +124,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                         <select
                                             value={formData.position}
                                             onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                                            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition bg-white"
+                                            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition bg-white"
                                         >
                                             <option value="Senior Eyelash Artist">Senior Eyelash Artist</option>
                                             <option value="Nail Art Specialist">Nail Art Specialist</option>
@@ -143,7 +143,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                     <select
                                         value={formData.experience}
                                         onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition bg-white"
+                                        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition bg-white"
                                     >
                                         <option value="Fresh Graduate / Magang">Fresh Graduate / Magang</option>
                                         <option value="1-3 Tahun">1-3 Tahun</option>
@@ -164,7 +164,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                         value={formData.portfolio}
                                         onChange={(e) => setFormData({ ...formData, portfolio: e.target.value })}
                                         placeholder="https://linkedin.com/in/... atau link drive"
-                                        className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
+                                        className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition"
                                     />
                                 </div>
                             </div>
@@ -178,14 +178,14 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                     value={formData.coverLetter}
                                     onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}
                                     placeholder="Ceritakan minat dan keahlian utama Anda..."
-                                    className="w-full p-3 text-sm border border-gray-200 rounded focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition resize-none"
+                                    className="w-full p-3 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition resize-none"
                                 />
                             </div>
 
                             <button 
                                 type="submit" 
                                 disabled={isSubmitting}
-                                className="w-full mt-2 py-3 px-6 bg-charcoal hover:bg-nude text-white text-xs font-semibold tracking-widest uppercase rounded transition flex items-center justify-center gap-2"
+                                className="w-full mt-2 py-3 px-6 bg-charcoal hover:bg-nude text-white text-xs font-semibold tracking-widest uppercase rounded-full transition flex items-center justify-center gap-2"
                             >
                                 {isSubmitting ? (
                                     <span>Mengirimkan Lamaran...</span>

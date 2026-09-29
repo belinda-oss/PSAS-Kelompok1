@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+const MotionLink = motion.create(Link);
 
 export default function BusinessUnitsSection() {
     const units = [
@@ -27,25 +30,33 @@ export default function BusinessUnitsSection() {
         <section className="py-12 md:py-20 lg:py-24 bg-[#1f1f1f] text-white font-sans overflow-hidden" id="units">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Title */}
-                <h2 className="font-serif text-3xl sm:text-4xl text-center font-normal tracking-wide mb-12 sm:mb-16 text-white" data-aos="fade-up">
+                <motion.h2
+                    className="font-serif text-3xl sm:text-4xl text-center font-normal tracking-wide mb-12 sm:mb-16 text-white"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                >
                     Our Business Units
-                </h2>
+                </motion.h2>
 
                 {/* 2 Equal-height Cards Grid with Antigravity Floating Animation */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-4xl mx-auto items-stretch">
-                    {units.map((unit) => (
-                        <div 
+                    {units.map((unit, idx) => (
+                        <motion.div 
                             key={unit.id}
-                            className={`bg-white text-charcoal rounded-none overflow-hidden shadow-lg flex flex-col transition-all duration-300 hover:shadow-2xl ${unit.animClass} h-full`}
-                            data-aos="fade-up"
-                            data-aos-delay={unit.id === 'shofi-eyelash' ? 100 : 250}
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.6, delay: idx * 0.15, ease: "easeOut" }}
+                            className={`bg-white text-charcoal rounded-3xl overflow-hidden shadow-xl flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 ${unit.animClass} h-full`}
                         >
                             {/* Card Image: Full bleed */}
-                            <div className="w-full h-60 sm:h-64 overflow-hidden shrink-0">
+<div className="w-full h-60 sm:h-64 overflow-hidden shrink-0">
                                 <img 
                                     src={unit.image} 
                                     alt={unit.title} 
-                                    className="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-105"
+                                    className="w-full h-full object-cover object-center rounded-t-3xl transition-transform duration-700 group-hover:scale-105"
                                     loading="lazy"
                                 />
                             </div>
@@ -64,15 +75,17 @@ export default function BusinessUnitsSection() {
                                     </p>
                                 </div>
 
-                                <Link 
+                                <MotionLink
                                     to={unit.route}
-                                    className="px-8 py-2.5 text-xs font-semibold tracking-[0.2em] uppercase border border-charcoal text-charcoal hover:bg-charcoal hover:text-white transition-all duration-300 inline-block w-fit mt-auto"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="px-8 py-2.5 text-xs font-semibold tracking-[0.2em] uppercase border border-charcoal text-charcoal hover:bg-charcoal hover:text-white rounded-full transition-all duration-300 inline-block w-fit mt-auto"
                                     aria-label={`Explore ${unit.title}`}
                                 >
                                     EXPLORE
-                                </Link>
+                                </MotionLink>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </div>

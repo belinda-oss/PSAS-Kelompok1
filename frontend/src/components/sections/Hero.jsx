@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function Hero() {
     const handleContinue = (e) => {
@@ -32,7 +33,12 @@ export default function Hero() {
             </div>
 
             {/* Hero Centered Content */}
-            <div className="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center" data-aos="zoom-in" data-aos-duration="1000">
+            <motion.div
+                className="relative z-10 text-center text-white px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center"
+                initial={{ opacity: 0, y: 36 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, ease: [0.25, 0.1, 0.25, 1.0] }}
+            >
                 {/* Center text: "GSU" */}
                 <h1 className="font-serif italic font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-wider leading-none mb-4 drop-shadow-lg">
                     GSU
@@ -44,8 +50,11 @@ export default function Hero() {
                 </p>
 
                 {/* Button: "CONTINUE" */}
-                <button 
-                    onClick={handleContinue} 
+                <motion.button
+                    type="button"
+                    onClick={handleContinue}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.95 }}
                     className="inline-flex flex-col items-center gap-2 text-white/90 hover:text-white transition-all duration-300 group cursor-pointer focus:outline-none"
                     aria-label="Continue to About Us section"
                 >
@@ -53,8 +62,8 @@ export default function Hero() {
                         CONTINUE
                     </span>
                     <ChevronDown size={22} className="animate-bounce text-white/80 group-hover:text-white mt-1" />
-                </button>
-            </div>
+                </motion.button>
+            </motion.div>
         </section>
     );
 }
