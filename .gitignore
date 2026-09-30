@@ -26,7 +26,8 @@ yarn-error.log
 /.idea
 /.vscode
 /ai-service/venv/
-/ai-service/__pycache__/
+__pycache__/
+*.pyc
 *.pt
 frontend/dist/
 backend/test_nail.jpg

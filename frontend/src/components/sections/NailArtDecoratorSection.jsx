@@ -130,6 +130,11 @@ export default function NailArtDecoratorSection() {
     // Katalog lokal = fallback saat AI Microservice tidak aktif.
     const [designCatalog, setDesignCatalog] = useState(NAIL_DESIGNS);
 
+    // Gemini Analysis State (Tahap 2)
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [analysisResult, setAnalysisResult] = useState(null);
+    const [analysisError, setAnalysisError] = useState(null);
+
     // Controls
     const [glossIntensity, setGlossIntensity] = useState(0.85);
     const [nailLengthFactor, setNailLengthFactor] = useState(1.0);
@@ -189,6 +194,46 @@ export default function NailArtDecoratorSection() {
         return () => { cancelled = true; };
     }, []);
 
+    // Auto-select motif yang paling cocok dengan rekomendasi Gemini (opsional)
+    useEffect(() => {
+        if (!analysisResult || !designCatalog.length) return;
+
+        const recType = analysisResult.recommendationType?.toLowerCase() || '';
+        const skinTone = analysisResult.skinTone?.toLowerCase() || '';
+
+        // Logic pencocokan sederhana berdasarkan recommendation_type dan skin_tone
+        let bestMatch = null;
+
+        if (recType.includes('nail art') || recType.includes('art')) {
+            // Prioritaskan motif yang cocok dengan skin tone
+            if (skinTone.includes('fair') || skinTone.includes('light')) {
+                bestMatch = designCatalog.find(d => 
+                    d.recommended_skin_tone?.toLowerCase().includes('fair') ||
+                    d.recommended_skin_tone?.toLowerCase().includes('cool')
+                );
+            } else if (skinTone.includes('medium') || skinTone.includes('warm')) {
+                bestMatch = designCatalog.find(d => 
+                    d.recommended_skin_tone?.toLowerCase().includes('warm') ||
+                    d.recommended_skin_tone?.toLowerCase().includes('medium')
+                );
+            } else if (skinTone.includes('deep') || skinTone.includes('dark')) {
+                bestMatch = designCatalog.find(d => 
+                    d.recommended_skin_tone?.toLowerCase().includes('deep') ||
+                    d.recommended_skin_tone?.toLowerCase().includes('dark')
+                );
+            }
+        }
+
+        // Fallback: pilih motif pertama yang available
+        if (!bestMatch && designCatalog.length > 0) {
+            bestMatch = designCatalog[0];
+        }
+
+        if (bestMatch) {
+            setSelectedDesignId(bestMatch.id);
+        }
+    }, [analysisResult, designCatalog]);
+
     // Handle File Drop / Select
     const handleFileChange = (file) => {
         if (!file) return;
@@ -201,6 +246,9 @@ export default function NailArtDecoratorSection() {
             setUploadedImage(e.target.result);
             setDecorationResult(null);
             setErrorMessage(null);
+            // Reset analysis when new photo is uploaded
+            setAnalysisResult(null);
+            setAnalysisError(null);
         };
         reader.readAsDataURL(file);
     };
@@ -259,7 +307,92 @@ export default function NailArtDecoratorSection() {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
         setUploadedImage(dataUrl);
         setDecorationResult(null);
+        // Reset analysis when new photo is captured
+        setAnalysisResult(null);
+        setAnalysisError(null);
         stopCamera();
+    };
+
+    // Trigger Gemini AI Analysis (Tahap 2) - calls POST /api/nail-analysis
+    const triggerAnalysis = async () => {
+        setIsAnalyzing(true);
+        setAnalysisError(null);
+        setAnalysisResult(null);
+
+        try {
+            let imageFileToUpload = null;
+
+            // If user uploaded an image, convert dataURL to File
+            if (uploadedImage) {
+                const res = await fetch(uploadedImage);
+                const blob = await res.blob();
+                imageFileToUpload = new File([blob], 'uploaded_hand.jpg', { type: blob.type || 'image/jpeg' });
+            } else {
+                // If using preset image, fetch and convert to File
+                const sampleUrl = selectedPreset?.image;
+                if (!sampleUrl) {
+                    throw new Error('Silakan pilih foto kuku atau sampel tone terlebih dahulu.');
+                }
+                const fetchRes = await fetch(sampleUrl);
+                if (!fetchRes.ok) {
+                    throw new Error('Gagal memuat foto sampel. Silakan unggah foto tangan Anda.');
+                }
+                const blob = await fetchRes.blob();
+                imageFileToUpload = new File([blob], `${selectedPreset.id}_sample.jpg`, { type: blob.type || 'image/jpeg' });
+            }
+
+            const formData = new FormData();
+            formData.append('image', imageFileToUpload);
+
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+            const targetUrl = `${baseUrl.replace(/\/$/, '')}/api/nail-analysis`;
+
+            console.log('[AI Analysis] Sending request to:', targetUrl);
+            console.log('[AI Analysis] File to upload:', imageFileToUpload.name, imageFileToUpload.type, imageFileToUpload.size, 'bytes');
+
+            const response = await fetch(targetUrl, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                body: formData
+            });
+
+            console.log('[AI Analysis] Response HTTP status:', response.status);
+
+            const rawText = await response.text();
+            console.log('[AI Analysis] Raw response body:', rawText);
+
+            let data;
+            try {
+                data = JSON.parse(rawText);
+            } catch (parseErr) {
+                console.error('[AI Analysis] JSON parse error:', parseErr);
+                throw new Error(`Response backend bukan JSON (HTTP ${response.status}): ${rawText.substring(0, 150)}`);
+            }
+
+            if (!data.success) {
+                throw new Error(data.message || 'Analisis gagal diproses oleh backend.');
+            }
+
+            const resultData = data.data;
+            setAnalysisResult({
+                nailBedShape: resultData.nail_bed_shape || 'N/A',
+                skinTone: resultData.skin_tone || 'N/A',
+                nailColor: resultData.nail_color || 'N/A',
+                recommendationType: resultData.recommendation_type || 'N/A',
+                designRecommendation: resultData.design_recommendation || '',
+                aiMatchPercentage: resultData.ai_match_percentage ?? null,
+            });
+            setAnalysisError(null);
+
+        } catch (err) {
+            console.error('[AI Analysis] Error:', err);
+            setAnalysisError(err.message || 'Gagal menghubungkan ke service AI backend. Silakan coba beberapa saat lagi.');
+            setAnalysisResult(null);
+        } finally {
+            setIsAnalyzing(false);
+        }
     };
 
     useEffect(() => {
@@ -505,6 +638,9 @@ export default function NailArtDecoratorSection() {
                                                         e.stopPropagation();
                                                         setUploadedImage(null);
                                                         setDecorationResult(null);
+                                                        // Reset analysis when photo is removed
+                                                        setAnalysisResult(null);
+                                                        setAnalysisError(null);
                                                     }}
                                                     className="absolute top-2 right-2 p-1.5 bg-black/70 hover:bg-red-950 text-white rounded-full border border-neutral-700 transition"
                                                 >
@@ -549,6 +685,9 @@ export default function NailArtDecoratorSection() {
                                                             setSelectedPreset(p);
                                                             setUploadedImage(null);
                                                             setDecorationResult(null);
+                                                            // Reset analysis when preset changes
+                                                            setAnalysisResult(null);
+                                                            setAnalysisError(null);
                                                         }}
                                                         className={`py-2 px-2 text-[11px] rounded-xl border text-center transition cursor-pointer ${
                                                             isActive
@@ -624,17 +763,144 @@ export default function NailArtDecoratorSection() {
 
                         </div>
 
-                        {/* 2. KATALOG PILIH DESAIN NAIL ART */}
+                        {/* 2. ANALISIS GEMINI AI (Tahap 2) */}
                         <div className="bg-[#1f1f1f] border border-neutral-800 p-5 sm:p-6 rounded-3xl shadow-xl space-y-4">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold tracking-[0.2em] uppercase text-white flex items-center gap-2">
+                                    <Sparkles size={14} className="text-amber-400" />
+                                    2. Analisis Hand & Nail Tone
+                                </span>
+                                {analysisResult && (
+                                    <span className="text-[11px] text-emerald-400 font-medium flex items-center gap-1">
+                                        <Check size={12} />
+                                        Analisis Selesai
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Analysis Button */}
+                            <button
+                                type="button"
+                                onClick={triggerAnalysis}
+                                disabled={isAnalyzing}
+                                className="w-full py-3.5 bg-white text-charcoal hover:bg-neutral-200 text-xs font-bold tracking-[0.2em] uppercase transition shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                            >
+                                {isAnalyzing ? (
+                                    <>
+                                        <RefreshCw size={15} className="animate-spin text-charcoal" />
+                                        <span>MENGANALISIS HAND & NAIL TONE...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles size={15} className="text-amber-600" />
+                                        <span>ANALISIS HAND & NAIL TONE</span>
+                                    </>
+                                )}
+                            </button>
+
+                            {/* Analysis Loading State */}
+                            {isAnalyzing && (
+                                <div className="py-8 text-center space-y-3">
+                                    <RefreshCw size={28} className="animate-spin text-amber-500 mx-auto" />
+                                    <p className="text-sm text-neutral-200 font-medium">Memproses Analisis Kuku dengan Gemini AI...</p>
+                                    <p className="text-xs text-neutral-400 font-light">Mendeteksi bentuk nail bed, tone kulit, dan warna kuku</p>
+                                </div>
+                            )}
+
+                            {/* Analysis Error State */}
+                            {analysisError && (
+                                <div className="py-6 px-4 bg-red-950/40 border border-red-800/60 rounded-xl text-center space-y-2">
+                                    <p className="text-sm font-semibold text-red-300">Gagal Memproses Analisis</p>
+                                    <p className="text-xs text-red-400 font-light">{analysisError}</p>
+                                </div>
+                            )}
+
+                            {/* Analysis Result */}
+                            {analysisResult && !isAnalyzing && (
+                                <div className="space-y-4">
+                                    {/* Metrics Grid */}
+                                    <div className="grid grid-cols-2 gap-2.5">
+                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-xl">
+                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-1">
+                                                Bentuk Nail Bed
+                                            </span>
+                                            <p className="text-xs font-semibold text-white capitalize">
+                                                {analysisResult.nailBedShape}
+                                            </p>
+                                        </div>
+                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-xl">
+                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-1">
+                                                Tone Kulit
+                                            </span>
+                                            <p className="text-xs font-semibold text-white capitalize">
+                                                {analysisResult.skinTone}
+                                            </p>
+                                        </div>
+                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-xl">
+                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-1">
+                                                Warna Kuku
+                                            </span>
+                                            <p className="text-xs font-semibold text-white capitalize">
+                                                {analysisResult.nailColor}
+                                            </p>
+                                        </div>
+                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-xl">
+                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-1">
+                                                Tipe Rekomendasi
+                                            </span>
+                                            <p className="text-xs font-semibold text-amber-300 capitalize">
+                                                {analysisResult.recommendationType}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* AI Match Score */}
+                                    {analysisResult.aiMatchPercentage !== null && (
+                                        <div className="bg-emerald-950/30 border border-emerald-500/30 p-3 rounded-xl flex items-center justify-between">
+                                            <span className="text-xs font-semibold text-emerald-300">AI Match Score</span>
+                                            <span className="text-sm font-bold text-emerald-400 font-mono">
+                                                {analysisResult.aiMatchPercentage}%
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Design Recommendation */}
+                                    {analysisResult.designRecommendation && (
+                                        <div className="bg-neutral-800/60 border border-neutral-700/80 p-3.5 rounded-2xl">
+                                            <span className="text-xs font-semibold text-amber-300 block mb-1">Rekomendasi AI:</span>
+                                            <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-light">
+                                                {analysisResult.designRecommendation}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 3. KATALOG PILIH DESAIN NAIL ART */}
+                        <div className={`bg-[#1f1f1f] border border-neutral-800 p-5 sm:p-6 rounded-3xl shadow-xl space-y-4 transition-opacity ${!analysisResult ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold tracking-[0.2em] uppercase text-white flex items-center gap-2">
                                     <Palette size={14} className="text-amber-400" />
-                                    2. Katalog Pilih Motif Seni Kuku
+                                    3. Katalog Pilih Motif Seni Kuku
                                 </span>
                                 <span className="text-[11px] text-neutral-400">
                                     {filteredDesigns.length} Motif Tersedia
                                 </span>
                             </div>
+
+                            {/* Disabled Overlay Message */}
+                            {!analysisResult && (
+                                <div className="py-8 px-4 border border-dashed border-neutral-700/80 text-center space-y-3 bg-neutral-900/40 rounded-xl">
+                                    <Sparkles size={24} className="text-neutral-500 mx-auto" />
+                                    <p className="text-sm font-semibold text-neutral-400">
+                                        Selesaikan analisis foto terlebih dahulu
+                                    </p>
+                                    <p className="text-xs text-neutral-500 font-light">
+                                        Katalog motif akan aktif setelah analisis Gemini AI selesai
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Category Filter Pills */}
                             <div className="flex gap-1.5 overflow-x-auto pb-1.5 scrollbar-none">
@@ -740,7 +1006,7 @@ export default function NailArtDecoratorSection() {
                             <motion.button
                                 type="button"
                                 onClick={handleDecorateNails}
-                                disabled={isDecorating}
+                                disabled={isDecorating || !analysisResult}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.96 }}
                                 className="w-full py-4 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-charcoal font-bold text-xs tracking-[0.2em] uppercase rounded-full shadow-lg hover:shadow-amber-500/20 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
@@ -764,14 +1030,14 @@ export default function NailArtDecoratorSection() {
                     {/* RIGHT COLUMN: Interactive Before vs After & Analysis Diagnosis (lg:col-span-7) */}
                     <div className="lg:col-span-7 space-y-6">
                         
-                        {/* 3. BEFORE VS AFTER INTERACTIVE COMPARISON VIEWER */}
+                        {/* 4. BEFORE VS AFTER INTERACTIVE COMPARISON VIEWER */}
                         <div className="bg-[#1f1f1f] border border-neutral-800 p-5 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between">
                             <div>
                                 {/* Viewer Header & View Mode Switcher */}
                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                                     <div>
                                         <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-neutral-400 block mb-1">
-                                            3. PREVIEW HASIL SENI KUKU
+                                            4. PREVIEW HASIL SENI KUKU
                                         </span>
                                         <h3 className="font-serif text-xl sm:text-2xl text-white font-medium flex items-center gap-2">
                                             <span>Before vs After View</span>
