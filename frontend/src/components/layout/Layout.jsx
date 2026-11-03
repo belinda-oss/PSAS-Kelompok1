@@ -15,8 +15,8 @@ export default function Layout() {
             {/* Fixed Navigation Bar */}
             <Navbar onOpenContact={openContact} />
 
-            {/* Main Page Outlet — pt offsets the fixed navbar height (≈56-60px) */}
-            <main className="flex-1 w-full pt-[56px] sm:pt-[60px]">
+            {/* Main Page Outlet — pages start at the top so the floating navbar overlays the hero */}
+            <main className="flex-1 w-full">
                 <Outlet context={{ openContact }} />
             </main>
 

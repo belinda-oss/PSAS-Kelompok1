@@ -142,7 +142,7 @@ export default function ShofiEyelashPage() {
                     data-aos="zoom-in"
                     data-aos-duration="900"
                 >
-                    <h1 className="font-serif font-normal text-4xl sm:text-6xl md:text-7xl tracking-wide mb-3 leading-tight drop-shadow-md">
+                    <h1 className="font-serif font-semibold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-3 leading-tight drop-shadow-md">
                         Shofi Eyelash
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light tracking-wide text-neutral-200 mb-8 sm:mb-10 max-w-xl mx-auto">

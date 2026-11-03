@@ -38,7 +38,7 @@ export default function RecruitPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
-                    <h1 className="font-serif italic font-bold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-4 leading-tight drop-shadow-md">
+                    <h1 className="font-serif font-bold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-4 leading-tight drop-shadow-md">
                         Join Our Team
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light text-neutral-200 tracking-wide max-w-xl mx-auto leading-relaxed">
@@ -122,7 +122,7 @@ export default function RecruitPage() {
                         viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.6, ease: 'easeOut' }}
                     >
-                        <h2 className="font-serif italic text-3xl sm:text-4xl md:text-5xl text-white font-normal mb-4">
+                        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-white font-normal mb-4">
                             Our Culture
                         </h2>
                         <p className="text-neutral-300 text-sm sm:text-base max-w-xl mx-auto font-light">

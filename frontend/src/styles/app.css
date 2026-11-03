@@ -21,7 +21,7 @@
 
 :root {
     --font-serif: 'Playfair Display', Georgia, Cambria, serif;
-    --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+    --font-sans: 'Playfair Display', Georgia, Cambria, serif;
     
     --color-bg-light: #fbfbfb;
     --color-bg-white: #ffffff;
@@ -69,6 +69,12 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.modal-title,
+.modal-details-heading {
+    font-family: var(--font-serif);
 }
 
 img {

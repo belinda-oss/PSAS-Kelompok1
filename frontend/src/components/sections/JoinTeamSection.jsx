@@ -6,26 +6,15 @@ const MotionLink = motion.create(Link);
 
 export default function JoinTeamSection() {
     return (
-        <section className="py-12 md:py-20 lg:py-24 bg-white font-sans" id="recruit-section">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* External Heading in Serif */}
-                <motion.h2
-                    className="font-serif text-3xl sm:text-4xl text-center font-normal tracking-wide text-charcoal mb-8 sm:mb-12"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                >
-                    Join Our Team
-                </motion.h2>
-
+        <section className="pt-6 pb-12 md:pt-8 md:pb-20 lg:pt-10 lg:pb-24 bg-white font-sans" id="recruit-section">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Full-width image (people on grass) with dark overlay */}
                 <motion.div 
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="relative w-full h-80 sm:h-96 md:h-[420px] rounded-3xl overflow-hidden shadow-xl group"
+                    className="relative w-full h-80 sm:h-96 md:h-[480px] rounded-3xl overflow-hidden shadow-xl group"
                 >
                     <img 
                         src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=80" 
@@ -39,8 +28,8 @@ export default function JoinTeamSection() {
 
                     {/* Centered Content: Large italic serif text "Lorem Ipsum Dolor" and "EXPLORE" button */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10 space-y-6">
-                        <h3 className="font-serif italic text-3xl sm:text-5xl md:text-6xl text-white font-normal drop-shadow-md tracking-wide">
-                            Lorem Ipsum Dolor
+                        <h3 className="font-serif font-semibold text-3xl sm:text-5xl md:text-6xl text-white font-normal drop-shadow-md tracking-wide">
+                            Join Our Team
                         </h3>
 
                         <MotionLink

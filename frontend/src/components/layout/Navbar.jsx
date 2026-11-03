@@ -102,15 +102,12 @@ export default function Navbar({ onOpenContact }) {
     };
 
     // ── Scroll State Logic ───────────────────────────────────────────────────
-    // Always use solid white background, dark text, and original colored logo
-    // so the navbar is clearly visible both at the top (not scrolled) and when scrolled.
-    const isSolid = true;
+    // Floating pill navbar: light neutral surface, dark text, original logo.
+    const pillShadow = isScrolled
+        ? 'shadow-[0_10px_35px_rgba(0,0,0,0.10)]'
+        : 'shadow-[0_4px_20px_rgba(0,0,0,0.06)]';
 
-    const headerClass = `bg-white/95 backdrop-blur-sm text-gray-900 transition-all duration-300 ${
-        isScrolled ? 'shadow-md' : 'border-b border-gray-100 shadow-sm'
-    }`;
-
-    // Nav link text colour — dark gray-900 on solid white
+    // Nav link text colour
     const linkColour = 'text-gray-900 hover:text-black';
 
     const navLinkClass = `text-xs font-semibold tracking-[0.2em] uppercase transition-colors duration-300 relative group py-1 cursor-pointer ${linkColour}`;
@@ -119,10 +116,10 @@ export default function Navbar({ onOpenContact }) {
     const underlineClass = 'bg-gray-900';
 
     // Hamburger icon colour
-    const hamburgerClass = 'text-gray-900 hover:bg-gray-100';
+    const hamburgerClass = 'text-gray-900 hover:bg-black/5';
 
-    // Logo visibility — crisp contrast against white background
-    const logoClass = 'h-12 w-auto object-contain mix-blend-multiply transition-all duration-300';
+    // Logo visibility — crisp contrast against the light surface
+    const logoClass = 'w-auto object-contain mix-blend-multiply transition-all duration-300';
 
     return (
         <>
@@ -146,12 +143,12 @@ export default function Navbar({ onOpenContact }) {
                 onMouseLeave={(e) => {
                     if (e.clientY > 85) setIsHovered(false);
                 }}
-                className={`fixed top-0 left-0 right-0 z-50 w-full py-2.5 sm:py-3 ${headerClass}`}
+                className="fixed top-0 left-0 right-0 z-50 w-full px-3 sm:px-6 lg:px-8 pt-3"
             >
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
+                <div className={`relative max-w-7xl mx-auto h-[60px] sm:h-[68px] px-5 sm:px-8 lg:px-10 flex items-center justify-between rounded-full bg-[#F9F9F9] text-gray-900 transition-shadow duration-300 ${pillShadow}`}>
 
                     {/* Desktop Left Nav */}
-                    <nav className="hidden md:flex items-center gap-8 lg:gap-10 justify-start">
+                    <nav className="hidden md:flex items-center gap-8 lg:gap-12">
                         <button onClick={() => scrollToSection('about')} className={navLinkClass}>
                             ABOUT US
                             <span className={`absolute bottom-0 left-0 w-0 h-[1.5px] transition-all duration-300 group-hover:w-full ${underlineClass}`} />
@@ -166,23 +163,20 @@ export default function Navbar({ onOpenContact }) {
                         </button>
                     </nav>
 
-                    {/* Mobile spacer (keeps logo centred on mobile) */}
-                    <div className="md:hidden" aria-hidden="true" />
-
-                    {/* Centre Logo */}
-                    <div className="flex justify-center">
+                    {/* Centre Logo - absolutely centered */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                         <a
                             href="/"
                             onClick={handleLogoClick}
-                            className="inline-block transition hover:opacity-80 select-none"
+                            className="inline-flex items-center justify-center transition hover:opacity-80 select-none"
                             aria-label="PT GSU Home"
                         >
-                            <img src={LOGO_SRC} alt="GSU Cosmetics" className={logoClass} />
+                            <img src={LOGO_SRC} alt="GSU Cosmetics" className={`${logoClass} h-8 sm:h-10`} />
                         </a>
                     </div>
 
                     {/* Desktop Right Nav */}
-                    <nav className="hidden md:flex items-center gap-8 lg:gap-10 justify-end">
+                    <nav className="hidden md:flex items-center gap-8 lg:gap-12">
                         <Link to="/recruit" className={navLinkClass}>
                             RECRUIT
                             <span className={`absolute bottom-0 left-0 h-[1.5px] transition-all duration-300 ${
@@ -199,14 +193,14 @@ export default function Navbar({ onOpenContact }) {
                     </nav>
 
                     {/* Mobile Hamburger */}
-                    <div className="flex justify-end md:hidden">
+                    <div className="flex md:hidden ml-auto">
                         <button
-                            className={`p-2 rounded transition ${hamburgerClass}`}
+                            className={`p-2 rounded-full transition ${hamburgerClass}`}
                             onClick={() => setIsOpen(!isOpen)}
                             aria-label="Toggle navigation menu"
                             aria-expanded={isOpen}
                         >
-                            {isOpen ? <X size={26} /> : <Menu size={26} />}
+                            {isOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
                     </div>
                 </div>

@@ -24,7 +24,7 @@ export default {
       },
       fontFamily: {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"Plus Jakarta Sans"', 'Inter', '-apple-system', 'sans-serif'],
+        sans: ['"Playfair Display"', 'Georgia', 'serif'],
       },
       letterSpacing: {
         widest: '.2em',
