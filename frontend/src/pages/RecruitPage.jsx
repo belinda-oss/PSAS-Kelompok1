@@ -19,16 +19,16 @@ export default function RecruitPage() {
     return (
         <div className="w-full font-sans">
             {/* 1. HERO SECTION */}
-            <section className="relative w-full min-h-[75vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden bg-charcoal">
+            <section className="hero-fullscreen relative w-full h-screen min-h-screen flex flex-col items-center justify-center overflow-hidden bg-charcoal">
                 {/* Full-width background image: Office team discussion */}
-                <div className="absolute inset-0 z-0">
+                <div className="hero-media absolute inset-0 w-full h-full z-0">
                     <img 
                         src="/assets/images/recruit-hero.jpg" 
                         alt="Tim profesional PT GSU berdiskusi" 
                         className="w-full h-full object-cover object-center filter brightness-[0.65]"
                         loading="eager"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/60"></div>
+                    <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-black/85 via-black/45 to-black/60"></div>
                 </div>
 
                 {/* Centered Hero Content */}

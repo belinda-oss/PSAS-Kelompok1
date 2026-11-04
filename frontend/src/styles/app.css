@@ -364,6 +364,39 @@ button {
 /* ==========================================================================
    2. HERO SECTION
    ========================================================================== */
+
+/* Shared full-viewport hero used on Home, Shofi Eyelash, Distribution & Recruit.
+   100vh is the fallback; 100dvh tracks mobile browser chrome (URL bar) so the
+   next section never peeks above the fold. The navbar is position: fixed, so it
+   overlays the hero and does not affect this height. */
+.hero-fullscreen {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.hero-fullscreen > .hero-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-fullscreen > .hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
 .hero-section {
     position: relative;
     width: 100%;

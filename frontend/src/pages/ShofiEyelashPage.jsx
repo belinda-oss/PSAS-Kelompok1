@@ -122,16 +122,16 @@ export default function ShofiEyelashPage() {
     return (
         <div className="shofi-page w-full font-sans bg-white text-charcoal">
             {/* 1. HERO SECTION */}
-            <section className="relative w-full min-h-[75vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden bg-charcoal">
+            <section className="hero-fullscreen relative w-full h-screen min-h-screen flex flex-col items-center justify-center overflow-hidden bg-charcoal">
                 {/* Background lash photo */}
-                <div className="absolute inset-0 z-0">
+                <div className="hero-media absolute inset-0 w-full h-full z-0">
                     <img 
                         src="/assets/images/shofi-hero.jpg" 
                         alt="Shofi Eyelash Close Up Treatment" 
                         className="w-full h-full object-cover object-center filter brightness-[0.62]"
                         loading="eager"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/75"></div>
+                    <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-black/55 via-black/35 to-black/75"></div>
                 </div>
 
                 <motion.div
