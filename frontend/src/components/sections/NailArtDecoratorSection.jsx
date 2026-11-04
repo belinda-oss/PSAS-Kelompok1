@@ -790,9 +790,84 @@ export default function NailArtDecoratorSection() {
                                                     muted 
                                                     className="w-full h-full object-cover"
                                                 />
-                                                <div className="absolute inset-0 border-2 border-dashed border-amber-400/40 rounded-2xl m-6 pointer-events-none flex items-center justify-center">
-                                                    <span className="text-[10px] tracking-wider uppercase text-amber-200 bg-black/60 px-2.5 py-1 rounded-full border border-amber-500/30">
-                                                        Posisikan Jari Tangan di Dalam Kotak
+                                                {/* Hand & Nail Outline Guide Overlay (tidak menghalangi interaksi kamera) */}
+                                                <div
+                                                    aria-hidden="true"
+                                                    style={{
+                                                        position: 'absolute',
+                                                        inset: 0,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        pointerEvents: 'none',
+                                                    }}
+                                                >
+                                                    <svg
+                                                        viewBox="0 0 220 260"
+                                                        preserveAspectRatio="xMidYMid meet"
+                                                        style={{
+                                                            height: '70%',
+                                                            width: 'auto',
+                                                            maxWidth: '90%',
+                                                            opacity: 0.75,
+                                                            overflow: 'visible',
+                                                            filter: 'drop-shadow(0 0 1.5px rgba(0,0,0,0.9)) drop-shadow(0 0 6px rgba(245,158,11,0.45))',
+                                                        }}
+                                                    >
+                                                        {/* Siluet punggung tangan terbuka (5 jari) - garis tegas */}
+                                                        <path
+                                                            d="M 52 255
+                                                               C 44 230, 37 205, 37 175
+                                                               L 37 92
+                                                               A 11 11 0 0 1 59 92
+                                                               L 59 140
+                                                               Q 63 146, 67 140
+                                                               L 67 56
+                                                               A 13 13 0 0 1 93 56
+                                                               L 93 134
+                                                               Q 96 140, 99 134
+                                                               L 99 42
+                                                               A 13 13 0 0 1 125 42
+                                                               L 125 136
+                                                               Q 128 142, 131 136
+                                                               L 131 58
+                                                               A 13 13 0 0 1 157 58
+                                                               L 157 165
+                                                               L 186 124
+                                                               A 12 12 0 0 1 206 136
+                                                               L 182 190
+                                                               C 176 215, 170 235, 168 255"
+                                                            fill="rgba(251,191,36,0.04)"
+                                                            stroke="#fbbf24"
+                                                            strokeWidth="2"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            vectorEffect="non-scaling-stroke"
+                                                        />
+
+                                                        {/* Penanda area kuku - garis putus-putus + highlight lembut */}
+                                                        <g
+                                                            className="animate-pulse"
+                                                            fill="rgba(251,191,36,0.18)"
+                                                            stroke="#fde68a"
+                                                            strokeWidth="2"
+                                                            strokeDasharray="3 3"
+                                                            strokeLinecap="round"
+                                                            vectorEffect="non-scaling-stroke"
+                                                        >
+                                                            <rect x="41" y="84" width="14" height="17" rx="7" vectorEffect="non-scaling-stroke" />
+                                                            <rect x="72" y="46" width="16" height="20" rx="8" vectorEffect="non-scaling-stroke" />
+                                                            <rect x="104" y="32" width="16" height="21" rx="8" vectorEffect="non-scaling-stroke" />
+                                                            <rect x="136" y="48" width="16" height="20" rx="8" vectorEffect="non-scaling-stroke" />
+                                                            <ellipse cx="195" cy="132" rx="8" ry="10" transform="rotate(35 195 132)" vectorEffect="non-scaling-stroke" />
+                                                        </g>
+                                                    </svg>
+                                                </div>
+
+                                                {/* Badge teks panduan - diposisikan di atas frame agar tidak menutupi siluet */}
+                                                <div className="absolute top-3 inset-x-0 flex justify-center px-3 pointer-events-none">
+                                                    <span className="text-[9px] sm:text-[10px] tracking-wider uppercase text-amber-200 bg-black/65 backdrop-blur-sm px-2.5 py-1 rounded-full border border-amber-500/30 text-center leading-tight">
+                                                        Posisikan Tangan &amp; Kuku Sesuai Garis Panduan
                                                     </span>
                                                 </div>
                                             </>
