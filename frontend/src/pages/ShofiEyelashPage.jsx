@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Star, MessageCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Star, CheckCircle2, Loader2 } from 'lucide-react';
 import { fetchApprovedReviews, submitReview } from '../services/reviewsService';
 import { fetchActiveServices } from '../services/servicesService';
 import NailArtDecoratorSection from '../components/sections/NailArtDecoratorSection';
@@ -109,29 +109,25 @@ export default function ShofiEyelashPage() {
         }
     };
 
-    const scrollToBooking = () => {
-        const ctaElement = document.getElementById('booking-cta');
-        if (ctaElement) {
-            const navOffset = 80;
-            const elementPosition = ctaElement.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - navOffset;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
+    // Hero CTA opens WhatsApp reservation directly (the separate "Book Your Session" section was removed)
+    const WA_BOOKING_URL = 'https://wa.me/6281234567890?text=Halo%20Shofi%20Eyelash%2C%20saya%20ingin%20booking%20appointment';
+    const openBooking = () => {
+        window.open(WA_BOOKING_URL, '_blank', 'noopener,noreferrer');
     };
 
     return (
         <div className="shofi-page w-full font-sans bg-white text-charcoal">
             {/* 1. HERO SECTION */}
-            <section className="relative w-full min-h-[75vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden bg-charcoal">
+            <section className="hero-fullscreen relative w-full h-screen min-h-screen flex flex-col items-center justify-center overflow-hidden bg-charcoal">
                 {/* Background lash photo */}
-                <div className="absolute inset-0 z-0">
+                <div className="hero-media absolute inset-0 w-full h-full z-0">
                     <img 
                         src="/assets/images/shofi-hero.jpg" 
                         alt="Shofi Eyelash Close Up Treatment" 
                         className="w-full h-full object-cover object-center filter brightness-[0.62]"
                         loading="eager"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/75"></div>
+                    <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-black/55 via-black/35 to-black/75"></div>
                 </div>
 
                 <motion.div
@@ -150,7 +146,7 @@ export default function ShofiEyelashPage() {
                     </p>
                     <motion.button
                         type="button"
-                        onClick={scrollToBooking}
+                        onClick={openBooking}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.95 }}
                         className="px-8 sm:px-10 py-3.5 bg-white text-charcoal hover:bg-neutral-100 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-full transition-all duration-300 shadow-md cursor-pointer"
@@ -292,63 +288,30 @@ export default function ShofiEyelashPage() {
             {/* 5. AI NAIL ART DECORATOR SECTION — MediaPipe Precision + Before vs After */}
             <NailArtDecoratorSection />
 
-            {/* 6. BOOK YOUR SESSION */}
-            <section className="py-16 md:py-20 bg-white border-y border-gray-100" id="booking-cta" data-aos="fade-up">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-5">
-                    <motion.div
-                        className="space-y-5"
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.2 }}
-                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                    >
-                    <h2 className="font-serif text-3xl sm:text-4xl text-charcoal font-normal">
-                        Book Your Session
-                    </h2>
-                    <p className="text-gray-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed font-light">
-                        Ready to transform your look? Contact us via WhatsApp to schedule an appointment or consultation.
-                    </p>
-                    <div className="pt-2">
-                        <motion.a
-                            href="https://wa.me/6281234567890?text=Halo%20Shofi%20Eyelash%2C%20saya%20ingin%20booking%20appointment"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="inline-flex items-center gap-2.5 px-8 sm:px-10 py-3.5 bg-charcoal text-white hover:bg-neutral-800 text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase rounded-full transition-all duration-300 shadow-md"
-                        >
-                            <MessageCircle size={18} />
-                            <span>WHATSAPP RESERVATION</span>
-                        </motion.a>
-                    </div>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* 7. REVIEWS SECTION: Berikan Ulasan Anda + Ulasan Pelanggan */}
-            <section className="py-16 md:py-24 bg-[#1f1f1f] text-white" id="reviews">
+            {/* 6. REVIEWS SECTION: Berikan Ulasan Anda + Ulasan Pelanggan */}
+            <section className="py-16 md:py-24 bg-white text-charcoal" id="reviews">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
 
                         {/* Left Col: Form "Berikan Ulasan Anda" */}
                         <motion.div
-                            className="lg:col-span-4 min-w-0 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl"
+                            className="lg:col-span-4 min-w-0 bg-[#fbfbfb] border border-gray-200 p-6 sm:p-7 rounded-3xl shadow-sm"
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, amount: 0.2 }}
                             transition={{ duration: 0.6, ease: 'easeOut' }}
                             data-aos="fade-right"
                         >
-                            <h3 className="font-serif text-2xl text-white font-normal mb-6">
+                            <h3 className="font-serif text-2xl text-charcoal font-normal mb-6">
                                 Berikan Ulasan Anda
                             </h3>
 
                             {formSuccess ? (
-                                <div className="p-5 bg-emerald-950/60 border border-emerald-700/50 rounded-2xl text-emerald-200 text-sm flex items-start gap-3 animate-fadeIn">
-                                    <CheckCircle2 size={20} className="flex-shrink-0 mt-0.5 text-emerald-400" />
+                                <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-700 text-sm flex items-start gap-3 animate-fadeIn">
+                                    <CheckCircle2 size={20} className="flex-shrink-0 mt-0.5 text-emerald-500" />
                                     <div>
-                                        <p className="font-semibold text-white">Terima kasih atas ulasan Anda!</p>
-                                        <p className="text-xs text-emerald-300 mt-1 leading-relaxed">
+                                        <p className="font-semibold text-charcoal">Terima kasih atas ulasan Anda!</p>
+                                        <p className="text-xs text-emerald-700 mt-1 leading-relaxed">
                                             Ulasan Anda telah berhasil dikirim dan akan ditinjau oleh admin sebelum ditampilkan di website.
                                         </p>
                                     </div>
@@ -356,7 +319,7 @@ export default function ShofiEyelashPage() {
                             ) : (
                                 <form onSubmit={handleReviewSubmit} className="space-y-4">
                                     <div>
-                                        <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5 font-medium">
+                                        <label className="block text-xs uppercase tracking-wider text-gray-600 mb-1.5 font-medium">
                                             Nama
                                         </label>
                                         <input 
@@ -365,12 +328,12 @@ export default function ShofiEyelashPage() {
                                             value={reviewName}
                                             onChange={(e) => setReviewName(e.target.value)}
                                             placeholder="Nama Lengkap" 
-                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition"
+                                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:border-charcoal transition"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5 font-medium">
+                                        <label className="block text-xs uppercase tracking-wider text-gray-600 mb-1.5 font-medium">
                                             Rating
                                         </label>
                                         <div className="flex items-center gap-1.5 py-1">
@@ -382,7 +345,7 @@ export default function ShofiEyelashPage() {
                                                     onMouseEnter={() => setHoverRating(star)}
                                                     onMouseLeave={() => setHoverRating(0)}
                                                     whileTap={{ scale: 0.9 }}
-                                                    className="p-1 text-neutral-600 hover:text-amber-400 rounded-lg transition cursor-pointer"
+                                                    className="p-1 text-gray-300 hover:text-amber-400 rounded-lg transition cursor-pointer"
                                                     aria-label={`Beri bintang ${star}`}
                                                 >
                                                     <Star 
@@ -390,7 +353,7 @@ export default function ShofiEyelashPage() {
                                                         className={`transition-colors ${
                                                             (hoverRating || reviewRating) >= star 
                                                                 ? 'text-amber-400 fill-amber-400' 
-                                                                : 'text-neutral-600'
+                                                                : 'text-gray-300'
                                                         }`}
                                                     />
                                                 </motion.button>
@@ -399,7 +362,7 @@ export default function ShofiEyelashPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs uppercase tracking-wider text-neutral-400 mb-1.5 font-medium">
+                                        <label className="block text-xs uppercase tracking-wider text-gray-600 mb-1.5 font-medium">
                                             Komentar
                                         </label>
                                         <textarea 
@@ -408,7 +371,7 @@ export default function ShofiEyelashPage() {
                                             value={reviewComment}
                                             onChange={(e) => setReviewComment(e.target.value)}
                                             placeholder="Tulis ulasan Anda di sini..." 
-                                            className="w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white transition resize-none"
+                                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-charcoal placeholder-gray-400 focus:outline-none focus:border-charcoal transition resize-none"
                                         ></textarea>
                                     </div>
 
@@ -416,7 +379,7 @@ export default function ShofiEyelashPage() {
                                         type="submit"
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="w-full px-8 py-3 bg-white text-charcoal hover:bg-neutral-200 text-xs font-semibold tracking-[0.2em] uppercase rounded-full transition duration-200 cursor-pointer"
+                                        className="w-full px-8 py-3 bg-charcoal text-white hover:bg-neutral-800 text-xs font-semibold tracking-[0.2em] uppercase rounded-full transition duration-200 cursor-pointer"
                                     >
                                         KIRIM ULASAN
                                     </motion.button>
@@ -432,21 +395,21 @@ export default function ShofiEyelashPage() {
                                 viewport={{ once: true, amount: 0.2 }}
                                 transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
                             >
-                                <h3 className="font-serif text-2xl text-white font-normal mb-1">
+                                <h3 className="font-serif text-2xl text-charcoal font-normal mb-1">
                                     Ulasan Pelanggan
                                 </h3>
-                                <p className="text-xs text-neutral-400 font-light">
+                                <p className="text-xs text-gray-600 font-light">
                                     Testimoni terkurasi dari pelanggan setia Shofi Eyelash.
                                 </p>
                             </motion.div>
 
                             {reviewsLoading ? (
-                                <div className="p-8 text-center bg-neutral-900/60 border border-neutral-800 rounded-2xl text-neutral-400 text-sm flex items-center justify-center gap-2">
-                                    <Loader2 className="animate-spin text-amber-400" size={18} />
+                                <div className="p-8 text-center bg-[#fbfbfb] border border-gray-200 rounded-2xl text-gray-600 text-sm flex items-center justify-center gap-2">
+                                    <Loader2 className="animate-spin text-amber-500" size={18} />
                                     <span>Memuat ulasan pelanggan...</span>
                                 </div>
                             ) : reviews.length === 0 ? (
-                                <div className="p-10 bg-neutral-900/40 border border-neutral-800 rounded-2xl text-neutral-400 text-sm text-center font-light leading-relaxed">
+                                <div className="p-10 bg-[#fbfbfb] border border-dashed border-gray-200 rounded-2xl text-gray-600 text-sm text-center font-light leading-relaxed">
                                     Belum ada ulasan, jadilah yang pertama untuk memberikan ulasan!
                                 </div>
                             ) : (
@@ -461,7 +424,7 @@ export default function ShofiEyelashPage() {
                                         <motion.div 
                                             key={item.id}
                                             variants={cardVariants}
-                                            className="p-5 bg-neutral-900/60 border border-neutral-800 rounded-2xl shadow-sm flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-neutral-700"
+                                            className="p-5 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-gray-300"
                                         >
                                             <div>
                                                 <div className="flex items-center gap-1 text-amber-400 mb-3">
@@ -469,16 +432,16 @@ export default function ShofiEyelashPage() {
                                                         <Star key={i} size={14} className="fill-amber-400" />
                                                     ))}
                                                 </div>
-                                                <p className="text-neutral-200 text-xs sm:text-sm leading-relaxed italic mb-6">
+                                                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed italic mb-6">
                                                     "{item.comment}"
                                                 </p>
                                             </div>
 
                                             <div>
-                                                <p className="font-medium text-white text-xs sm:text-sm">
+                                                <p className="font-medium text-charcoal text-xs sm:text-sm">
                                                     {item.name}
                                                 </p>
-                                                <p className="text-[11px] text-neutral-500 mt-0.5">
+                                                <p className="text-[11px] text-gray-400 mt-0.5">
                                                     {formatDate(item.created_at || item.published_at || item.date)}
                                                 </p>
                                             </div>

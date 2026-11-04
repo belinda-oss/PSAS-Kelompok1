@@ -19,9 +19,9 @@ export default function Hero() {
     };
 
     return (
-        <section className="relative w-full min-h-[85vh] sm:min-h-[88vh] flex items-center justify-center overflow-hidden bg-charcoal" id="hero">
+        <section className="hero-fullscreen relative w-full h-screen min-h-screen flex flex-col items-center justify-center overflow-hidden bg-charcoal" id="hero">
             {/* Dark elegant background image */}
-            <div className="absolute inset-0 z-0">
+            <div className="hero-media absolute inset-0 w-full h-full z-0">
                 <img 
                     src="/assets/images/hero-beauty.jpg" 
                     alt="PT GSU Luxury Beauty Aesthetic" 
@@ -29,7 +29,7 @@ export default function Hero() {
                     loading="eager"
                 />
                 {/* Dark gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/75"></div>
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-black/60 via-black/40 to-black/75"></div>
             </div>
 
             {/* Hero Centered Content */}

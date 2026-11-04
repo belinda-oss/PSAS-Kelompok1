@@ -35,7 +35,7 @@ const OPERATING_HOURS = [
 
 export default function ContactModal({ isOpen, onClose }) {
     const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [department, setDepartment] = useState('beauty');
     const [isDeptOpen, setIsDeptOpen] = useState(false);
@@ -47,7 +47,7 @@ export default function ContactModal({ isOpen, onClose }) {
             setContacts(getContactSettings());
             // Reset form
             setName('');
-            setPhone('');
+            setEmail('');
             setMessage('');
             setDepartment('beauty');
             setIsDeptOpen(false);
@@ -66,12 +66,12 @@ export default function ContactModal({ isOpen, onClose }) {
             message.trim() ||
             selectedDept.defaultMsg(name);
 
-        // Tambahkan nama & telepon ke pesan jika diisi
+        // Tambahkan nama & email ke pesan jika diisi
         const fullMsg = [
             message.trim()
                 ? `${selectedDept.defaultMsg(name)}\n\n*Pesan:*\n${message.trim()}`
                 : selectedDept.defaultMsg(name),
-            phone.trim() ? `\n📞 Kontak saya: ${phone.trim()}` : '',
+            email.trim() ? `\n📧 Email saya: ${email.trim()}` : '',
         ]
             .join('')
             .trim();
@@ -255,17 +255,19 @@ export default function ContactModal({ isOpen, onClose }) {
                                 />
                             </div>
 
-                            {/* No. WhatsApp/HP */}
+                            {/* Email */}
                             <div>
-                                <label className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-500 mb-1.5">
-                                    No. WhatsApp / HP
+                                <label htmlFor="contact-email" className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-500 mb-1.5">
+                                    Email
                                     <span className="ml-1 text-gray-300 normal-case tracking-normal font-normal">(opsional)</span>
                                 </label>
                                 <input
-                                    type="text"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    placeholder="+62 8xx-xxxx-xxxx"
+                                    id="contact-email"
+                                    type="email"
+                                    autoComplete="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="nama@email.com"
                                     className="w-full px-3.5 py-2.5 text-sm bg-[#fbfbfb] border border-gray-200 rounded-xl focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.10)] transition-all placeholder:text-gray-300"
                                 />
                             </div>
