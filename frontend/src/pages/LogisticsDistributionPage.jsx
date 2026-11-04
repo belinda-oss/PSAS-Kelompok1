@@ -29,8 +29,8 @@ export default function LogisticsDistributionPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                 >
-                    <h1 className="font-serif font-light tracking-widest uppercase text-3xl sm:text-5xl md:text-6xl mb-4 leading-tight drop-shadow-md">
-                        Logistics &amp; Distribution
+                    <h1 className="font-serif font-bold text-4xl sm:text-6xl md:text-7xl tracking-wide mb-4 leading-tight drop-shadow-md">
+                        Logistics and Distribution
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light text-neutral-200 tracking-wide max-w-2xl mx-auto leading-relaxed">
                         Precision supply chain solutions for the premium beauty industry. Delivering excellence at scale.

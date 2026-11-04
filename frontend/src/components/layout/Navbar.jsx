@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ArrowRight, Phone, Mail } from 'lucide-react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 
-const LOGO_SRC = '/ChatGPT Image Sep 28, 2026, 09_03_38 PM.png';
+const LOGO_SRC = '/1-logo.png';
 
 export default function Navbar({ onOpenContact }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -119,7 +119,7 @@ export default function Navbar({ onOpenContact }) {
     const hamburgerClass = 'text-gray-900 hover:bg-black/5';
 
     // Logo visibility — crisp contrast against the light surface
-    const logoClass = 'w-auto object-contain mix-blend-multiply transition-all duration-300';
+    const logoClass = 'w-auto object-contain transition-all duration-300';
 
     return (
         <>
@@ -143,9 +143,9 @@ export default function Navbar({ onOpenContact }) {
                 onMouseLeave={(e) => {
                     if (e.clientY > 85) setIsHovered(false);
                 }}
-                className="fixed top-0 left-0 right-0 z-50 w-full px-3 sm:px-6 lg:px-8 pt-3"
+                className="fixed top-0 left-0 right-0 z-50 w-full px-3 sm:px-5 lg:px-8 pt-2"
             >
-                <div className={`relative max-w-7xl mx-auto h-[60px] sm:h-[68px] px-5 sm:px-8 lg:px-10 flex items-center justify-between rounded-full bg-[#F9F9F9] text-gray-900 transition-shadow duration-300 ${pillShadow}`}>
+                <div className={`relative max-w-7xl mx-auto h-[52px] sm:h-[56px] px-5 sm:px-8 lg:px-10 flex items-center justify-between rounded-full bg-[#F9F9F9] text-gray-900 transition-shadow duration-300 ${pillShadow}`}>
 
                     {/* Desktop Left Nav */}
                     <nav className="hidden md:flex items-center gap-8 lg:gap-12">
@@ -227,7 +227,7 @@ export default function Navbar({ onOpenContact }) {
                     <img
                         src={LOGO_SRC}
                         alt="GSU Cosmetics"
-                        className="h-12 w-auto object-contain mix-blend-multiply"
+                        className="h-10 w-auto object-contain"
                     />
                     <button
                         className="p-2 text-gray-500 hover:text-charcoal hover:bg-gray-100 rounded-full transition"

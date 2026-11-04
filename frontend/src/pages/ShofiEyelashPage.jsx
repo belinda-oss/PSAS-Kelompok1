@@ -120,13 +120,13 @@ export default function ShofiEyelashPage() {
     };
 
     return (
-        <div className="w-full font-sans bg-white text-charcoal">
+        <div className="shofi-page w-full font-sans bg-white text-charcoal">
             {/* 1. HERO SECTION */}
             <section className="relative w-full min-h-[75vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden bg-charcoal">
                 {/* Background lash photo */}
                 <div className="absolute inset-0 z-0">
                     <img 
-                        src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=2000&q=85" 
+                        src="/assets/images/shofi-hero.jpg" 
                         alt="Shofi Eyelash Close Up Treatment" 
                         className="w-full h-full object-cover object-center filter brightness-[0.62]"
                         loading="eager"
@@ -187,7 +187,7 @@ export default function ShofiEyelashPage() {
 
                         {/* Right Column: Serene Salon Interior Image (portrait aspect ratio matching screenshot) */}
                         <motion.div
-                            className="lg:col-span-6 flex justify-center lg:justify-end"
+                            className="lg:col-span-6 w-full"
                             initial={{ opacity: 0, x: 40 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true, amount: 0.2 }}
@@ -195,10 +195,10 @@ export default function ShofiEyelashPage() {
                             data-aos="fade-left"
                             data-aos-delay="100"
                         >
-                            <div className="relative w-full max-w-md aspect-[3/4] rounded-3xl overflow-hidden shadow-xl group">
+                            <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden shadow-xl group">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1000&q=80" 
-                                    alt="Shofi Eyelash Serene Studio Interior" 
+                                    src="/assets/images/shofi-about.jpg" 
+                                    alt="Shofi Eyelash Beauty Treatment" 
                                     className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                     loading="lazy"
                                 />
@@ -332,7 +332,7 @@ export default function ShofiEyelashPage() {
 
                         {/* Left Col: Form "Berikan Ulasan Anda" */}
                         <motion.div
-                            className="lg:col-span-4 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl"
+                            className="lg:col-span-4 min-w-0 bg-neutral-900/90 border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl"
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, amount: 0.2 }}
@@ -425,7 +425,7 @@ export default function ShofiEyelashPage() {
                         </motion.div>
 
                         {/* Right Col: "Ulasan Pelanggan" */}
-                        <div className="lg:col-span-8 space-y-6" data-aos="fade-left" data-aos-delay="100">
+                        <div className="lg:col-span-8 min-w-0 space-y-6" data-aos="fade-left" data-aos-delay="100">
                             <motion.div
                                 initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}

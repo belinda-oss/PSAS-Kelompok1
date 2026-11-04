@@ -59,6 +59,7 @@ html {
     scroll-behavior: smooth;
     font-size: 16px;
     -webkit-text-size-adjust: 100%;
+    overflow-x: clip;
 }
 
 body {
@@ -66,7 +67,7 @@ body {
     color: var(--color-text-dark);
     background-color: var(--color-bg-white);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -2188,4 +2189,29 @@ button {
 .scrollbar-none {
     -ms-overflow-style: none !important;
     scrollbar-width: none !important;
+}
+
+/* Keep the page scrollbar from reading as a white gutter on the dark Shofi hero */
+html:has(.shofi-page) {
+    color-scheme: dark;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.35) #1f2421;
+}
+
+html:has(.shofi-page)::-webkit-scrollbar {
+    width: 10px;
+}
+
+html:has(.shofi-page)::-webkit-scrollbar-track {
+    background: #1f2421;
+}
+
+html:has(.shofi-page)::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.35);
+    border-radius: 9999px;
+    border: 2px solid #1f2421;
+}
+
+html:has(.shofi-page)::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.55);
 }

@@ -56,10 +56,10 @@ export default function AdminLayout() {
             className="flex items-center gap-3 group focus:outline-none"
           >
             <img
-              src="/gsu-logo.jpg"
+              src="/1-logo.png"
               alt="PT GSU"
               style={{ maxHeight: '38px', width: 'auto', objectFit: 'contain' }}
-              className="mix-blend-multiply transition-all duration-300 group-hover:opacity-80"
+              className="transition-all duration-300 group-hover:opacity-80"
             />
             <span className="font-sans text-[11px] tracking-[0.25em] text-gray-400 font-medium uppercase">
               SHOFI EYELASH ADMIN

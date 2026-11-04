@@ -6,11 +6,11 @@
     <title>Login Administrator - PSAS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #fbfbfb;
             color: #1f2421;
             display: flex;
@@ -58,7 +58,7 @@
         }
 
         .login-header .brand {
-            font-family: 'Lora', Georgia, serif;
+            font-family: 'Playfair Display', Georgia, serif;
             font-size: 2.6rem;
             font-style: italic;
             font-weight: 700;
@@ -84,7 +84,7 @@
         }
 
         .login-header h1 {
-            font-family: 'Lora', Georgia, serif;
+            font-family: 'Playfair Display', Georgia, serif;
             font-size: 20px;
             font-weight: 500;
             letter-spacing: 0.03em;
@@ -127,7 +127,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 0;
             color: #1f2421;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 13px;
             outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
@@ -156,7 +156,7 @@
             color: #ffffff;
             border: none;
             border-radius: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 0.15em;

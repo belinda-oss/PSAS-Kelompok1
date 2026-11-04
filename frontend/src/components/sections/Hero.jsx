@@ -23,7 +23,7 @@ export default function Hero() {
             {/* Dark elegant background image */}
             <div className="absolute inset-0 z-0">
                 <img 
-                    src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=2000&q=85" 
+                    src="/assets/images/hero-beauty.jpg" 
                     alt="PT GSU Luxury Beauty Aesthetic" 
                     className="w-full h-full object-cover object-center filter brightness-[0.7]"
                     loading="eager"

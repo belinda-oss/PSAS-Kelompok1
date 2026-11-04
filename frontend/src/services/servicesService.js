@@ -21,7 +21,7 @@ const SEED_SERVICES = [
         title: 'Eyebrow & Lip Embroidery',
         price: 'From $150',
         description: 'Wake up effortlessly beautiful with our semi-permanent makeup solutions. Precision techniques for natural-looking enhancement.',
-        image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80',
+        image: '/assets/images/service-eyebrow.jpg',
         status: 'Aktif',
         is_active: true,
         created_at: new Date().toISOString(),
@@ -31,7 +31,7 @@ const SEED_SERVICES = [
         title: 'Eyelash Extension',
         price: 'From $80',
         description: 'Customized lash designs tailored to your eye shape. Choose from classic, volume, or hybrid sets for the perfect flutter.',
-        image: 'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=format&fit=crop&w=800&q=80',
+        image: '/assets/images/service-eyelash.jpg',
         status: 'Aktif',
         is_active: true,
         created_at: new Date().toISOString(),
@@ -41,7 +41,7 @@ const SEED_SERVICES = [
         title: 'Nail Art (Motif, Plain, 3D)',
         price: 'From $45',
         description: 'Express your style with our premium manicure services. Featuring intricate motifs, classic solids, and stunning 3D designs.',
-        image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80',
+        image: '/assets/images/service-nail-art.jpg',
         status: 'Aktif',
         is_active: true,
         created_at: new Date().toISOString(),
@@ -51,12 +51,20 @@ const SEED_SERVICES = [
         title: 'Foot Spa',
         price: 'From $60',
         description: 'A rejuvenating retreat for your feet. Includes deep exfoliation, soothing massage, and a restorative hydrating mask.',
-        image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+        image: '/assets/images/service-foot-spa.jpg',
         status: 'Aktif',
         is_active: true,
         created_at: new Date().toISOString(),
     },
 ];
+
+const IMAGE_MIGRATIONS = {
+    'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80': '/assets/images/service-eyebrow.jpg',
+    'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=format&fit=crop&w=800&q=80': '/assets/images/service-eyelash.jpg',
+    'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80': '/assets/images/service-nail-art.jpg',
+    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80': '/assets/images/service-foot-spa.jpg',
+    'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=800&q=80': '/assets/images/service-eyelash.jpg',
+};
 
 function lsRead() {
     try {
@@ -64,7 +72,11 @@ function lsRead() {
         if (raw) {
             const parsed = JSON.parse(raw);
             if (Array.isArray(parsed) && parsed.length > 0) {
-                return parsed;
+                const migrated = parsed.map(s => IMAGE_MIGRATIONS[s.image] ? { ...s, image: IMAGE_MIGRATIONS[s.image] } : s);
+                if (migrated.some((s, i) => s.image !== parsed[i].image)) {
+                    localStorage.setItem(LS_KEY, JSON.stringify(migrated));
+                }
+                return migrated;
             }
         }
     } catch (_) {}
@@ -152,7 +164,7 @@ export async function createService(serviceData) {
         title: serviceData.title,
         price: serviceData.price,
         description: serviceData.description,
-        image: serviceData.image || 'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=800&q=80',
+        image: serviceData.image || '/assets/images/service-eyelash.jpg',
         status: serviceData.status || 'Aktif',
         is_active: serviceData.status === 'Aktif',
         created_at: new Date().toISOString(),

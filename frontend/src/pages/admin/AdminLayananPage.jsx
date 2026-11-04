@@ -60,7 +60,7 @@ export default function AdminLayananPage() {
       title: '',
       price: '',
       description: '',
-      image: 'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=800&q=80',
+      image: '/assets/images/service-eyelash.jpg',
       status: 'Aktif',
     });
     setIsModalOpen(true);
@@ -343,7 +343,7 @@ export default function AdminLayananPage() {
                     required
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="/assets/images/..."
                     className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] transition-all rounded-xl"
                   />
                 </div>

@@ -1,4 +1,4 @@
-﻿import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
@@ -54,9 +54,9 @@ export default function AdminLoginPage() {
               transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
             >
               <img
-                src="/gsu-logo.jpg"
+                src="/1-logo.png"
                 alt="PT GSU"
-                className="h-12 sm:h-14 w-auto object-contain mx-auto mix-blend-multiply"
+                className="h-12 sm:h-14 w-auto object-contain mx-auto"
               />
             </motion.div>
             <p className="text-[10px] tracking-[0.25em] text-gray-400 uppercase font-medium mt-3 mb-6">

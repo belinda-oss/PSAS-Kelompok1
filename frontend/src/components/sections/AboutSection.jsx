@@ -27,7 +27,7 @@ export default function AboutSection() {
                     >
                         <div className="relative w-full max-w-md aspect-[3/4] overflow-hidden rounded-3xl shadow-xl group border border-gray-100 animate-float">
                             <img 
-                                src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80" 
+                                src="/assets/images/about-beauty.jpg" 
                                 alt="GSU Beauty Service & Consultation" 
                                 className="relative w-full h-full object-cover object-center rounded-3xl transition-transform duration-700 group-hover:scale-105"
                                 loading="lazy"
