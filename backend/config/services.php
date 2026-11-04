@@ -33,6 +33,7 @@ return [
 
     'gemini' => [
         'key' => env('GEMINI_API_KEY'),
+        'ca_bundle' => env('GEMINI_CA_BUNDLE', 'C:/laragon/etc/ssl/cacert.pem'),
     ],
 
     'ai_service' => [

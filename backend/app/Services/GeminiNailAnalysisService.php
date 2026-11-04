@@ -84,9 +84,14 @@ class GeminiNailAnalysisService
         // 3. Retry loop (up to maxRetries attempts)
         for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
             try {
-                $response = Http::timeout(30)
-                    ->acceptJson()
-                    ->post($endpoint, $payload);
+                $request = Http::timeout(30)->acceptJson();
+
+                $caBundle = config('services.gemini.ca_bundle');
+                if (!empty($caBundle) && file_exists($caBundle)) {
+                    $request = $request->withOptions(['verify' => $caBundle]);
+                }
+
+                $response = $request->post($endpoint, $payload);
 
                 if (!$response->successful()) {
                     $errorBody = $response->body();
