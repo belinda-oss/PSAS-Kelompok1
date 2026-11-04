@@ -14,7 +14,7 @@ export default function LogisticsDistributionPage() {
                 {/* Warehouse background image */}
                 <div className="absolute inset-0 z-0">
                     <img 
-                        src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=2000&q=85" 
+                        src="/assets/images/distribution-hero.jpg" 
                         alt="Logistics & Distribution Warehouse" 
                         className="w-full h-full object-cover object-center filter brightness-[0.62]"
                         loading="eager"
@@ -33,7 +33,7 @@ export default function LogisticsDistributionPage() {
                         Logistics and Distribution
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light text-neutral-200 tracking-wide max-w-2xl mx-auto leading-relaxed">
-                        Precision supply chain solutions for the premium beauty industry. Delivering excellence at scale.
+                        Solusi rantai pasok presisi untuk industri kecantikan premium. Menghadirkan keunggulan distribusi dalam skala nasional.
                     </p>
                 </motion.div>
             </section>
@@ -71,14 +71,14 @@ export default function LogisticsDistributionPage() {
                                     Seamless Integration
                                 </h3>
                                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8">
-                                    We provide comprehensive wholesale and distribution services tailored to high-volume retail partners. Our infrastructure supports rapid deployment of new product lines with meticulous inventory tracking.
+                                    Kami menyediakan layanan grosir dan distribusi menyeluruh yang disesuaikan untuk mitra ritel bervolume tinggi. Infrastruktur kami mendukung penerapan lini produk baru secara cepat dengan pelacakan inventaris yang cermat dan akurat.
                                 </p>
                             </div>
 
                             {/* Gloved hands inspecting/handling product image */}
                             <div className="w-full h-64 sm:h-72 overflow-hidden rounded-2xl mt-auto">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?auto=format&fit=crop&w=1000&q=80" 
+                                    src="/assets/images/distribution-products.jpg" 
                                     alt="Quality Inspection and Warehouse Handling" 
                                     className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-105"
                                     loading="lazy"
@@ -104,7 +104,7 @@ export default function LogisticsDistributionPage() {
                                     Inventory Management
                                 </h3>
                                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                    Real-time tracking and automated replenishment systems ensuring optimal stock levels across all client locations.
+                                    Sistem pelacakan real-time dan pengisian ulang otomatis yang memastikan ketersediaan stok optimal di seluruh lokasi klien kami.
                                 </p>
                             </motion.div>
 
@@ -123,7 +123,7 @@ export default function LogisticsDistributionPage() {
                                     National Reach
                                 </h3>
                                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                    A robust logistics network guaranteeing secure and timely delivery to major commercial hubs.
+                                    Jaringan logistik yang kuat dan andal, memastikan pengiriman aman dan tepat waktu ke seluruh pusat niaga utama di Indonesia.
                                 </p>
                             </motion.div>
 
@@ -147,7 +147,7 @@ export default function LogisticsDistributionPage() {
                         >
                             <div className="relative aspect-[4/3] sm:aspect-square w-full rounded-3xl overflow-hidden shadow-2xl bg-neutral-800 group">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1000&q=80" 
+                                    src="/assets/images/distribution-readiness.jpg" 
                                     alt="Sensitive Cosmetic Formulations Product Readiness" 
                                     className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                     loading="lazy"
@@ -169,11 +169,11 @@ export default function LogisticsDistributionPage() {
                             </h2>
                             
                             <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-                                Our distribution centers are equipped with climate-controlled storage facilities specifically designed for sensitive cosmetic formulations. We maintain strict quality assurance protocols at every touchpoint.
+                                Pusat distribusi kami dilengkapi dengan fasilitas penyimpanan berpendingin yang dirancang khusus untuk menjaga kualitas formulasi kosmetik yang sensitif. Kami menerapkan protokol jaminan mutu yang ketat di setiap titik rantai pasokan.
                             </p>
                             
                             <p className="text-neutral-300 text-sm sm:text-base leading-relaxed">
-                                From import handling to final mile delivery, our processes are optimized to protect brand integrity and ensure end-consumer satisfaction.
+                                Mulai dari penanganan impor hingga pengiriman ke tangan konsumen akhir, seluruh proses kami dioptimalkan untuk menjaga integritas merek dan memastikan kepuasan pelanggan di setiap langkahnya.
                             </p>
 
                             <div className="pt-4">

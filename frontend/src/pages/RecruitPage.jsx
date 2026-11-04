@@ -11,9 +11,9 @@ export default function RecruitPage() {
     };
 
     const cultureCards = [
-        { icon: Lightbulb, title: 'Innovation', desc: 'We encourage creative thinking and continuous improvement in all our processes.' },
-        { icon: Users, title: 'Collaboration', desc: 'Success is built together. We value open communication and teamwork across all units.' },
-        { icon: TrendingUp, title: 'Growth', desc: 'We provide opportunities for personal and professional development at every career stage.' },
+        { icon: Lightbulb, title: 'Innovation', desc: 'Kami mendorong pemikiran kreatif dan peningkatan berkelanjutan dalam setiap proses kerja kami.' },
+        { icon: Users, title: 'Collaboration', desc: 'Kesuksesan dibangun bersama. Kami menghargai komunikasi terbuka dan kerja tim yang solid di seluruh unit bisnis.' },
+        { icon: TrendingUp, title: 'Growth', desc: 'Kami memberikan kesempatan pengembangan diri dan karier di setiap jenjang jabatan secara merata.' },
     ];
 
     return (
@@ -23,8 +23,8 @@ export default function RecruitPage() {
                 {/* Full-width background image: Office team discussion */}
                 <div className="absolute inset-0 z-0">
                     <img 
-                        src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=2000&q=85" 
-                        alt="Office team discussion" 
+                        src="/assets/images/recruit-hero.jpg" 
+                        alt="Tim profesional PT GSU berdiskusi" 
                         className="w-full h-full object-cover object-center filter brightness-[0.65]"
                         loading="eager"
                     />
@@ -42,7 +42,7 @@ export default function RecruitPage() {
                         Join Our Team
                     </h1>
                     <p className="text-sm sm:text-base md:text-lg font-light text-neutral-200 tracking-wide max-w-xl mx-auto leading-relaxed">
-                        Shape the future of beauty and distribution with PT GSU.
+                        Jadilah bagian dari perjalanan luar biasa kami dalam membangun ekosistem kecantikan terdepan di Indonesia bersama PT GSU.
                     </p>
                 </motion.div>
             </section>
@@ -99,9 +99,9 @@ export default function RecruitPage() {
                         >
                             <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-xl group">
                                 <img 
-                                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1000&q=80" 
-                                    alt="Professional woman reviewing documents" 
-                                    className="w-full h-full object-cover object-top filter grayscale contrast-105 transition-transform duration-700 group-hover:scale-105"
+                                    src="/assets/images/recruit-grow.jpg" 
+                                    alt="Profesional wanita Asia di lingkungan kerja" 
+                                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                                     loading="lazy"
                                 />
                             </div>
@@ -126,7 +126,7 @@ export default function RecruitPage() {
                             Our Culture
                         </h2>
                         <p className="text-neutral-300 text-sm sm:text-base max-w-xl mx-auto font-light">
-                            Discover the environment that drives our success and fosters your growth.
+                            Temukan lingkungan kerja yang menginspirasi dan mendorong pertumbuhan karier terbaik Anda.
                         </p>
                     </motion.div>
 
