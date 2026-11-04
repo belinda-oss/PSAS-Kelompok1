@@ -10,7 +10,7 @@ export default function BusinessUnitsSection() {
             id: 'shofi-eyelash',
             title: 'Shofi Eyelash',
             subtitle: 'Your Eyelash Specialist',
-            description: 'Hadir menyempurnakan penampilan Anda melalui layanan estetika profesional. Kami menyediakan perawatan eyelash extension, sulam alis & bibir, foot spa, hingga nail art (polos, motif, dan 3D). Nikmati kemudahan reservasi sekaligus pengecekan estimasi waktu perawatan secara instan dan praktis melalui layanan chatbot cerdas kami.',
+            description: 'Hadir menyempurnakan penampilan Anda melalui layanan estetika profesional: eyelash extension, sulam alis & bibir, foot spa, hingga nail art (polos, motif, dan 3D). Dilengkapi fitur AI Nail Art Recommendation — cukup unggah foto tangan Anda, dan sistem cerdas kami akan merekomendasikan gaya nail art yang paling sesuai dengan tone kulit dan selera Anda secara instan.',
             image: '/slash-logo.jpg',
             route: '/shofi-eyelash',
             animClass: 'animate-float'
@@ -20,7 +20,7 @@ export default function BusinessUnitsSection() {
             title: 'Cosmetic Distribution',
             subtitle: 'Premium Beauty Supplies & Distribution',
             description: 'Lebih dari sekadar distributor, kami adalah mitra strategis untuk bisnis kecantikan Anda. Kami mensuplai kebutuhan perlengkapan salon dan estetika berkualitas tinggi, mulai dari aneka bulu mata palsu, wig, cairan pigmentasi/tinta sulam, hingga material spesifik lainnya. Solusi rantai pasok terlengkap dan terpercaya berskala nasional.',
-            image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80',
+            image: '/assets/images/distribution-products.jpg',
             route: '/distribution',
             animClass: 'animate-float-delayed'
         }

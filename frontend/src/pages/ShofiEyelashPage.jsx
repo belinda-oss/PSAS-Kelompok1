@@ -178,10 +178,10 @@ export default function ShofiEyelashPage() {
                                 Elevating Your Natural Beauty
                             </h2>
                             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                At Shofi Eyelash, we believe that true beauty lies in the details. Our expert technicians use only premium materials and meticulous techniques to enhance your eyes, providing a look that is both striking and effortlessly natural.
+                                Di Shofi Eyelash, kami percaya bahwa kecantikan sejati terletak pada setiap detail. Teknisi ahli kami menggunakan bahan-bahan premium terpilih dan teknik yang teliti untuk mempercantik tampilan mata Anda — menghadirkan hasil yang memukau sekaligus tetap terasa alami dan nyaman.
                             </p>
                             <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                Whether you seek a subtle lift or dramatic volume, our tailored services ensure a flawless finish that complements your unique features and lifestyle. Experience the pinnacle of lash artistry in a serene, professional environment.
+                                Baik Anda menginginkan tampilan natural yang elegan maupun volume dramatis yang memesona, layanan kami yang disesuaikan memastikan hasil sempurna yang melengkapi keunikan fitur wajah dan gaya hidup Anda. Rasakan puncak seni kecantikan bulu mata dalam suasana studio yang tenang dan profesional.
                             </p>
                         </motion.div>
 

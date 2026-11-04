@@ -17,8 +17,8 @@ export default function JoinTeamSection() {
                     className="relative w-full h-80 sm:h-96 md:h-[480px] rounded-3xl overflow-hidden shadow-xl group"
                 >
                     <img 
-                        src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=80" 
-                        alt="Team members lying on grass" 
+                        src="/assets/images/recruit-hero.jpg" 
+                        alt="Tim profesional PT GSU" 
                         className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
                     />
