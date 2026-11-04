@@ -379,6 +379,7 @@ export default function NailArtDecoratorSection() {
 
             const resultData = data.data;
             setAnalysisResult({
+                id: resultData.id ?? null,
                 nailBedShape: resultData.nail_bed_shape || 'N/A',
                 skinTone: resultData.skin_tone || 'N/A',
                 nailColor: resultData.nail_color || 'N/A',
@@ -441,7 +442,8 @@ export default function NailArtDecoratorSection() {
         };
     }, [isDraggingSlider, handleSliderMove]);
 
-    // Triggers AI Nail Art Decorator Engine
+    // Triggers AI Nail Art Decorator Engine via backend agar hasilnya
+    // tersimpan dan terhubung ke analisis kuku (nail_analyses).
     const handleDecorateNails = async () => {
         setIsDecorating(true);
         setErrorMessage(null);
@@ -463,56 +465,58 @@ export default function NailArtDecoratorSection() {
 
             setProcessingStep('Mendeteksi 21 titik landmark tangan (MediaPipe Hands)...');
 
-            const formData = new FormData();
-            formData.append('image_base64', base64Image);
-            formData.append('design_id', selectedDesignId);
-            formData.append('nail_length_factor', nailLengthFactor);
-            formData.append('gloss_intensity', glossIntensity);
+            const payload = {
+                nail_analysis_id: analysisResult?.id ?? null,
+                design_id: selectedDesignId,
+                nail_length_factor: nailLengthFactor,
+                gloss_intensity: glossIntensity,
+            };
 
-            // Attempt AI backend endpoint: first try Vite proxy /ai-api, then direct port 8001
-            let response;
-            let data;
-            const endpoints = [
-                '/ai-api/api/v1/nail-art-decorate',
-                'http://127.0.0.1:8001/api/v1/nail-art-decorate'
-            ];
-
-            let fetchSuccess = false;
-            for (const url of endpoints) {
-                try {
-                    setProcessingStep('Menempelkan pola nail art & kilau kuku (glossy shine)...');
-                    response = await fetch(url, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    if (response.ok) {
-                        data = await response.json();
-                        fetchSuccess = true;
-                        break;
-                    }
-                } catch (e) {
-                    console.warn(`[AI Decorator] Failed to connect to ${url}:`, e);
-                }
+            // Jika analisis tersedia, backend memakai gambar asli yang dianalisis
+            // agar hasil generate benar-benar sesuai dengan nail analysis.
+            if (!analysisResult?.id) {
+                payload.image_base64 = base64Image;
             }
 
-            if (!fetchSuccess || !data || data.status !== 'success') {
-                throw new Error(data?.detail || 'Gagal memproses AI Nail Art. Pastikan AI Microservice aktif.');
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+            const targetUrl = `${baseUrl.replace(/\/$/, '')}/api/nail-art-generate`;
+
+            setProcessingStep('Menempelkan pola nail art & kilau kuku (glossy shine)...');
+
+            const response = await fetch(targetUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Gagal memproses AI Nail Art. Pastikan backend & AI Microservice aktif.');
             }
+
+            const resultData = data.data;
 
             setProcessingStep('Selesai!');
             setDecorationResult({
-                beforeImage: data.before_image || base64Image,
-                afterImage: data.after_image,
-                detectedNailsCount: data.detected_nails_count || 0,
-                nails: data.nails || [],
-                analysis: data.analysis || {
-                    skin_tone: 'Warm Golden',
-                    nail_bed_shape: 'Almond / Oval Precision',
+                generationId: resultData.id,
+                analysisId: resultData.nail_analysis_id,
+                beforeImage: resultData.before_image || base64Image,
+                afterImage: resultData.after_image,
+                detectedNailsCount: resultData.detected_nails_count || 0,
+                nails: resultData.nails || [],
+                analysis: resultData.analysis || {
+                    skin_tone: analysisResult?.skinTone || 'Warm Golden',
+                    nail_bed_shape: analysisResult?.nailBedShape || 'Almond / Oval Precision',
                     finish_type: activeDesign.finish,
-                    ai_match_percentage: 97.4,
-                    recommendation_note: `Desain ${activeDesign.name} sangat cocok untuk skin tone Anda.`
+                    ai_match_percentage: analysisResult?.aiMatchPercentage ?? 97.4,
+                    recommendation_note: analysisResult?.designRecommendation || `Desain ${activeDesign.name} sangat cocok untuk skin tone Anda.`
                 },
-                design: data.design || activeDesign
+                design: resultData.design || activeDesign,
+                example: resultData.example || null,
             });
 
         } catch (err) {

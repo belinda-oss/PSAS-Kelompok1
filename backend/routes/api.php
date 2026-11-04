@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\NailArtExampleController as AdminNailArtExampleController;
 use App\Http\Controllers\Admin\NailDesignController as AdminNailDesignController;
 use App\Http\Controllers\NailAnalysisController;
+use App\Http\Controllers\NailArtExampleController;
+use App\Http\Controllers\NailArtGenerationController;
 use App\Http\Controllers\NailDesignController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
@@ -63,3 +66,50 @@ Route::patch('/admin/nail-designs/{nailDesign}', [AdminNailDesignController::cla
     ->name('api.admin.nail-designs.toggle');
 Route::delete('/admin/nail-designs/{nailDesign}', [AdminNailDesignController::class, 'destroy'])
     ->name('api.admin.nail-designs.destroy');
+
+/*
+|--------------------------------------------------------------------------
+| Nail Art Generation Examples (YOLOv8 + MediaPipe)
+|--------------------------------------------------------------------------
+| Tabel `nail_art_examples` menyimpan gambar contoh nail art yang dipakai
+| oleh engine generator kuku (YOLOv8 + MediaPipe). Admin dapat menambah,
+| mengubah, menyembunyikan, dan menghapus contoh dari dashboard.
+|
+*/
+
+// Katalog publik contoh nail art untuk engine generator
+Route::get('/nail-art-examples', [NailArtExampleController::class, 'index'])
+    ->name('api.nail-art-examples.index');
+
+// Texture contoh sebagai base64 agar mudah diteruskan ke engine AI
+Route::get('/nail-art-examples/{slug}/texture', [NailArtExampleController::class, 'texture'])
+    ->name('api.nail-art-examples.texture');
+
+/*
+|--------------------------------------------------------------------------
+| Nail Art Generation (linked to nail analyses)
+|--------------------------------------------------------------------------
+| Endpoint ini menjembatani analisis kuku (tabel `nail_analyses`) dengan
+| engine generator YOLOv8 + MediaPipe. Hasil generate disimpan di tabel
+| `nail_generations` dan terhubung ke analisis asalnya.
+|
+*/
+
+Route::post('/nail-art-generate', [NailArtGenerationController::class, 'store'])
+    ->middleware('throttle:20,1')
+    ->name('api.nail-art-generate.store');
+
+Route::get('/nail-analyses/{nailAnalysis}/generations', [NailArtGenerationController::class, 'byAnalysis'])
+    ->name('api.nail-analyses.generations.index');
+
+// CRUD dashboard admin
+Route::get('/admin/nail-art-examples', [AdminNailArtExampleController::class, 'index'])
+    ->name('api.admin.nail-art-examples.index');
+Route::post('/admin/nail-art-examples', [AdminNailArtExampleController::class, 'store'])
+    ->name('api.admin.nail-art-examples.store');
+Route::put('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'update'])
+    ->name('api.admin.nail-art-examples.update');
+Route::patch('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'toggle'])
+    ->name('api.admin.nail-art-examples.toggle');
+Route::delete('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'destroy'])
+    ->name('api.admin.nail-art-examples.destroy');

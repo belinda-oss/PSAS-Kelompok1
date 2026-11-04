@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class NailAnalysis extends Model
 {
@@ -50,4 +51,12 @@ class NailAnalysis extends Model
         'ai_match_percentage' => 'decimal:2',
         'created_at' => 'datetime',
     ];
+
+    /**
+     * Hasil generate nail art yang memakai analisis ini.
+     */
+    public function generations(): HasMany
+    {
+        return $this->hasMany(NailGeneration::class, 'nail_analysis_id');
+    }
 }

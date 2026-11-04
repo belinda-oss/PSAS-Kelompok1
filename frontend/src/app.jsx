@@ -16,6 +16,7 @@ import AdminLayout from './components/layout/AdminLayout';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminUlasanPage from './pages/admin/AdminUlasanPage';
 import AdminLayananPage from './pages/admin/AdminLayananPage';
+import AdminNailArtPage from './pages/admin/AdminNailArtPage';
 import AdminPengaturanPage from './pages/admin/AdminPengaturanPage';
 
 // Scroll to top helper on route change & refresh AOS animations
@@ -69,6 +70,7 @@ export default function App() {
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route path="ulasan" element={<AdminUlasanPage />} />
                     <Route path="layanan" element={<AdminLayananPage />} />
+                    <Route path="nail-art" element={<AdminNailArtPage />} />
                     <Route path="pengaturan" element={<AdminPengaturanPage />} />
                 </Route>
 

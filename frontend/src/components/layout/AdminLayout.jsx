@@ -31,6 +31,7 @@ export default function AdminLayout() {
   const navItems = [
     { name: 'Ulasan', path: '/admin/ulasan' },
     { name: 'Layanan', path: '/admin/layanan' },
+    { name: 'Nail Art', path: '/admin/nail-art' },
     { name: 'Pengaturan', path: '/admin/pengaturan' },
   ];
 
