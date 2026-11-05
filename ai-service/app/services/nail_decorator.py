@@ -115,6 +115,112 @@ def get_landmarker():
     return _landmarker
 
 
+_yolo_segmenter = None
+_yolo_segmenter_path = None
+
+
+def get_yolo_segmenter():
+    """Load an optional, user-trained YOLOv8 segmentation model."""
+    global _yolo_segmenter, _yolo_segmenter_path
+    model_path = os.environ.get("NAIL_YOLO_MODEL", "").strip()
+    if not model_path:
+        return None
+
+    if not os.path.isfile(model_path):
+        raise FileNotFoundError(f"NAIL_YOLO_MODEL does not exist: {model_path}")
+
+    if _yolo_segmenter is None or _yolo_segmenter_path != model_path:
+        try:
+            from ultralytics import YOLO
+        except ImportError as e:
+            raise RuntimeError(
+                "NAIL_YOLO_MODEL is configured but ultralytics is not installed."
+            ) from e
+
+        model = YOLO(model_path)
+        if getattr(model, "task", None) != "segment":
+            raise RuntimeError(
+                "NAIL_YOLO_MODEL must point to YOLOv8 segmentation weights "
+                "trained to segment nails."
+            )
+        _yolo_segmenter = model
+        _yolo_segmenter_path = model_path
+
+    return _yolo_segmenter
+
+
+def detect_nails_with_yolo(
+    image_bgr: np.ndarray,
+    segmenter: Any
+) -> Tuple[List[Dict[str, Any]], List[np.ndarray]]:
+    """Convert YOLOv8-seg nail masks to the decorator's nail geometry."""
+    height, width = image_bgr.shape[:2]
+    results = segmenter.predict(image_bgr, conf=0.25, verbose=False)
+    if not results:
+        return [], []
+
+    result = results[0]
+    if result.masks is None:
+        if result.boxes is not None and len(result.boxes) > 0:
+            raise RuntimeError("The configured YOLOv8 model returned boxes but no masks.")
+        return [], []
+
+    masks = result.masks.data
+    if hasattr(masks, "cpu"):
+        masks = masks.cpu().numpy()
+
+    detections = []
+    for index, mask in enumerate(masks):
+        binary_mask = cv2.resize(
+            (mask >= 0.5).astype(np.uint8) * 255,
+            (width, height),
+            interpolation=cv2.INTER_NEAREST
+        )
+        contours, _ = cv2.findContours(
+            binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
+        if not contours:
+            continue
+
+        contour = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(contour)
+        if area < max(12, width * height * 0.00001) or area > width * height * 0.2:
+            continue
+
+        (cx, cy), (rect_width, rect_height), rect_angle = cv2.minAreaRect(contour)
+        nail_length, nail_width = max(rect_width, rect_height), min(rect_width, rect_height)
+        if nail_width < 2 or nail_length < 4:
+            continue
+
+        angle = rect_angle if rect_width >= rect_height else rect_angle + 90
+        confidence = None
+        if result.boxes is not None and index < len(result.boxes):
+            confidence = float(result.boxes.conf[index].item())
+
+        detections.append((
+            {
+                "finger": f"Kuku #{len(detections) + 1}",
+                "hand_id": 1,
+                "cx": int(cx),
+                "cy": int(cy),
+                "length": max(2, int(nail_length * 0.5)),
+                "width": max(2, int(nail_width * 0.5)),
+                "angle": angle,
+                "confidence": confidence
+            },
+            binary_mask
+        ))
+
+    detections.sort(key=lambda item: (item[0]["cy"], item[0]["cx"]))
+    for index, (nail, _) in enumerate(detections, start=1):
+        nail["finger"] = f"Kuku #{index}"
+
+    return (
+        [nail for nail, _ in detections],
+        [mask for _, mask in detections]
+    )
+
+
 def generate_nail_pattern(design_id: str, width: int = 300, height: int = 400) -> np.ndarray:
     """
     Generates high-resolution cute & aesthetic nail art patterns with rich artistic textures.
@@ -251,8 +357,7 @@ def apply_nail_art_to_image(
     gloss_intensity: float = 0.85
 ) -> Tuple[np.ndarray, List[Dict[str, Any]], Dict[str, Any]]:
     """
-    Precision Nail Detection (MediaPipe Hands + Adaptive Segmentation) +
-    AI Nail Art Decorator Engine with smooth blending mask and 3D glossy shine effect.
+    Apply nail art using configured YOLOv8-seg masks or MediaPipe hand landmarks.
     """
     h, w = image_bgr.shape[:2]
     decorated_bgr = image_bgr.copy()
@@ -261,21 +366,31 @@ def apply_nail_art_to_image(
     pattern_bgra = generate_nail_pattern(design_id, width=350, height=450)
     p_h, p_w = pattern_bgra.shape[:2]
 
-    # Run MediaPipe Hand Landmarker
-    detector = get_landmarker()
+    # Prefer trained nail segmentation; otherwise retain the existing hand-landmark path.
+    yolo_segmenter = get_yolo_segmenter()
     detected_landmarks = []
-    
-    if detector is not None:
-        try:
-            img_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
-            res = detector.detect(mp_image)
-            if res.hand_landmarks:
-                detected_landmarks = res.hand_landmarks
-        except Exception as e:
-            print(f"[NailDecorator] MediaPipe error: {e}")
+    nail_segmentation_masks = []
 
-    detected_nails = []
+    if yolo_segmenter is not None:
+        detected_nails, nail_segmentation_masks = detect_nails_with_yolo(
+            image_bgr, yolo_segmenter
+        )
+        detection_method = "YOLOv8-seg"
+    else:
+        detector = get_landmarker()
+        detected_nails = []
+        if detector is not None:
+            try:
+                img_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+                mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
+                res = detector.detect(mp_image)
+                if res.hand_landmarks:
+                    detected_landmarks = res.hand_landmarks
+            except Exception as e:
+                print(f"[NailDecorator] MediaPipe error: {e}")
+        detection_method = (
+            "MediaPipe landmarks" if detected_landmarks else "Skin-contour fallback"
+        )
 
     # Finger landmark indices: (DIP, TIP, Name, WidthRatio, LengthRatio)
     finger_specs = [
@@ -286,11 +401,20 @@ def apply_nail_art_to_image(
         (19, 20, 'Kelingking (Pinky)', 0.38, 0.38)
     ]
 
-    if detected_landmarks:
+    if yolo_segmenter is None and detected_landmarks:
         for hand_idx, landmarks in enumerate(detected_landmarks):
+            palm_points = np.array([
+                [landmarks[idx].x * w, landmarks[idx].y * h]
+                for idx in (0, 5, 9, 13, 17)
+            ], dtype=np.float32)
+            palm_hull = cv2.convexHull(palm_points)
+
             for dip_idx, tip_idx, fname, wr, lr in finger_specs:
                 dip = landmarks[dip_idx]
                 tip = landmarks[tip_idx]
+                if not (0 <= tip.x <= 1 and 0 <= tip.y <= 1):
+                    continue
+
                 dx = (tip.x - dip.x) * w
                 dy = (tip.y - dip.y) * h
                 dist = math.hypot(dx, dy)
@@ -300,10 +424,11 @@ def apply_nail_art_to_image(
                 angle = math.degrees(math.atan2(dy, dx))
                 cx = int((tip.x * w) - 0.10 * dx)
                 cy = int((tip.y * h) - 0.10 * dy)
-                
+                if cv2.pointPolygonTest(palm_hull, (float(cx), float(cy)), False) >= 0:
+                    continue
+
                 nail_len = int(dist * lr * 1.08 * nail_length_factor)
                 nail_wid = int(dist * wr * 0.54)
-
                 if nail_len < 4 or nail_wid < 3:
                     continue
 
@@ -316,32 +441,35 @@ def apply_nail_art_to_image(
                     "width": nail_wid,
                     "angle": angle
                 })
-    else:
-        # Fallback for macro/close-up images where landmarks aren't fully visible
-        # Detect fingertips or central nail areas using skin tone + luminance contours
+
+    if yolo_segmenter is None and not detected_landmarks:
+        # Fallback for close-up images where hand landmarks are not available.
         hsv = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2HSV)
-        # Skin color range
         lower_skin = np.array([0, 20, 70], dtype=np.uint8)
         upper_skin = np.array([25, 255, 255], dtype=np.uint8)
         skin_mask = cv2.inRange(hsv, lower_skin, upper_skin)
-        
-        contours, _ = cv2.findContours(skin_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        contours, _ = cv2.findContours(
+            skin_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
         candidates = []
-        for c in contours:
-            area = cv2.contourArea(c)
+        for contour in contours:
+            area = cv2.contourArea(contour)
             if area > (w * h * 0.005) and area < (w * h * 0.4):
-                rect = cv2.minAreaRect(c)
+                rect = cv2.minAreaRect(contour)
                 (rcx, rcy), (rw, rh), rangle = rect
                 if rw > 0 and rh > 0:
                     aspect = max(rw, rh) / min(rw, rh)
                     if aspect < 3.5:
-                        candidates.append((int(rcx), int(rcy), int(min(rw, rh) * 0.28), int(max(rw, rh) * 0.36), rangle))
-        
-        # Sort by proximity to center
-        candidates.sort(key=lambda item: (item[0] - w/2)**2 + (item[1] - h/2)**2)
+                        candidates.append((
+                            int(rcx), int(rcy), int(min(rw, rh) * 0.28),
+                            int(max(rw, rh) * 0.36), rangle
+                        ))
+
+        candidates.sort(key=lambda item: (item[0] - w / 2) ** 2 + (item[1] - h / 2) ** 2)
         for idx, (rcx, rcy, r_wid, r_len, r_ang) in enumerate(candidates[:5]):
             detected_nails.append({
-                "finger": f"Kuku #{idx+1}",
+                "finger": f"Kuku #{idx + 1}",
                 "hand_id": 1,
                 "cx": rcx,
                 "cy": rcy,
@@ -350,8 +478,8 @@ def apply_nail_art_to_image(
                 "angle": r_ang
             })
 
-    # Render Nail Art onto each detected nail
-    for nail in detected_nails:
+    # Render Nail Art onto each detected nail.
+    for nail_idx, nail in enumerate(detected_nails):
         cx = nail["cx"]
         cy = nail["cy"]
         nail_len = nail["length"]
@@ -374,8 +502,14 @@ def apply_nail_art_to_image(
         rcy = cy - y1
 
         # 1. Local nail mask (almond/oval nail bed contour)
-        local_nail_mask = np.zeros((rh, rw), dtype=np.uint8)
-        cv2.ellipse(local_nail_mask, (rcx, rcy), (int(nail_wid), int(nail_len)), int(angle + 90), 0, 360, 255, -1)
+        if nail_idx < len(nail_segmentation_masks):
+            local_nail_mask = nail_segmentation_masks[nail_idx][y1:y2, x1:x2].copy()
+        else:
+            local_nail_mask = np.zeros((rh, rw), dtype=np.uint8)
+            cv2.ellipse(
+                local_nail_mask, (rcx, rcy), (int(nail_wid), int(nail_len)),
+                int(angle + 90), 0, 360, 255, -1
+            )
         
         blur_k = max(3, int(nail_wid * 0.24) * 2 + 1)
         feathered_mask = cv2.GaussianBlur(local_nail_mask, (blur_k, blur_k), 0).astype(np.float32) / 255.0
@@ -463,6 +597,7 @@ def apply_nail_art_to_image(
         "skin_tone": avg_skin_tone,
         "nail_bed_shape": "Almond / Oval Precision",
         "finish_type": selected_design_meta.get("finish", "High Gloss Gel"),
+        "detection_method": detection_method,
         "ai_match_percentage": round(np.random.uniform(94.0, 98.8), 1),
         "recommendation_note": f"Desain {selected_design_meta['name']} sangat flattering untuk skin tone {avg_skin_tone} dengan hasil akhir {selected_design_meta.get('finish')} yang tahan lama."
     }
