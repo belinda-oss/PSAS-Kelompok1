@@ -3,256 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Administrator - PSAS</title>
+    <title>Login Administrator - Shofi Eyelash</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink: #20241f;
+            --ink-soft: #3a4039;
+            --paper: #f3efe9;
+            --paper-light: #f7f4ef;
+            --line: #d8d1c4;
+            --muted: #6f746c;
+            --faint: #9a9e96;
+            --accent: #a1876a;
+            --danger: #a13c2f;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #fbfbfb;
-            color: #1f2421;
+            background-color: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+        }
+
+        /* Panel kiri */
+        .brand-panel {
+            position: relative;
+            overflow: hidden;
+            background-color: #171a16;
+            color: #ffffff;
+            padding: 64px;
             display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 18% 22%, rgba(161, 135, 106, 0.35), transparent 45%),
+                radial-gradient(circle at 82% 78%, rgba(217, 195, 165, 0.18), transparent 42%),
+                linear-gradient(135deg, #1b1f1a 0%, #10130f 100%);
+        }
+
+        .brand-panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                115deg,
+                transparent 0,
+                transparent 46px,
+                rgba(255, 255, 255, 0.025) 46px,
+                rgba(255, 255, 255, 0.025) 47px
+            );
+        }
+
+        .brand-panel > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.78);
+            text-decoration: none;
+            width: fit-content;
+        }
+
+        .brand-monogram {
+            width: 38px;
+            height: 38px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        /* Floating gold sparkle accents (PT GSU signature) */
-        .sparkle {
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-        .sparkle-1 { width: 10px; height: 10px; background: rgba(196, 154, 108, 0.5); top: 12%; left: 8%; animation: float 4s ease-in-out infinite; }
-        .sparkle-2 { width: 12px; height: 12px; background: rgba(212, 175, 55, 0.45); bottom: 15%; right: 10%; animation: float 4.5s ease-in-out 1.6s infinite; }
-        .sparkle-3 { width: 7px; height: 7px; background: rgba(196, 154, 108, 0.4); top: 60%; left: 90%; animation: float 5s ease-in-out 0.8s infinite; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
-
-        .login-card {
-            background-color: #ffffff;
-            border: 1px solid #f0f0f0;
-            width: 100%;
-            max-width: 440px;
-            padding: 40px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-            animation: cardUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-
-        @keyframes cardUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .login-header .brand {
             font-family: 'Playfair Display', Georgia, serif;
-            font-size: 2.6rem;
-            font-style: italic;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: #1f2421;
-            line-height: 1;
-            display: inline-block;
-            animation: fadeDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+            font-size: 15px;
+            color: #ffffff;
         }
 
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-14px); }
-            to { opacity: 1; transform: translateY(0); }
+        .brand-name {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
         }
 
-        .login-header .sub-brand {
+        .brand-copy {
+            max-width: 420px;
+        }
+
+        .brand-kicker {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: #d9c3a5;
+        }
+
+        .brand-copy h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.5rem, 4vw, 3.4rem);
+            font-weight: 500;
+            line-height: 1.12;
+            margin-top: 16px;
+            color: #ffffff;
+        }
+
+        .brand-copy h1 em {
+            color: #e6d6bf;
+            font-weight: 400;
+        }
+
+        .brand-copy p {
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.62);
+            max-width: 360px;
+        }
+
+        .brand-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 40px;
             font-size: 10px;
             font-weight: 500;
-            letter-spacing: 0.25em;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: #9ca3af;
-            margin: 10px 0 26px;
+            color: rgba(255, 255, 255, 0.4);
         }
 
-        .login-header h1 {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 20px;
+        .brand-meta::before {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .brand-foot {
+            font-size: 10px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Panel kanan */
+        .form-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 32px 48px;
+        }
+
+        .form-top {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .back-link {
+            font-size: 11px;
             font-weight: 500;
-            letter-spacing: 0.03em;
-            color: #1f2421;
-            margin-bottom: 6px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--faint);
+            text-decoration: none;
+            transition: color 0.2s ease;
         }
 
-        .login-header p {
-            font-size: 12px;
-            color: #6b7280;
-            line-height: 1.6;
+        .back-link:hover { color: var(--ink); }
+
+        .login-box {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .login-kicker {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .login-box h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.35rem;
+            font-weight: 500;
+            line-height: 1.15;
+            margin-top: 12px;
+            color: var(--ink);
+        }
+
+        .login-subtitle {
+            margin-top: 12px;
+            font-size: 13px;
+            line-height: 1.65;
+            color: var(--muted);
         }
 
         .alert {
-            padding: 12px 16px;
-            border-radius: 4px;
+            margin-top: 24px;
+            padding: 12px 14px;
+            border-left: 2px solid var(--danger);
+            background-color: rgba(161, 60, 47, 0.06);
+            color: #8a3227;
             font-size: 13px;
-            margin-bottom: 20px;
-            line-height: 1.4;
-            animation: fadeDown 0.35s ease both;
+            line-height: 1.5;
         }
-        .alert-error { background-color: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.25); color: #b91c1c; }
-        .alert-success { background-color: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); color: #047857; }
 
-        .form-group { margin-bottom: 18px; }
+        .alert-success {
+            border-left-color: #3f7d5a;
+            background-color: rgba(63, 125, 90, 0.08);
+            color: #2f5f44;
+        }
+
+        form { margin-top: 30px; }
+
+        .form-group { margin-bottom: 24px; }
+
         .form-group label {
             display: block;
             font-size: 10px;
             font-weight: 600;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: #6b7280;
+            color: #7c817a;
             margin-bottom: 8px;
         }
+
+        .input-wrap { position: relative; }
+
         .form-group input[type="email"],
-        .form-group input[type="password"] {
+        .form-group input[type="password"],
+        .form-group input[type="text"] {
             width: 100%;
-            padding: 12px 14px;
-            background-color: #fbfbfb;
-            border: 1px solid #e5e7eb;
+            padding: 10px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--line);
             border-radius: 0;
-            color: #1f2421;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 14px;
             outline: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            transition: border-color 0.2s ease;
         }
-        .form-group input:focus {
-            border-color: #c49a6c;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(196, 154, 108, 0.12);
+
+        .form-group input::placeholder { color: #a8aca4; }
+
+        .form-group input:focus { border-bottom-color: var(--ink); }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: var(--faint);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px;
         }
+
+        .toggle-password:hover { color: var(--ink); }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
         .form-checkbox {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 24px;
+            color: var(--muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .form-checkbox input {
+            accent-color: var(--ink);
+            width: 14px;
+            height: 14px;
             cursor: pointer;
         }
-        .form-checkbox:hover { color: #1f2421; }
-        .form-checkbox input { accent-color: #1f2421; width: 15px; height: 15px; cursor: pointer; }
 
         .btn-submit {
             width: 100%;
-            padding: 14px;
-            background-color: #1f2421;
+            padding: 14px 20px;
+            background-color: var(--ink);
             color: #ffffff;
             border: none;
             border-radius: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 12px;
+            font-family: inherit;
+            font-size: 11px;
             font-weight: 600;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
             cursor: pointer;
-            transition: background-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
+            transition: background-color 0.2s ease;
         }
-        .btn-submit:hover { background-color: #c49a6c; }
-        .btn-submit:active { transform: scale(0.99); }
 
-        .divider {
+        .btn-submit:hover { background-color: var(--ink-soft); }
+        .btn-submit:active { transform: translateY(1px); }
+
+        .security-note {
+            margin-top: 34px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 11px;
+            line-height: 1.6;
+            color: var(--faint);
+        }
+
+        .security-note svg { flex-shrink: 0; margin-top: 1px; }
+
+        .form-foot {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--line);
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin: 28px 0 20px;
-            color: #9ca3af;
-            font-size: 9px;
-            font-weight: 600;
-            letter-spacing: 0.2em;
+            justify-content: space-between;
+            font-size: 10px;
+            letter-spacing: 0.18em;
             text-transform: uppercase;
-        }
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #f0f0f0;
+            color: var(--faint);
         }
 
-        .footer-info {
-            text-align: center;
-            color: #9ca3af;
-            font-size: 10px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            font-weight: 500;
+        @media (max-width: 900px) {
+            body { grid-template-columns: 1fr; }
+            .brand-panel { display: none; }
+            .form-panel { padding: 28px 24px; min-height: 100vh; }
         }
     </style>
 </head>
 <body>
-    <div class="sparkle sparkle-1"></div>
-    <div class="sparkle sparkle-2"></div>
-    <div class="sparkle sparkle-3"></div>
+    <aside class="brand-panel">
+        <a href="{{ url('/') }}" class="brand-mark">
+            <span class="brand-monogram">S</span>
+            <span class="brand-name">Shofi Eyelash</span>
+        </a>
 
-    <div class="login-card">
-        <div class="login-header">
-            <span class="brand">GSU</span>
-            <p class="sub-brand">• SHOFI EYELASH ADMIN •</p>
-
-            <h1>Login Administrasi</h1>
-            <p>Masuk untuk mengelola & memoderasi ulasan</p>
+        <div class="brand-copy">
+            <p class="brand-kicker">Portal internal</p>
+            <h1>Ruang kerja<br><em>tim Shofi.</em></h1>
+            <p>Kelola ulasan, layanan, katalog nail art, dan lamaran kerja dalam satu panel yang tenang dan teratur.</p>
+            <div class="brand-meta">PT Giandra Sadawira Utama</div>
         </div>
 
-        @if(session('error'))
-            <div class="alert alert-error">
-                {{ session('error') }}
+        <div class="brand-foot">Akses terbatas untuk staf</div>
+    </aside>
+
+    <main class="form-panel">
+        <div class="form-top">
+            <a href="{{ url('/') }}" class="back-link">Kembali ke situs</a>
+        </div>
+
+        <div class="login-box">
+            <p class="login-kicker">Administrasi</p>
+            <h2>Masuk ke panel</h2>
+            <p class="login-subtitle">Gunakan akun administrator yang terdaftar untuk melanjutkan.</p>
+
+            @if(session('error'))
+                <div class="alert">{{ session('error') }}</div>
+            @endif
+
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert">
+                    @foreach($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
+
+            <form action="{{ route('admin.login.submit') }}" method="POST">
+                @csrf
+
+                <div class="form-group">
+                    <label for="email">Email administrator</label>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="nama@perusahaan.co.id">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Kata sandi</label>
+                    <div class="input-wrap">
+                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Masukkan kata sandi">
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Tampilkan kata sandi">Lihat</button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="form-checkbox">
+                        <input type="checkbox" name="remember" value="1">
+                        <span>Ingat sesi di perangkat ini</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit">Masuk</button>
+            </form>
+
+            <div class="security-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Koneksi aman. Jangan bagikan kredensial Anda kepada siapa pun.</span>
             </div>
-        @endif
+        </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+        <div class="form-foot">
+            <span>&copy; {{ date('Y') }} PT GSU</span>
+            <span>Panel Admin</span>
+        </div>
+    </main>
 
-        @if($errors->any())
-            <div class="alert alert-error">
-                @foreach($errors->all() as $error)
-                    <div>{{ $error }}</div>
-                @endforeach
-            </div>
-        @endif
+    <script>
+        (function () {
+            var input = document.getElementById('password');
+            var toggle = document.getElementById('togglePassword');
 
-        <form action="{{ route('admin.login.submit') }}" method="POST">
-            @csrf
-            <div class="form-group">
-                <label for="email">Email Administrator</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="admin@example.com">
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="••••••••">
-            </div>
-
-            <label class="form-checkbox">
-                <input type="checkbox" name="remember" value="1">
-                <span>Ingat Saya</span>
-            </label>
-
-            <button type="submit" class="btn-submit">Masuk ke Dashboard Admin</button>
-        </form>
-
-        <div class="divider">Akses Terotentikasi</div>
-
-        <p class="footer-info">Sistem Terintegrasi PT GSU</p>
-    </div>
+            toggle.addEventListener('click', function () {
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                toggle.textContent = show ? 'Sembunyi' : 'Lihat';
+                toggle.setAttribute('aria-label', show ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi');
+            });
+        })();
+    </script>
 </body>
 </html>

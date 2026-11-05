@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\NailArtExampleController as AdminNailArtExampleController;
 use App\Http\Controllers\Admin\NailDesignController as AdminNailDesignController;
@@ -57,18 +58,6 @@ Route::get('/nail-designs', [NailDesignController::class, 'index'])
 Route::get('/nail-designs/{slug}/texture', [NailDesignController::class, 'texture'])
     ->name('api.nail-designs.texture');
 
-// CRUD dashboard admin
-Route::get('/admin/nail-designs', [AdminNailDesignController::class, 'index'])
-    ->name('api.admin.nail-designs.index');
-Route::post('/admin/nail-designs', [AdminNailDesignController::class, 'store'])
-    ->name('api.admin.nail-designs.store');
-Route::put('/admin/nail-designs/{nailDesign}', [AdminNailDesignController::class, 'update'])
-    ->name('api.admin.nail-designs.update');
-Route::patch('/admin/nail-designs/{nailDesign}', [AdminNailDesignController::class, 'toggle'])
-    ->name('api.admin.nail-designs.toggle');
-Route::delete('/admin/nail-designs/{nailDesign}', [AdminNailDesignController::class, 'destroy'])
-    ->name('api.admin.nail-designs.destroy');
-
 /*
 |--------------------------------------------------------------------------
 | Nail Art Generation Examples (YOLOv8 + MediaPipe)
@@ -104,18 +93,6 @@ Route::post('/nail-art-generate', [NailArtGenerationController::class, 'store'])
 Route::get('/nail-analyses/{nailAnalysis}/generations', [NailArtGenerationController::class, 'byAnalysis'])
     ->name('api.nail-analyses.generations.index');
 
-// CRUD dashboard admin
-Route::get('/admin/nail-art-examples', [AdminNailArtExampleController::class, 'index'])
-    ->name('api.admin.nail-art-examples.index');
-Route::post('/admin/nail-art-examples', [AdminNailArtExampleController::class, 'store'])
-    ->name('api.admin.nail-art-examples.store');
-Route::put('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'update'])
-    ->name('api.admin.nail-art-examples.update');
-Route::patch('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'toggle'])
-    ->name('api.admin.nail-art-examples.toggle');
-Route::delete('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'destroy'])
-    ->name('api.admin.nail-art-examples.destroy');
-
 /*
 |--------------------------------------------------------------------------
 | Recruitment / Job Applications
@@ -131,10 +108,65 @@ Route::post('/job-applications', [JobApplicationController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('api.job-applications.store');
 
-// CRUD dashboard admin
-Route::get('/admin/job-applications', [AdminJobApplicationController::class, 'index'])
-    ->name('api.admin.job-applications.index');
-Route::patch('/admin/job-applications/{jobApplication}', [AdminJobApplicationController::class, 'update'])
-    ->name('api.admin.job-applications.update');
-Route::delete('/admin/job-applications/{jobApplication}', [AdminJobApplicationController::class, 'destroy'])
-    ->name('api.admin.job-applications.destroy');
+/*
+|--------------------------------------------------------------------------
+| Admin API
+|--------------------------------------------------------------------------
+| Login dibatasi (throttle) dan seluruh endpoint admin dilindungi token
+| Sanctum + middleware `admin`. Frontend menyimpan token setelah login.
+|
+*/
+
+Route::prefix('admin')->group(function () {
+    Route::post('/login', [AdminAuthController::class, 'apiLogin'])
+        ->middleware('throttle:5,1')
+        ->name('api.admin.login');
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/me', [AdminAuthController::class, 'apiMe'])
+            ->name('api.admin.me');
+        Route::post('/logout', [AdminAuthController::class, 'apiLogout'])
+            ->name('api.admin.logout');
+        Route::post('/change-password', [AdminAuthController::class, 'apiChangePassword'])
+            ->name('api.admin.change-password');
+
+        // CRUD desain nail art (dashboard admin)
+        Route::get('/nail-designs', [AdminNailDesignController::class, 'index'])
+            ->name('api.admin.nail-designs.index');
+        Route::post('/nail-designs', [AdminNailDesignController::class, 'store'])
+            ->name('api.admin.nail-designs.store');
+        Route::put('/nail-designs/{nailDesign}', [AdminNailDesignController::class, 'update'])
+            ->name('api.admin.nail-designs.update');
+        Route::patch('/nail-designs/{nailDesign}', [AdminNailDesignController::class, 'toggle'])
+            ->name('api.admin.nail-designs.toggle');
+        Route::delete('/nail-designs/{nailDesign}', [AdminNailDesignController::class, 'destroy'])
+            ->name('api.admin.nail-designs.destroy');
+
+        // CRUD contoh nail art (dashboard admin)
+        Route::get('/nail-art-examples', [AdminNailArtExampleController::class, 'index'])
+            ->name('api.admin.nail-art-examples.index');
+        Route::post('/nail-art-examples', [AdminNailArtExampleController::class, 'store'])
+            ->name('api.admin.nail-art-examples.store');
+        Route::put('/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'update'])
+            ->name('api.admin.nail-art-examples.update');
+        Route::patch('/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'toggle'])
+            ->name('api.admin.nail-art-examples.toggle');
+        Route::delete('/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'destroy'])
+            ->name('api.admin.nail-art-examples.destroy');
+
+        // CRUD lamaran kerja (dashboard admin)
+        Route::get('/job-applications', [AdminJobApplicationController::class, 'index'])
+            ->name('api.admin.job-applications.index');
+        Route::patch('/job-applications/{jobApplication}', [AdminJobApplicationController::class, 'update'])
+            ->name('api.admin.job-applications.update');
+        Route::delete('/job-applications/{jobApplication}', [AdminJobApplicationController::class, 'destroy'])
+            ->name('api.admin.job-applications.destroy');
+    });
+});
+
+Route::fallback(function () {
+    return response()->json([
+        'success' => false,
+        'message' => 'API endpoint not found.',
+    ], 404);
+});

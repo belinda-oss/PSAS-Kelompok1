@@ -26,7 +26,7 @@ const FILTERS = [
   { key: 'reviewed', label: 'Sudah Ditinjau' },
 ];
 
-export default function AdminRekrutmenPage() {
+export default function AdminRecruitPage() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -131,7 +131,7 @@ export default function AdminRekrutmenPage() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-[#1f2421] tracking-wide mb-2.5">
-          Manajemen Rekrutmen
+          Manajemen Recruit
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 font-light">
           Kelola lamaran kerja yang dikirim dari halaman Recruit. Tandai lamaran sebagai sudah ditinjau atau belum ditinjau.

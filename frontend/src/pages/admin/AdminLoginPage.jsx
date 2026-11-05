@@ -1,197 +1,290 @@
-import { motion } from 'framer-motion';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  ArrowRight,
+  CircleAlert,
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  Lock,
+  ShieldCheck,
+} from 'lucide-react';
+import { fetchAdminSession, loginAdmin } from '../../services/adminAuth';
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@ptgsu.co.id');
-  const [password, setPassword] = useState('password123');
+  const location = useLocation();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [remember, setRemember] = useState(true);
+  const [capsLock, setCapsLock] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const redirectTo = location.state?.from || '/admin/ulasan';
+
+  useEffect(() => {
+    let active = true;
+
+    fetchAdminSession().then((user) => {
+      if (active && user) {
+        navigate('/admin/ulasan', { replace: true });
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
     setIsLoading(true);
 
-    setTimeout(() => {
-      localStorage.setItem('admin_authenticated', 'true');
+    try {
+      await loginAdmin({ email: email.trim(), password, remember });
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      setError(err.message || 'Gagal masuk ke panel admin.');
+    } finally {
       setIsLoading(false);
-      navigate('/admin/ulasan');
-    }, 400);
+    }
   };
 
-  const handleForgotPassword = (e) => {
-    e.preventDefault();
-    alert('Silakan hubungi Divisi IT PT Giandra Sadawira Utama (admin@ptgsu.co.id) untuk mengatur ulang kata sandi Anda.');
+  const detectCapsLock = (event) => {
+    if (typeof event.getModifierState === 'function') {
+      setCapsLock(event.getModifierState('CapsLock'));
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center px-4 py-12 selection:bg-[#212121] selection:text-white font-sans relative overflow-hidden">
-      {/* Decorative floating sparkle accents (PT GSU signature) */}
-      <div
-        className="pointer-events-none absolute top-16 left-10 w-2 h-2 rounded-full bg-[#c49a6c]/40 animate-float hidden md:block"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute bottom-20 right-12 w-2.5 h-2.5 rounded-full bg-[#d4af37]/40 animate-float-delayed hidden md:block"
-        aria-hidden="true"
-      />
+    <div className="min-h-screen bg-[#f3efe9] font-sans text-[#20241f] selection:bg-[#20241f] selection:text-white">
+      <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
+        {/* Panel visual */}
+        <aside className="relative hidden overflow-hidden bg-[#171a16] lg:flex">
+          <img
+            src="/assets/images/shofi-hero.jpg"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover object-center opacity-60"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#10130f] via-[#10130f]/70 to-[#10130f]/25" />
 
-      <motion.div
-        className="w-full max-w-[460px]"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-      >
-        <div className="bg-white border border-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-8 sm:p-12 rounded-3xl">
-          {/* Brand Header */}
-          <div className="text-center">
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+          <div className="relative z-10 flex w-full flex-col justify-between p-12 xl:p-16">
+            <Link
+              to="/"
+              className="inline-flex w-fit items-center gap-3 text-white/75 transition-colors hover:text-white"
             >
-              <img
-                src="/1-logo.png"
-                alt="PT GSU"
-                className="h-12 sm:h-14 w-auto object-contain mx-auto"
-              />
-            </motion.div>
-            <p className="text-[10px] tracking-[0.25em] text-gray-400 uppercase font-medium mt-3 mb-6">
-              â€¢ SHOFI EYELASH ADMIN â€¢
-            </p>
+              <span className="flex h-9 w-9 items-center justify-center border border-white/25 font-serif text-sm text-white">
+                S
+              </span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.32em]">
+                Shofi Eyelash
+              </span>
+            </Link>
 
-            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#1f2421] tracking-wide mb-2">
-              Login Administrator
-            </h2>
-            <p className="text-xs text-gray-500 font-normal">
-              Portal Pengelolaan & Moderasi Rating Pengunjung
-            </p>
-            <p className="text-xs text-gray-500 font-normal mb-8">
-              Shofi Eyelash
-            </p>
+            <div className="max-w-md">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#d9c3a5]">
+                Portal internal
+              </p>
+              <h1 className="mt-4 font-serif text-4xl leading-[1.12] text-white xl:text-5xl">
+                Ruang kerja
+                <br />
+                <span className="italic text-[#e6d6bf]">tim Shofi.</span>
+              </h1>
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">
+                Kelola ulasan, layanan, katalog nail art, dan lamaran kerja
+                dalam satu panel yang tenang dan teratur.
+              </p>
+              <div className="mt-10 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/40">
+                <span className="h-px w-10 bg-white/30" />
+                PT Giandra Sadawira Utama
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.24em] text-white/40">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Akses terbatas untuk staf
+            </div>
+          </div>
+        </aside>
+
+        {/* Panel form */}
+        <main className="flex flex-col justify-between px-6 py-8 sm:px-10 lg:px-16 xl:px-24">
+          <div className="flex items-center justify-between lg:justify-end">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-[#7c817a] transition-colors hover:text-[#20241f] lg:hidden"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Situs utama
+            </Link>
+            <Link
+              to="/"
+              className="hidden items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-[#7c817a] transition-colors hover:text-[#20241f] lg:inline-flex"
+            >
+              Kembali ke situs
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
 
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-semibold tracking-widest text-gray-600 uppercase mb-2">
-                EMAIL / ID ADMIN
-              </label>
-              <div className="relative flex items-center">
-                <span className="absolute left-3.5 text-gray-400">
-                  <User className="w-4 h-4" />
-                </span>
+          <div className="mx-auto w-full max-w-[380px] py-10">
+            <img
+              src="/1-logo.png"
+              alt="Shofi Eyelash"
+              className="mb-8 h-9 w-auto object-contain lg:mb-10"
+            />
+
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#a1876a]">
+              Administrasi
+            </p>
+            <h2 className="mt-3 font-serif text-3xl leading-tight tracking-tight text-[#20241f] sm:text-[2.35rem]">
+              Masuk ke panel
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[#6f746c]">
+              Gunakan akun administrator yang terdaftar untuk melanjutkan.
+            </p>
+
+            {error && (
+              <div
+                role="alert"
+                className="mt-6 flex items-start gap-2.5 border-l-2 border-[#a13c2f] bg-[#a13c2f]/[0.06] px-3.5 py-3 text-[13px] leading-relaxed text-[#8a3227]"
+              >
+                <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+              <div>
+                <label
+                  htmlFor="admin-email"
+                  className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7c817a]"
+                >
+                  Email administrator
+                </label>
                 <input
-                  type="text"
+                  id="admin-email"
+                  type="email"
+                  autoComplete="username"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@ptgsu.co.id"
-                  className="w-full pl-10 pr-4 py-2.5 text-xs text-gray-900 bg-[#fbfbfb] border border-gray-200 rounded-xl focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.12)] transition-all placeholder:text-gray-400"
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="nama@perusahaan.co.id"
+                  className="w-full border-b border-[#cfcabf] bg-transparent px-0 py-2.5 text-sm text-[#20241f] placeholder:text-[#a8aca4] transition-colors focus:border-[#20241f] focus:outline-none"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-[10px] font-semibold tracking-widest text-gray-600 uppercase mb-2">
-                KATA SANDI
-              </label>
-              <div className="relative flex items-center">
-                <span className="absolute left-3.5 text-gray-400">
-                  <Lock className="w-4 h-4" />
-                </span>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
-                  className="w-full pl-10 pr-10 py-2.5 text-xs text-gray-900 bg-[#fbfbfb] border border-gray-200 rounded-xl focus:outline-none focus:border-[#c49a6c] focus:bg-white focus:shadow-[0_0_0_3px_rgba(196,154,108,0.12)] transition-all placeholder:text-gray-400 font-sans"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 text-gray-400 hover:text-gray-600 focus:outline-none"
-                  tabIndex={-1}
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <label
+                    htmlFor="admin-password"
+                    className="block text-[10px] font-semibold uppercase tracking-[0.22em] text-[#7c817a]"
+                  >
+                    Kata sandi
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowHelp((value) => !value)}
+                    className="text-[11px] text-[#8b7a63] transition-colors hover:text-[#20241f]"
+                  >
+                    Lupa kata sandi?
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    id="admin-password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    onKeyUp={detectCapsLock}
+                    onKeyDown={detectCapsLock}
+                    placeholder="Masukkan kata sandi"
+                    className="w-full border-b border-[#cfcabf] bg-transparent py-2.5 pr-10 text-sm text-[#20241f] placeholder:text-[#a8aca4] transition-colors focus:border-[#20241f] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((value) => !value)}
+                    aria-label={
+                      showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'
+                    }
+                    className="absolute inset-y-0 right-0 flex items-center text-[#8f948b] transition-colors hover:text-[#20241f]"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {capsLock && (
+                  <p className="mt-2 text-[11px] text-[#a1876a]">
+                    Caps Lock sedang aktif.
+                  </p>
+                )}
               </div>
-            </div>
 
-            {/* Options: Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between pt-1 pb-2 text-xs">
-              <label className="flex items-center gap-2 cursor-pointer text-gray-600 select-none group">
+              <label className="flex cursor-pointer select-none items-center gap-2.5 text-[12px] text-[#6f746c]">
                 <input
                   type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded-md border-gray-300 text-[#1f2421] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                  checked={remember}
+                  onChange={(event) => setRemember(event.target.checked)}
+                  className="h-3.5 w-3.5 cursor-pointer rounded-sm border-[#c4c0b6] text-[#20241f] focus:ring-0 focus:ring-offset-0"
                 />
-                <span className="text-[11px] text-gray-600 group-hover:text-gray-900 transition-colors">
-                  Ingat Sesi Ini
-                </span>
+                Ingat sesi di perangkat ini
               </label>
+
               <button
-                type="button"
-                onClick={handleForgotPassword}
-                className="text-[11px] text-gray-500 hover:text-[#b08556] transition-colors relative group py-0.5"
+                type="submit"
+                disabled={isLoading}
+                className="group mt-1 flex w-full items-center justify-center gap-2 bg-[#20241f] px-5 py-3.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#3a4039] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#a1876a] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Lupa Kata Sandi?
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-[#c49a6c] transition-all duration-300 group-hover:w-full"></span>
+                {isLoading ? (
+                  <>
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                    Memeriksa...
+                  </>
+                ) : (
+                  <>
+                    Masuk
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </>
+                )}
               </button>
-            </div>
+            </form>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-[#1f2421] text-white text-xs font-semibold py-3.5 tracking-widest uppercase hover:bg-[#c49a6c] active:scale-[0.99] transition-all rounded-full flex items-center justify-center gap-2 focus:outline-none disabled:opacity-75"
-            >
-              {isLoading ? (
-                <span className="animate-pulse">MEMPROSES...</span>
-              ) : (
-                <>
-                  <span>MASUK KE PORTAL ADMIN</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </>
-              )}
-            </button>
-          </form>
+            {showHelp && (
+              <div className="mt-5 border border-[#ddd6c9] bg-white/60 px-4 py-3 text-[12px] leading-relaxed text-[#6f746c]">
+                Untuk pengaturan ulang kata sandi, hubungi tim IT PT GSU di{' '}
+                <a
+                  href="mailto:admin@ptgsu.co.id"
+                  className="text-[#20241f] underline underline-offset-2"
+                >
+                  admin@ptgsu.co.id
+                </a>
+                .
+              </div>
+            )}
 
-          {/* Divider with Text */}
-          <div className="relative my-7">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100"></div>
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-white px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
-                AKSES TEROTENTIKASI
-              </span>
+            <div className="mt-10 flex items-start gap-2 text-[11px] leading-relaxed text-[#8f948b]">
+              <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span>Koneksi aman. Jangan bagikan kredensial Anda kepada siapa pun.</span>
             </div>
           </div>
 
-          {/* Info Text */}
-          <div className="text-center space-y-1">
-            <p className="text-[11px] text-gray-500 leading-relaxed">
-              Sistem Terintegrasi PT Giandra Sadawira Utama.
-            </p>
-            <p className="text-[11px] text-gray-500 leading-relaxed">
-              Akses terbatas untuk staf dan manajemen Shofi Eyelash.
-            </p>
-            <p className="text-[10px] tracking-[0.2em] uppercase text-gray-400 font-medium pt-3">
-              ID ENKRIPSI: TLS-256 • VERSI 2.4.0
-            </p>
+          <div className="mx-auto flex w-full max-w-[380px] items-center justify-between border-t border-[#ddd6c9] pt-5 text-[10px] uppercase tracking-[0.18em] text-[#9a9e96]">
+            <span>© {new Date().getFullYear()} PT GSU</span>
+            <span>Panel Admin</span>
           </div>
-        </div>
-      </motion.div>
+        </main>
+      </div>
     </div>
   );
 }

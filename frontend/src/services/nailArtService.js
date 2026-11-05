@@ -11,6 +11,8 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+import { adminFetch } from './adminAuth';
+
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
 const LS_KEY = 'gsu_nail_art_examples_v1';
 
@@ -125,9 +127,7 @@ export async function fetchAllExamples() {
     const alive = await isBackendAlive();
     if (alive) {
         try {
-            const res = await fetch(`${BASE_URL}/api/admin/nail-art-examples`, {
-                headers: { Accept: 'application/json' },
-            });
+            const res = await adminFetch('/api/admin/nail-art-examples');
             const data = await res.json();
             if (data.success) return extractList(data);
         } catch (_) {}
@@ -147,9 +147,8 @@ export async function createExample(payload, file = null) {
             appendPayload(formData, payload);
             if (file) formData.append('image', file);
 
-            const res = await fetch(`${BASE_URL}/api/admin/nail-art-examples`, {
+            const res = await adminFetch('/api/admin/nail-art-examples', {
                 method: 'POST',
-                headers: { Accept: 'application/json' },
                 body: formData,
             });
             const data = await res.json();
@@ -190,9 +189,8 @@ export async function updateExample(id, payload, file = null) {
             appendPayload(formData, payload);
             if (file) formData.append('image', file);
 
-            const res = await fetch(`${BASE_URL}/api/admin/nail-art-examples/${id}`, {
+            const res = await adminFetch(`/api/admin/nail-art-examples/${id}`, {
                 method: 'POST',
-                headers: { Accept: 'application/json' },
                 body: formData,
             });
             const data = await res.json();
@@ -235,9 +233,9 @@ export async function toggleExampleVisibility(id) {
 
     if (alive) {
         try {
-            const res = await fetch(`${BASE_URL}/api/admin/nail-art-examples/${id}`, {
+            const res = await adminFetch(`/api/admin/nail-art-examples/${id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({}),
             });
             const data = await res.json();
@@ -267,9 +265,8 @@ export async function deleteExample(id) {
 
     if (alive) {
         try {
-            const res = await fetch(`${BASE_URL}/api/admin/nail-art-examples/${id}`, {
+            const res = await adminFetch(`/api/admin/nail-art-examples/${id}`, {
                 method: 'DELETE',
-                headers: { Accept: 'application/json' },
             });
             const data = await res.json();
             if (res.ok && data.success) return true;

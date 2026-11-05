@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check, KeyRound, Scissors, Package, Info } from 'lucide-react';
 import { getContactSettings, saveContactSettings } from '../../hooks/useContactSettings';
+import { changeAdminPassword, getAdminUser } from '../../services/adminAuth';
 
 export default function AdminPengaturanPage() {
   // ── Kontak WA per departemen ──────────────────────────────────────────────
@@ -11,8 +12,10 @@ export default function AdminPengaturanPage() {
 
   // ── Pengaturan lainnya ────────────────────────────────────────────────────
   const [autoPublishReviews, setAutoPublishReviews] = useState(true);
-  const [adminEmail, setAdminEmail] = useState('admin@gsu-eyelash.com');
+  const [adminEmail, setAdminEmail] = useState('');
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   const [notification, setNotification] = useState(null);
 
   const [passwordForm, setPasswordForm] = useState({
@@ -20,6 +23,13 @@ export default function AdminPengaturanPage() {
     newPassword: '',
     confirmPassword: '',
   });
+
+  useEffect(() => {
+    const sessionUser = getAdminUser();
+    if (sessionUser?.email) {
+      setAdminEmail(sessionUser.email);
+    }
+  }, []);
 
   const showToast = (msg, type = 'success') => {
     setNotification({ msg, type });
@@ -33,15 +43,45 @@ export default function AdminPengaturanPage() {
     showToast('Pengaturan salon & website berhasil disimpan!');
   };
 
-  const handleChangePassword = (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
+    setPasswordError('');
+
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert('Konfirmasi kata sandi baru tidak cocok!');
+      setPasswordError('Konfirmasi kata sandi baru tidak cocok.');
       return;
     }
-    setIsPasswordModalOpen(false);
+
+    setIsChangingPassword(true);
+
+    try {
+      await changeAdminPassword({
+        currentPassword: passwordForm.oldPassword,
+        password: passwordForm.newPassword,
+        passwordConfirmation: passwordForm.confirmPassword,
+      });
+
+      setIsPasswordModalOpen(false);
+      setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+      setPasswordError('');
+      showToast('Kata sandi administrator berhasil diperbarui.');
+    } catch (err) {
+      setPasswordError(err.message || 'Kata sandi gagal diperbarui.');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const openPasswordModal = () => {
+    setPasswordError('');
     setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
-    showToast('Kata sandi administrator berhasil diperbarui!');
+    setIsPasswordModalOpen(true);
+  };
+
+  const closePasswordModal = () => {
+    setIsPasswordModalOpen(false);
+    setPasswordError('');
+    setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
   };
 
   // ── Shared input class ────────────────────────────────────────────────────
@@ -233,15 +273,18 @@ export default function AdminPengaturanPage() {
                 </label>
                 <input
                   type="email"
-                  value={adminEmail}
-                  onChange={(e) => setAdminEmail(e.target.value)}
-                  className={inputClass}
+                  value={adminEmail || 'Memuat email...'}
+                  readOnly
+                  className={`${inputClass} cursor-not-allowed text-gray-500`}
                 />
+                <p className="mt-1.5 text-[11px] text-gray-400 font-light">
+                  Email akun administrator tidak dapat diubah dari panel.
+                </p>
               </div>
               <div>
                 <button
                   type="button"
-                  onClick={() => setIsPasswordModalOpen(true)}
+                  onClick={openPasswordModal}
                   className="text-xs font-medium text-gray-800 hover:text-[#b08556] pt-1 inline-flex items-center gap-1.5 focus:outline-none transition-colors"
                 >
                   <KeyRound className="w-3.5 h-3.5 text-gray-500" />
@@ -277,12 +320,19 @@ export default function AdminPengaturanPage() {
               <p className="text-xs text-gray-400 font-light mb-6">
                 Masukkan kata sandi lama dan tentukan kata sandi baru Anda.
               </p>
+
+              {passwordError && (
+                <div className="mb-4 border-l-2 border-red-500 bg-red-50 px-3 py-2 text-[11px] leading-relaxed text-red-700">
+                  {passwordError}
+                </div>
+              )}
+
               <form onSubmit={handleChangePassword} className="space-y-4 text-xs">
                 {[
-                  { key: 'oldPassword', label: 'KATA SANDI LAMA' },
-                  { key: 'newPassword', label: 'KATA SANDI BARU' },
-                  { key: 'confirmPassword', label: 'KONFIRMASI KATA SANDI BARU' },
-                ].map(({ key, label }) => (
+                  { key: 'oldPassword', label: 'KATA SANDI LAMA', autoComplete: 'current-password' },
+                  { key: 'newPassword', label: 'KATA SANDI BARU', autoComplete: 'new-password' },
+                  { key: 'confirmPassword', label: 'KONFIRMASI KATA SANDI BARU', autoComplete: 'new-password' },
+                ].map(({ key, label, autoComplete }) => (
                   <div key={key}>
                     <label className="block text-[10px] font-semibold tracking-widest text-gray-600 uppercase mb-1.5">
                       {label}
@@ -290,6 +340,8 @@ export default function AdminPengaturanPage() {
                     <input
                       type="password"
                       required
+                      minLength={key === 'oldPassword' ? undefined : 8}
+                      autoComplete={autoComplete}
                       value={passwordForm[key]}
                       onChange={(e) =>
                         setPasswordForm({ ...passwordForm, [key]: e.target.value })
@@ -298,19 +350,23 @@ export default function AdminPengaturanPage() {
                     />
                   </div>
                 ))}
+                <p className="text-[11px] text-gray-400 font-light">
+                  Kata sandi baru minimal 8 karakter.
+                </p>
                 <div className="pt-3 flex justify-end gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsPasswordModalOpen(false)}
+                    onClick={closePasswordModal}
                     className="px-4 py-2 border border-gray-200 text-gray-600 hover:text-[#1f2421] hover:border-[#1f2421] rounded-full transition-colors text-xs"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-[#1f2421] text-white hover:bg-[#c49a6c] rounded-full transition-colors font-medium text-xs"
+                    disabled={isChangingPassword}
+                    className="px-6 py-2 bg-[#1f2421] text-white hover:bg-[#c49a6c] rounded-full transition-colors font-medium text-xs disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Simpan Kata Sandi
+                    {isChangingPassword ? 'Menyimpan...' : 'Simpan Kata Sandi'}
                   </button>
                 </div>
               </form>

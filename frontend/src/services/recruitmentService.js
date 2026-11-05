@@ -4,13 +4,15 @@
  * Data layer untuk lamaran kerja (Recruit / Join Our Team).
  *
  * - Halaman publik (/recruit) mengirim lamaran lewat JobApplicationModal.
- * - Dashboard admin (/admin/rekrutmen) membaca semua lamaran, menandai
+ * - Dashboard admin (/admin/recruit) membaca semua lamaran, menandai
  *   "sudah ditinjau" / "belum ditinjau", dan menghapus data.
  * - Endpoint Laravel: POST /api/job-applications
  *                     GET/PATCH/DELETE /api/admin/job-applications
  * - Tetap bisa dipakai saat backend mati lewat fallback localStorage.
  * -----------------------------------------------------------------------------
  */
+
+import { adminFetch } from './adminAuth';
 
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
 const LS_KEY = 'gsu_job_applications_v1';
@@ -92,7 +94,7 @@ async function isBackendAlive() {
     try {
         const ctrl = new AbortController();
         const timer = setTimeout(() => ctrl.abort(), 1200);
-        const res = await fetch(`${BASE_URL}/api/admin/job-applications`, {
+        const res = await fetch(`${BASE_URL}/api/reviews?limit=1`, {
             headers: { Accept: 'application/json' },
             signal: ctrl.signal,
         });
@@ -131,9 +133,7 @@ export async function fetchAllApplications() {
     const alive = await isBackendAlive();
     if (alive) {
         try {
-            const res = await fetch(`${BASE_URL}/api/admin/job-applications`, {
-                headers: { Accept: 'application/json' },
-            });
+            const res = await adminFetch('/api/admin/job-applications');
             const data = await res.json();
             if (data.success) return extractList(data);
         } catch (_) {}
@@ -193,9 +193,9 @@ export async function updateApplication(id, payload) {
     const alive = await isBackendAlive();
     if (alive) {
         try {
-            const res = await fetch(`${BASE_URL}/api/admin/job-applications/${id}`, {
+            const res = await adminFetch(`/api/admin/job-applications/${id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
             const data = await res.json();
@@ -222,9 +222,8 @@ export async function deleteApplication(id) {
     const alive = await isBackendAlive();
     if (alive) {
         try {
-            const res = await fetch(`${BASE_URL}/api/admin/job-applications/${id}`, {
+            const res = await adminFetch(`/api/admin/job-applications/${id}`, {
                 method: 'DELETE',
-                headers: { Accept: 'application/json' },
             });
             const data = await res.json();
             if (res.ok && data.success) return true;

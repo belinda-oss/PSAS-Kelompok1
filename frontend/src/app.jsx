@@ -17,8 +17,20 @@ import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminUlasanPage from './pages/admin/AdminUlasanPage';
 import AdminLayananPage from './pages/admin/AdminLayananPage';
 import AdminNailArtPage from './pages/admin/AdminNailArtPage';
-import AdminRekrutmenPage from './pages/admin/AdminRekrutmenPage';
+import AdminRecruitPage from './pages/admin/AdminRecruitPage';
 import AdminPengaturanPage from './pages/admin/AdminPengaturanPage';
+import { isAdminAuthenticated } from './services/adminAuth';
+
+// Guard for admin routes: requires a valid admin session token.
+function ProtectedAdminRoute({ children }) {
+    const location = useLocation();
+
+    if (!isAdminAuthenticated()) {
+        return <Navigate to="/admin/login" replace state={{ from: location.pathname }} />;
+    }
+
+    return children;
+}
 
 // Scroll to top helper on route change & refresh AOS animations
 function ScrollToTop() {
@@ -64,15 +76,13 @@ export default function App() {
                 {/* 1. Admin Standalone Login Route */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />
 
-                {/* 2. Admin Root Redirect */}
-                <Route path="/admin" element={<Navigate to="/admin/ulasan" replace />} />
-
-                {/* 3. Admin Pages Wrapped in AdminLayout */}
-                <Route path="/admin" element={<AdminLayout />}>
+                {/* 2. Admin Pages Wrapped in AdminLayout */}
+                <Route path="/admin" element={<ProtectedAdminRoute><AdminLayout /></ProtectedAdminRoute>}>
+                    <Route index element={<Navigate to="ulasan" replace />} />
                     <Route path="ulasan" element={<AdminUlasanPage />} />
                     <Route path="layanan" element={<AdminLayananPage />} />
                     <Route path="nail-art" element={<AdminNailArtPage />} />
-                    <Route path="rekrutmen" element={<AdminRekrutmenPage />} />
+                    <Route path="recruit" element={<AdminRecruitPage />} />
                     <Route path="pengaturan" element={<AdminPengaturanPage />} />
                 </Route>
 
