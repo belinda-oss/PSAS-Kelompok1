@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ArrowRight, Phone, Mail } from 'lucide-react';
+import { Menu, X, ArrowRight, Phone, Mail, ChevronDown } from 'lucide-react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 
 const LOGO_SRC = '/1-logo.png';
@@ -153,14 +153,50 @@ export default function Navbar({ onOpenContact }) {
                             ABOUT US
                             <span className={`absolute bottom-0 left-0 w-0 h-[1.5px] transition-all duration-300 group-hover:w-full ${underlineClass}`} />
                         </button>
-                        <button onClick={() => scrollToSection('units')} className={navLinkClass}>
-                            UNITS
-                            <span className={`absolute bottom-0 left-0 h-[1.5px] transition-all duration-300 ${
-                                location.pathname === '/distribution' || location.pathname === '/shofi-eyelash'
-                                    ? 'w-full'
-                                    : 'w-0 group-hover:w-full'
-                            } ${underlineClass}`} />
-                        </button>
+                        <div className="relative group/units">
+                            <button onClick={() => scrollToSection('units')} className={navLinkClass}>
+                                <span className="inline-flex items-center gap-1">
+                                    UNITS
+                                    <ChevronDown
+                                        size={14}
+                                        className="transition-transform duration-300 group-hover/units:rotate-180"
+                                    />
+                                </span>
+                                <span className={`absolute bottom-0 left-0 h-[1.5px] transition-all duration-300 ${
+                                    location.pathname === '/distribution' || location.pathname === '/shofi-eyelash'
+                                        ? 'w-full'
+                                        : 'w-0 group-hover/units:w-full'
+                                } ${underlineClass}`} />
+                            </button>
+
+                            {/* Dropdown submenu */}
+                            <div className="absolute left-1/2 top-full -translate-x-1/2 pt-4 z-50 opacity-0 invisible translate-y-1 pointer-events-none transition-all duration-200 group-hover/units:opacity-100 group-hover/units:visible group-hover/units:translate-y-0 group-hover/units:pointer-events-auto group-focus-within/units:opacity-100 group-focus-within/units:visible group-focus-within/units:translate-y-0 group-focus-within/units:pointer-events-auto">
+                                <div className="min-w-[220px] rounded-2xl bg-[#F9F9F9] border border-black/5 shadow-[0_10px_35px_rgba(0,0,0,0.10)] p-2">
+                                    <Link
+                                        to="/shofi-eyelash"
+                                        className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-[0.12em] uppercase transition-colors ${
+                                            location.pathname === '/shofi-eyelash'
+                                                ? 'bg-black/5 text-black'
+                                                : 'text-gray-700 hover:text-black hover:bg-black/5'
+                                        }`}
+                                    >
+                                        <span>Shofi Eyelash</span>
+                                        <ArrowRight size={14} className="opacity-50" />
+                                    </Link>
+                                    <Link
+                                        to="/distribution"
+                                        className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-[0.12em] uppercase transition-colors ${
+                                            location.pathname === '/distribution'
+                                                ? 'bg-black/5 text-black'
+                                                : 'text-gray-700 hover:text-black hover:bg-black/5'
+                                        }`}
+                                    >
+                                        <span>Cosmetic Distribution</span>
+                                        <ArrowRight size={14} className="opacity-50" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
                     </nav>
 
                     {/* Centre Logo - absolutely centered */}

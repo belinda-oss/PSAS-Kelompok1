@@ -20,13 +20,18 @@ export default function Hero() {
 
     return (
         <section className="hero-fullscreen relative w-full h-screen min-h-screen flex flex-col items-center justify-center overflow-hidden bg-charcoal" id="hero">
-            {/* Dark elegant background image */}
+            {/* Dark elegant cinematic background video (slow motion) */}
             <div className="hero-media absolute inset-0 w-full h-full z-0">
-                <img 
-                    src="/assets/images/hero-beauty.jpg" 
-                    alt="PT GSU Luxury Beauty Aesthetic" 
-                    className="w-full h-full object-cover object-center filter brightness-[0.7]"
-                    loading="eager"
+                <video
+                    src="/assets/media/hero.mp4"
+                    poster="/assets/images/hero-beauty.jpg"
+                    className="w-full h-full object-cover object-center opacity-80"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="auto"
+                    aria-hidden="true"
                 />
                 {/* Dark gradient overlay */}
                 <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-black/60 via-black/40 to-black/75"></div>

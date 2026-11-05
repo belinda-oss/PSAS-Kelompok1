@@ -193,7 +193,7 @@ export default function ShofiEyelashPage() {
                         >
                             <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden shadow-xl group">
                                 <img 
-                                    src="/assets/images/shofi-about.jpg" 
+                                    src="/assets/images/Slash_Image.png" 
                                     alt="Shofi Eyelash Beauty Treatment" 
                                     className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                     loading="lazy"

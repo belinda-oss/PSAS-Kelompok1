@@ -9,7 +9,6 @@ import {
     Check, 
     ShieldCheck, 
     X, 
-    Palette, 
     SlidersHorizontal,
     MessageCircle,
     Lock,
@@ -540,158 +539,148 @@ export default function NailArtDecoratorSection() {
     };
 
     return (
-        <section className="py-16 md:py-24 bg-[#141414] text-white" id="ai-nail-decorator">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
+        <section className="py-16 md:py-24 bg-[#F7F4EF] text-charcoal" id="ai-nail-decorator">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
                 {/* Section Header */}
                 <motion.div
-                    className="text-center mb-12 sm:mb-16"
+                    className="max-w-2xl mb-12 md:mb-16"
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold tracking-widest uppercase mb-3">
-                        <Sparkles size={14} className="text-amber-400" />
-                        <span>AI VIRTUAL NAIL ART DECORATOR & TRY-ON</span>
-                    </div>
-                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-white font-normal mb-4 tracking-tight">
-                        Deteksi Kuku Presisi & AI Nail Decorator
+                    <span className="inline-flex items-center gap-3 text-[10px] font-semibold tracking-[0.28em] uppercase text-neutral-500 mb-4">
+                        <span className="w-8 h-px bg-neutral-400" />
+                        Virtual Try-On
+                    </span>
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-[2.75rem] leading-tight font-normal mb-4">
+                        Coba Nail Art Langsung dari Foto Anda
                     </h2>
-                    <p className="text-neutral-300 text-xs sm:text-sm md:text-base max-w-3xl mx-auto leading-relaxed font-light">
-                        AI NAILS ART yang di buat untuk mempermudah pelanggan dengan hasil yang menarik.
+                    <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
+                        Unggah foto tangan, lihat rekomendasi motif yang paling sesuai, lalu simulasikan hasilnya sebelum datang ke studio.
                     </p>
                 </motion.div>
 
-                {/* 3-Step Flow Indicator Bar */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl mx-auto mb-10">
-                    <div className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all ${
-                        uploadedImage || selectedPreset 
-                            ? 'bg-amber-500/10 border-amber-500/40 text-amber-300 shadow-sm' 
-                            : 'bg-neutral-900/60 border-neutral-800 text-neutral-400'
-                    }`}>
-                        <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-300 font-bold text-xs flex items-center justify-center shrink-0 border border-amber-500/40">
-                            1
-                        </div>
-                        <div className="text-left">
-                            <p className="text-xs font-semibold text-white">1. Foto &amp; Analisis Tone</p>
-                            <p className="text-[10px] text-neutral-400 font-light">Upload foto &amp; analisis Gemini AI</p>
-                        </div>
-                    </div>
-
-                    <div className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all ${
-                        analysisResult 
-                            ? 'bg-amber-500/10 border-amber-500/40 text-amber-300 shadow-sm' 
-                            : 'bg-neutral-900/60 border-neutral-800 text-neutral-400'
-                    }`}>
-                        <div className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center shrink-0 border ${
-                            analysisResult
-                                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                                : 'bg-neutral-800 text-neutral-500 border-neutral-700'
+                {/* 3-Step Flow Indicator */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-neutral-200 border border-neutral-200 rounded-2xl overflow-hidden mb-8">
+                    <div className={`px-4 py-4 flex items-start gap-3 transition-colors ${analysisResult || uploadedImage || selectedPreset ? 'bg-white' : 'bg-[#F7F4EF]'}`}>
+                        <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold ${
+                            analysisResult || uploadedImage || selectedPreset
+                                ? 'border-charcoal bg-charcoal text-white'
+                                : 'border-neutral-300 text-neutral-500'
                         }`}>
-                            {analysisResult ? '2' : <Lock size={13} />}
+                            1
+                        </span>
+                        <div>
+                            <p className="text-xs font-semibold text-charcoal">Foto &amp; analisis</p>
+                            <p className="text-[11px] text-neutral-500 mt-0.5">Unggah atau ambil foto tangan</p>
                         </div>
-                        <div className="text-left">
-                            <p className="text-xs font-semibold text-white flex items-center gap-1.5">
-                                <span>2. Pilih Motif Seni Kuku</span>
-                                {!analysisResult && (
-                                    <span className="text-[9px] bg-neutral-800 text-amber-400/90 px-1.5 py-0.5 rounded-full border border-amber-500/20 font-medium">
-                                        Terkunci
-                                    </span>
-                                )}
-                            </p>
-                            <p className="text-[10px] text-neutral-400 font-light">
-                                {analysisResult ? 'Katalog motif & kustomisasi kilau' : 'Tersedia setelah Sesi 1'}
+                    </div>
+
+                    <div className={`px-4 py-4 flex items-start gap-3 transition-colors ${analysisResult ? 'bg-white' : 'bg-[#F7F4EF]'}`}>
+                        <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold ${
+                            analysisResult
+                                ? 'border-charcoal bg-charcoal text-white'
+                                : 'border-neutral-300 text-neutral-500'
+                        }`}>
+                            {analysisResult ? '2' : <Lock size={11} />}
+                        </span>
+                        <div>
+                            <p className="text-xs font-semibold text-charcoal">Pilih motif</p>
+                            <p className="text-[11px] text-neutral-500 mt-0.5">
+                                {analysisResult ? 'Kurasi motif sesuai tone' : 'Terbuka setelah analisis'}
                             </p>
                         </div>
                     </div>
 
-                    <div className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all ${
-                        decorationResult 
-                            ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 shadow-sm' 
-                            : 'bg-neutral-900/60 border-neutral-800 text-neutral-400'
-                    }`}>
-                        <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center justify-center shrink-0 border border-emerald-500/40">
-                            3
-                        </div>
-                        <div className="text-left">
-                            <p className="text-xs font-semibold text-white">3. Preview Hasil &amp; Booking</p>
-                            <p className="text-[10px] text-neutral-400 font-light">Before-After View &amp; Reservasi WA</p>
+                    <div className={`px-4 py-4 flex items-start gap-3 transition-colors ${decorationResult ? 'bg-white' : 'bg-[#F7F4EF]'}`}>
+                        <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold ${
+                            decorationResult
+                                ? 'border-charcoal bg-charcoal text-white'
+                                : 'border-neutral-300 text-neutral-500'
+                        }`}>
+                            {decorationResult ? <Check size={12} /> : '3'}
+                        </span>
+                        <div>
+                            <p className="text-xs font-semibold text-charcoal">Preview hasil</p>
+                            <p className="text-[11px] text-neutral-500 mt-0.5">Bandingkan sebelum &amp; sesudah</p>
                         </div>
                     </div>
                 </div>
 
-                {/* TOP ROW: 2 Balanced Equal-Height Columns (Langkah 1 di Kiri, Langkah 2 di Kanan) */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mb-8">
-                    
-                    {/* LANGKAH 1 (KIRI): Sumber Foto Tangan & Analisis Tone (Gabungan Poin 1 & 2) */}
-                    <div className="bg-[#1f1f1f] border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-5">
-                        <div className="space-y-5">
-                            {/* Header Langkah 1 */}
-                            <div className="flex items-center justify-between pb-3 border-b border-neutral-800/80">
-                                <span className="text-xs font-bold tracking-[0.2em] uppercase text-white flex items-center gap-2">
-                                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                                    1. Sumber Foto &amp; Analisis Tone
-                                </span>
-                                <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
-                                    <ShieldCheck size={14} />
-                                    <span>Privasi Terjaga</span>
+                {/* TOP ROW: Input & Catalog */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch mb-6 lg:mb-8">
+
+                    {/* STEP 1: Photo Source & Analysis */}
+                    <div className="bg-white border border-neutral-200 p-6 sm:p-8 rounded-3xl flex flex-col justify-between space-y-6">
+                        <div className="space-y-6">
+                            <div className="flex items-start justify-between gap-4 pb-4 border-b border-neutral-100">
+                                <div>
+                                    <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-neutral-400">
+                                        Langkah 01
+                                    </span>
+                                    <h3 className="font-serif text-xl text-charcoal mt-1">Foto Tangan</h3>
                                 </div>
+                                <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-500 shrink-0">
+                                    <ShieldCheck size={14} />
+                                    Privasi terjaga
+                                </span>
                             </div>
 
-                            {/* Mode Toggle Tabs */}
-                            <div className="grid grid-cols-2 gap-2 bg-neutral-900/90 p-1.5 rounded-2xl border border-neutral-800">
+                            {/* Mode Toggle */}
+                            <div className="grid grid-cols-2 gap-1 bg-neutral-100 p-1 rounded-full">
                                 <button
                                     type="button"
                                     onClick={() => { setInputMode('upload'); stopCamera(); }}
-                                    className={`py-2 px-3 rounded-xl text-xs font-semibold tracking-wide transition flex items-center justify-center gap-2 cursor-pointer ${
-                                        inputMode === 'upload' 
-                                            ? 'bg-neutral-800 text-white shadow-md border border-neutral-700' 
-                                            : 'text-neutral-400 hover:text-white'
+                                    className={`py-2 px-3 rounded-full text-[11px] font-semibold tracking-wide transition flex items-center justify-center gap-2 cursor-pointer ${
+                                        inputMode === 'upload'
+                                            ? 'bg-white text-charcoal shadow-sm'
+                                            : 'text-neutral-500 hover:text-charcoal'
                                     }`}
                                 >
-                                    <Upload size={14} />
-                                    <span>Mode 1: Upload File</span>
+                                    <Upload size={13} />
+                                    <span>Unggah Foto</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => { setInputMode('camera'); startCamera(); }}
-                                    className={`py-2 px-3 rounded-xl text-xs font-semibold tracking-wide transition flex items-center justify-center gap-2 cursor-pointer ${
-                                        inputMode === 'camera' 
-                                            ? 'bg-neutral-800 text-white shadow-md border border-neutral-700' 
-                                            : 'text-neutral-400 hover:text-white'
+                                    className={`py-2 px-3 rounded-full text-[11px] font-semibold tracking-wide transition flex items-center justify-center gap-2 cursor-pointer ${
+                                        inputMode === 'camera'
+                                            ? 'bg-white text-charcoal shadow-sm'
+                                            : 'text-neutral-500 hover:text-charcoal'
                                     }`}
                                 >
-                                    <Camera size={14} />
-                                    <span>Mode 2: Kamera / Webcam</span>
+                                    <Camera size={13} />
+                                    <span>Kamera</span>
                                 </button>
                             </div>
 
-                            {/* MODE 1: UPLOAD (Drag & Drop + File Picker) */}
+                            {/* UPLOAD MODE */}
                             {inputMode === 'upload' && (
-                                <div className="space-y-4">
+                                <div className="space-y-5">
                                     <div
                                         onDragOver={handleDragOver}
                                         onDragLeave={handleDragLeave}
                                         onDrop={handleDrop}
                                         onClick={() => fileInputRef.current?.click()}
-                                        className={`relative aspect-[16/10] w-full rounded-2xl overflow-hidden border-2 border-dashed transition cursor-pointer flex flex-col items-center justify-center p-4 text-center group ${
-                                            isDragOver 
-                                                ? 'border-amber-400 bg-amber-500/10' 
-                                                : uploadedImage 
-                                                    ? 'border-neutral-700 bg-black' 
-                                                    : 'border-neutral-700 hover:border-neutral-500 bg-neutral-900/60'
+                                        className={`relative aspect-[16/10] w-full rounded-2xl overflow-hidden border transition cursor-pointer flex flex-col items-center justify-center p-4 text-center group ${
+                                            isDragOver
+                                                ? 'border-charcoal bg-[#FAF8F4]'
+                                                : uploadedImage
+                                                    ? 'border-neutral-200 bg-neutral-100'
+                                                    : 'border-dashed border-neutral-300 hover:border-neutral-500 bg-[#FAF8F4]'
                                         }`}
                                     >
                                         {uploadedImage ? (
                                             <>
-                                                <img 
-                                                    src={uploadedImage} 
-                                                    alt="Tangan Terunggah" 
+                                                <img
+                                                    src={uploadedImage}
+                                                    alt="Tangan terunggah"
                                                     className="w-full h-full object-cover rounded-xl"
                                                 />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-                                                    <span className="text-xs bg-black/80 px-3 py-1.5 rounded-full text-white font-medium border border-neutral-700">
+                                                <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                                    <span className="text-[11px] bg-white/95 px-3.5 py-1.5 rounded-full text-charcoal font-medium">
                                                         Klik untuk mengganti foto
                                                     </span>
                                                 </div>
@@ -704,37 +693,40 @@ export default function NailArtDecoratorSection() {
                                                         setAnalysisResult(null);
                                                         setAnalysisError(null);
                                                     }}
-                                                    className="absolute top-2 right-2 p-1.5 bg-black/70 hover:bg-red-950 text-white rounded-full border border-neutral-700 transition cursor-pointer"
+                                                    className="absolute top-2.5 right-2.5 p-1.5 bg-white/90 hover:bg-white text-charcoal rounded-full transition cursor-pointer shadow-sm"
+                                                    aria-label="Hapus foto"
                                                 >
                                                     <X size={14} />
                                                 </button>
                                             </>
                                         ) : (
-                                            <div className="space-y-2 pointer-events-none">
-                                                <div className="w-12 h-12 rounded-full bg-neutral-800/80 border border-neutral-700 mx-auto flex items-center justify-center text-amber-400">
-                                                    <Upload size={20} />
+                                            <div className="space-y-3 pointer-events-none">
+                                                <div className="w-11 h-11 rounded-full bg-white border border-neutral-200 mx-auto flex items-center justify-center text-neutral-500">
+                                                    <Upload size={18} />
                                                 </div>
-                                                <p className="text-xs font-semibold text-neutral-200">
-                                                    Tarik &amp; Lepas Foto Tangan / Kuku Di Sini
-                                                </p>
-                                                <p className="text-[11px] text-neutral-400">
-                                                    Atau klik untuk memilih file (JPG, PNG, WEBP)
-                                                </p>
+                                                <div className="space-y-1">
+                                                    <p className="text-xs font-semibold text-charcoal">
+                                                        Tarik &amp; lepas foto tangan di sini
+                                                    </p>
+                                                    <p className="text-[11px] text-neutral-500">
+                                                        atau klik untuk memilih file JPG, PNG, WEBP
+                                                    </p>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
-                                    <input 
-                                        type="file" 
-                                        ref={fileInputRef} 
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
                                         onChange={(e) => handleFileChange(e.target.files?.[0])}
-                                        accept="image/*" 
-                                        className="hidden" 
+                                        accept="image/*"
+                                        className="hidden"
                                     />
 
-                                    {/* Presets selector for instant try */}
-                                    <div className="space-y-2 pt-1">
-                                        <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 block">
-                                            Atau Coba Sampel Tone Tangan:
+                                    {/* Sample Presets */}
+                                    <div className="space-y-2.5">
+                                        <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-neutral-400 block">
+                                            Atau gunakan sampel tone
                                         </span>
                                         <div className="grid grid-cols-3 gap-2">
                                             {SAMPLE_PRESETS.map((p) => {
@@ -750,13 +742,24 @@ export default function NailArtDecoratorSection() {
                                                             setAnalysisResult(null);
                                                             setAnalysisError(null);
                                                         }}
-                                                        className={`py-2 px-2 text-[11px] rounded-xl border text-center transition cursor-pointer ${
+                                                        className={`overflow-hidden rounded-xl border text-left transition cursor-pointer ${
                                                             isActive
-                                                                ? 'bg-neutral-700 border-white text-white font-semibold'
-                                                                : 'bg-neutral-800/60 border-neutral-700 text-neutral-300 hover:border-neutral-500'
+                                                                ? 'border-charcoal ring-1 ring-charcoal'
+                                                                : 'border-neutral-200 hover:border-neutral-400'
                                                         }`}
                                                     >
-                                                        {p.name}
+                                                        <div className="aspect-[4/3] overflow-hidden bg-neutral-100">
+                                                            <img
+                                                                src={p.image}
+                                                                alt={p.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                        <span className={`block px-2 py-1.5 text-[10px] font-medium ${
+                                                            isActive ? 'text-charcoal' : 'text-neutral-600'
+                                                        }`}>
+                                                            {p.name}
+                                                        </span>
                                                     </button>
                                                 );
                                             })}
@@ -765,32 +768,31 @@ export default function NailArtDecoratorSection() {
                                 </div>
                             )}
 
-                            {/* MODE 2: CAMERA / WEBCAM */}
+                            {/* CAMERA MODE */}
                             {inputMode === 'camera' && (
                                 <div className="space-y-4">
-                                    <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-black border border-neutral-700">
+                                    <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-200">
                                         {cameraError ? (
                                             <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center space-y-2">
-                                                <Camera size={28} className="text-red-400" />
-                                                <p className="text-xs text-red-300 font-medium">{cameraError}</p>
+                                                <Camera size={26} className="text-neutral-400" />
+                                                <p className="text-xs text-neutral-200 font-medium">{cameraError}</p>
                                                 <button
                                                     type="button"
                                                     onClick={startCamera}
-                                                    className="px-3 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg text-xs"
+                                                    className="px-3 py-1.5 bg-white text-charcoal rounded-full text-[11px] font-medium"
                                                 >
-                                                    Coba Lagi
+                                                    Coba lagi
                                                 </button>
                                             </div>
                                         ) : (
                                             <>
-                                                <video 
-                                                    ref={videoRef} 
-                                                    autoPlay 
-                                                    playsInline 
-                                                    muted 
+                                                <video
+                                                    ref={videoRef}
+                                                    autoPlay
+                                                    playsInline
+                                                    muted
                                                     className="w-full h-full object-cover"
                                                 />
-                                                {/* Hand & Nail Outline Guide Overlay (tidak menghalangi interaksi kamera) */}
                                                 <div
                                                     aria-hidden="true"
                                                     style={{
@@ -809,12 +811,11 @@ export default function NailArtDecoratorSection() {
                                                             height: '70%',
                                                             width: 'auto',
                                                             maxWidth: '90%',
-                                                            opacity: 0.75,
+                                                            opacity: 0.7,
                                                             overflow: 'visible',
-                                                            filter: 'drop-shadow(0 0 1.5px rgba(0,0,0,0.9)) drop-shadow(0 0 6px rgba(245,158,11,0.45))',
+                                                            filter: 'drop-shadow(0 0 1.5px rgba(0,0,0,0.8))',
                                                         }}
                                                     >
-                                                        {/* Siluet punggung tangan terbuka (5 jari) - garis tegas */}
                                                         <path
                                                             d="M 52 255
                                                                C 44 230, 37 205, 37 175
@@ -837,20 +838,17 @@ export default function NailArtDecoratorSection() {
                                                                A 12 12 0 0 1 206 136
                                                                L 182 190
                                                                C 176 215, 170 235, 168 255"
-                                                            fill="rgba(251,191,36,0.04)"
-                                                            stroke="#fbbf24"
-                                                            strokeWidth="2"
+                                                            fill="rgba(255,255,255,0.03)"
+                                                            stroke="#ffffff"
+                                                            strokeWidth="1.5"
                                                             strokeLinecap="round"
                                                             strokeLinejoin="round"
                                                             vectorEffect="non-scaling-stroke"
                                                         />
-
-                                                        {/* Penanda area kuku - garis putus-putus + highlight lembut */}
                                                         <g
-                                                            className="animate-pulse"
-                                                            fill="rgba(251,191,36,0.18)"
-                                                            stroke="#fde68a"
-                                                            strokeWidth="2"
+                                                            fill="rgba(255,255,255,0.12)"
+                                                            stroke="#ffffff"
+                                                            strokeWidth="1.5"
                                                             strokeDasharray="3 3"
                                                             strokeLinecap="round"
                                                             vectorEffect="non-scaling-stroke"
@@ -863,32 +861,29 @@ export default function NailArtDecoratorSection() {
                                                         </g>
                                                     </svg>
                                                 </div>
-
-                                                {/* Badge teks panduan - diposisikan di atas frame agar tidak menutupi siluet */}
                                                 <div className="absolute top-3 inset-x-0 flex justify-center px-3 pointer-events-none">
-                                                    <span className="text-[9px] sm:text-[10px] tracking-wider uppercase text-amber-200 bg-black/65 backdrop-blur-sm px-2.5 py-1 rounded-full border border-amber-500/30 text-center leading-tight">
-                                                        Posisikan Tangan &amp; Kuku Sesuai Garis Panduan
+                                                    <span className="text-[9px] sm:text-[10px] tracking-[0.14em] uppercase text-white/90 bg-black/45 backdrop-blur-sm px-2.5 py-1 rounded-full text-center leading-tight">
+                                                        Posisikan tangan sesuai garis panduan
                                                     </span>
                                                 </div>
                                             </>
                                         )}
                                     </div>
 
-                                    {/* Camera Action Buttons */}
                                     <div className="flex gap-2">
                                         <button
                                             type="button"
                                             onClick={captureSnapshot}
                                             disabled={!isCameraActive}
-                                            className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                                            className="flex-1 py-3 bg-charcoal hover:bg-black text-white font-semibold text-[11px] uppercase tracking-[0.14em] rounded-full transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                                         >
-                                            <Camera size={16} />
-                                            <span>AMBIL FOTO (SNAPSHOT)</span>
+                                            <Camera size={15} />
+                                            <span>Ambil Foto</span>
                                         </button>
                                         <button
                                             type="button"
                                             onClick={stopCamera}
-                                            className="px-4 py-3 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs rounded-xl transition cursor-pointer"
+                                            className="px-5 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 text-[11px] font-medium rounded-full transition cursor-pointer"
                                         >
                                             Tutup
                                         </button>
@@ -896,101 +891,99 @@ export default function NailArtDecoratorSection() {
                                 </div>
                             )}
 
-                            {/* TOMBOL AKSI: ANALISIS HAND & NAIL TONE (Gabungan dari Poin 2) */}
-                            <div className="pt-2">
+                            {/* Analyze Action */}
+                            <div className="pt-1">
                                 <button
                                     type="button"
                                     onClick={triggerAnalysis}
                                     disabled={isAnalyzing}
-                                    className="w-full py-3.5 bg-white text-charcoal hover:bg-neutral-200 text-xs font-bold tracking-[0.2em] uppercase transition shadow-md rounded-full flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                                    className="w-full py-3.5 bg-charcoal text-white hover:bg-black text-[11px] font-semibold tracking-[0.18em] uppercase transition rounded-full flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
                                 >
                                     {isAnalyzing ? (
                                         <>
-                                            <RefreshCw size={15} className="animate-spin text-charcoal" />
-                                            <span>MENGANALISIS HAND &amp; NAIL TONE...</span>
+                                            <RefreshCw size={14} className="animate-spin" />
+                                            <span>Menganalisis foto...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Sparkles size={15} className="text-amber-600" />
-                                            <span>ANALISIS HAND &amp; NAIL TONE</span>
+                                            <Sparkles size={14} />
+                                            <span>Analisis Foto Tangan</span>
                                         </>
                                     )}
                                 </button>
                             </div>
 
-                            {/* Analysis Loading State */}
+                            {/* Loading */}
                             {isAnalyzing && (
-                                <div className="py-6 text-center space-y-2 bg-neutral-900/60 rounded-2xl border border-neutral-800">
-                                    <RefreshCw size={24} className="animate-spin text-amber-500 mx-auto" />
-                                    <p className="text-xs text-neutral-200 font-medium">Memproses Analisis Kuku dengan Gemini AI...</p>
-                                    <p className="text-[11px] text-neutral-400 font-light">Mendeteksi bentuk nail bed, tone kulit, dan warna kuku</p>
+                                <div className="py-5 text-center space-y-1.5 bg-[#FAF8F4] rounded-2xl border border-neutral-200">
+                                    <RefreshCw size={20} className="animate-spin text-neutral-500 mx-auto" />
+                                    <p className="text-xs text-charcoal font-medium">Menganalisis bentuk kuku dan tone kulit</p>
+                                    <p className="text-[11px] text-neutral-500">Proses ini hanya butuh beberapa detik</p>
                                 </div>
                             )}
 
-                            {/* Analysis Error State */}
+                            {/* Error */}
                             {analysisError && (
-                                <div className="py-4 px-4 bg-red-950/40 border border-red-800/60 rounded-2xl text-center space-y-1">
-                                    <p className="text-xs font-semibold text-red-300">Gagal Memproses Analisis</p>
-                                    <p className="text-[11px] text-red-400 font-light">{analysisError}</p>
+                                <div className="py-4 px-4 bg-red-50 border border-red-200 rounded-2xl text-center space-y-1">
+                                    <p className="text-xs font-semibold text-red-700">Analisis gagal</p>
+                                    <p className="text-[11px] text-red-600">{analysisError}</p>
                                 </div>
                             )}
 
-                            {/* Analysis Result (Tampil di dalam Langkah 1) */}
+                            {/* Analysis Result */}
                             {analysisResult && !isAnalyzing && (
-                                <div className="space-y-3 pt-2 border-t border-neutral-800/80">
+                                <div className="space-y-4 pt-4 border-t border-neutral-100">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[11px] font-semibold tracking-wider uppercase text-amber-400 flex items-center gap-1.5">
-                                            <Check size={13} className="text-emerald-400" />
-                                            Hasil Analisis Kuku Selesai
+                                        <span className="text-[11px] font-semibold tracking-[0.16em] uppercase text-charcoal flex items-center gap-1.5">
+                                            <Check size={13} className="text-emerald-600" />
+                                            Hasil analisis
                                         </span>
                                         {analysisResult.aiMatchPercentage !== null && (
-                                            <span className="text-[11px] font-bold text-emerald-400 font-mono bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                                                Match: {analysisResult.aiMatchPercentage}%
+                                            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                                {analysisResult.aiMatchPercentage}% cocok
                                             </span>
                                         )}
                                     </div>
 
-                                    {/* Metrics Grid */}
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div className="bg-[#181818] border border-neutral-800 p-2.5 rounded-xl">
-                                            <span className="text-[9px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                Bentuk Nail Bed
+                                    <div className="grid grid-cols-2 gap-2.5">
+                                        <div className="bg-[#FAF8F4] border border-neutral-200 p-3 rounded-xl">
+                                            <span className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider block mb-0.5">
+                                                Bentuk nail bed
                                             </span>
-                                            <p className="text-xs font-semibold text-white capitalize">
+                                            <p className="text-xs font-semibold text-charcoal capitalize">
                                                 {analysisResult.nailBedShape}
                                             </p>
                                         </div>
-                                        <div className="bg-[#181818] border border-neutral-800 p-2.5 rounded-xl">
-                                            <span className="text-[9px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                Tone Kulit
+                                        <div className="bg-[#FAF8F4] border border-neutral-200 p-3 rounded-xl">
+                                            <span className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider block mb-0.5">
+                                                Tone kulit
                                             </span>
-                                            <p className="text-xs font-semibold text-white capitalize">
+                                            <p className="text-xs font-semibold text-charcoal capitalize">
                                                 {analysisResult.skinTone}
                                             </p>
                                         </div>
-                                        <div className="bg-[#181818] border border-neutral-800 p-2.5 rounded-xl">
-                                            <span className="text-[9px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                Warna Kuku
+                                        <div className="bg-[#FAF8F4] border border-neutral-200 p-3 rounded-xl">
+                                            <span className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider block mb-0.5">
+                                                Warna kuku
                                             </span>
-                                            <p className="text-xs font-semibold text-white capitalize">
+                                            <p className="text-xs font-semibold text-charcoal capitalize">
                                                 {analysisResult.nailColor}
                                             </p>
                                         </div>
-                                        <div className="bg-[#181818] border border-neutral-800 p-2.5 rounded-xl">
-                                            <span className="text-[9px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                Tipe Rekomendasi
+                                        <div className="bg-[#FAF8F4] border border-neutral-200 p-3 rounded-xl">
+                                            <span className="text-[9px] font-semibold text-neutral-500 uppercase tracking-wider block mb-0.5">
+                                                Rekomendasi
                                             </span>
-                                            <p className="text-xs font-semibold text-amber-300 capitalize truncate">
+                                            <p className="text-xs font-semibold text-charcoal capitalize truncate">
                                                 {analysisResult.recommendationType}
                                             </p>
                                         </div>
                                     </div>
 
-                                    {/* Design Recommendation */}
                                     {analysisResult.designRecommendation && (
-                                        <div className="bg-neutral-800/60 border border-neutral-700/80 p-3 rounded-2xl">
-                                            <span className="text-[11px] font-semibold text-amber-300 block mb-0.5">Rekomendasi AI:</span>
-                                            <p className="text-xs text-neutral-300 leading-relaxed font-light">
+                                        <div className="bg-[#FAF8F4] border border-neutral-200 p-3.5 rounded-xl">
+                                            <span className="text-[10px] font-semibold text-charcoal block mb-1">Catatan nailist</span>
+                                            <p className="text-[11px] text-neutral-600 leading-relaxed">
                                                 {analysisResult.designRecommendation}
                                             </p>
                                         </div>
@@ -1000,68 +993,58 @@ export default function NailArtDecoratorSection() {
                         </div>
                     </div>
 
-                    {/* LANGKAH 2 (KANAN LANGKAH PERTAMA): Katalog Pilih Motif Seni Kuku */}
-                    <div className="bg-[#1f1f1f] border border-neutral-800 p-6 sm:p-7 rounded-3xl shadow-xl flex flex-col justify-between space-y-5 relative">
-                        {/* Header Langkah 2 */}
-                        <div className="flex items-center justify-between pb-3 border-b border-neutral-800/80">
-                            <span className="text-xs font-bold tracking-[0.2em] uppercase text-white flex items-center gap-2">
-                                <span className={`w-2.5 h-2.5 rounded-full ${analysisResult ? 'bg-amber-400' : 'bg-neutral-600'}`}></span>
-                                2. Katalog Pilih Motif Seni Kuku
-                            </span>
+                    {/* STEP 2: Catalog */}
+                    <div className="bg-white border border-neutral-200 p-6 sm:p-8 rounded-3xl flex flex-col justify-between space-y-6">
+                        <div className="flex items-start justify-between gap-4 pb-4 border-b border-neutral-100">
+                            <div>
+                                <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-neutral-400">
+                                    Langkah 02
+                                </span>
+                                <h3 className="font-serif text-xl text-charcoal mt-1">Pilih Motif</h3>
+                            </div>
                             {analysisResult ? (
-                                <span className="text-[11px] text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30 font-medium flex items-center gap-1">
-                                    <Sparkles size={12} />
-                                    <span>{filteredDesigns.length} Motif Aktif</span>
+                                <span className="text-[11px] text-neutral-500 shrink-0 mt-1">
+                                    {filteredDesigns.length} motif
                                 </span>
                             ) : (
-                                <span className="text-[11px] text-neutral-400 bg-neutral-900 px-2.5 py-1 rounded-full border border-neutral-800 flex items-center gap-1.5 font-medium">
-                                    <Lock size={11} className="text-amber-500" />
-                                    <span>Terkunci</span>
+                                <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-400 shrink-0 mt-1">
+                                    <Lock size={12} />
+                                    Terkunci
                                 </span>
                             )}
                         </div>
 
                         {!analysisResult ? (
-                            /* LOCKED STATE: Tampilan Terkunci Sangat Eye-Catching (Hanya tersedia setelah Sesi 1) */
-                            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-5 bg-gradient-to-b from-neutral-900/80 via-black/50 to-neutral-950/90 rounded-2xl border border-dashed border-neutral-800 my-auto shadow-inner">
-                                <div className="relative">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-500/5 border border-amber-500/40 flex items-center justify-center text-amber-400 mx-auto shadow-lg shadow-amber-500/10 animate-pulse">
-                                        <Lock size={26} />
-                                    </div>
-                                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-amber-300 text-[10px] font-bold">
-                                        2
-                                    </div>
+                            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4 bg-[#FAF8F4] rounded-2xl border border-dashed border-neutral-200 my-auto">
+                                <div className="w-12 h-12 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-neutral-400">
+                                    <Lock size={20} />
                                 </div>
-
-                                <div className="space-y-2 max-w-sm">
-                                    <h4 className="text-base font-semibold text-white">
-                                        Katalog Motif Terbuka Setelah Sesi 1
+                                <div className="space-y-2 max-w-xs">
+                                    <h4 className="text-sm font-semibold text-charcoal">
+                                        Katalog terbuka setelah analisis
                                     </h4>
-                                    <p className="text-xs text-neutral-400 leading-relaxed font-light">
-                                        Unggah foto tangan atau pilih sampel tone di <strong className="text-neutral-200">Langkah 1 (sebelah kiri)</strong>, lalu klik tombol <strong className="text-amber-300">"ANALISIS HAND &amp; NAIL TONE"</strong> untuk membuka kurasi motif AI.
+                                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                                        Selesaikan langkah 01 terlebih dahulu agar kami dapat menyesuaikan motif dengan tone kulit dan bentuk kuku Anda.
                                     </p>
                                 </div>
-
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold shadow-xs">
-                                    <ArrowLeft size={14} className="animate-pulse" />
-                                    <span>Selesaikan Analisis pada Langkah 1</span>
-                                </div>
+                                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-200 text-[11px] text-neutral-600">
+                                    <ArrowLeft size={12} />
+                                    Selesaikan analisis
+                                </span>
                             </div>
                         ) : (
-                            /* UNLOCKED STATE: Katalog Terbuka dengan Filter Wrap, Custom Scrollbar & Sliders Eye-Catching */
-                            <div className="space-y-4 flex-1 flex flex-col justify-between">
+                            <div className="space-y-5 flex-1 flex flex-col justify-between">
                                 <div className="space-y-4">
-                                    {/* Category Filter Pills (Wrap rapi, bebas scrollbar putih tebal) */}
                                     <div>
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-[10px] font-semibold tracking-wider uppercase text-neutral-400">
-                                                Pilih Kategori:
+                                            <span className="text-[10px] font-semibold tracking-[0.16em] uppercase text-neutral-400">
+                                                Kategori
                                             </span>
-                                            <span className="text-[10px] text-amber-400/90 font-medium">
+                                            <span className="text-[10px] text-neutral-500 font-medium">
                                                 {selectedCategory}
                                             </span>
                                         </div>
-                                        <div className="flex flex-wrap gap-1.5 pb-0.5">
+                                        <div className="flex flex-wrap gap-1.5">
                                             {categories.map((cat) => (
                                                 <button
                                                     key={cat}
@@ -1069,8 +1052,8 @@ export default function NailArtDecoratorSection() {
                                                     onClick={() => setSelectedCategory(cat)}
                                                     className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition cursor-pointer ${
                                                         selectedCategory === cat
-                                                            ? 'bg-amber-400 text-charcoal font-bold shadow-md shadow-amber-400/20'
-                                                            : 'bg-neutral-900 text-neutral-300 border border-neutral-800 hover:border-neutral-600 hover:text-white'
+                                                            ? 'bg-charcoal text-white'
+                                                            : 'bg-white text-neutral-600 border border-neutral-200 hover:border-neutral-400'
                                                     }`}
                                                 >
                                                     {cat}
@@ -1079,113 +1062,111 @@ export default function NailArtDecoratorSection() {
                                         </div>
                                     </div>
 
-                                    {/* Design Cards Grid (Sleek dark custom-scrollbar) */}
                                     <div className="grid grid-cols-2 gap-2.5 max-h-[290px] overflow-y-auto pr-1.5 custom-scrollbar">
                                         {filteredDesigns.map((design) => {
                                             const isSelected = selectedDesignId === design.id;
                                             return (
                                                 <motion.div
                                                     key={design.id}
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.98 }}
+                                                    whileHover={{ y: -2 }}
+                                                    whileTap={{ scale: 0.99 }}
                                                     onClick={() => setSelectedDesignId(design.id)}
-                                                    className={`p-3 rounded-2xl border transition cursor-pointer flex flex-col justify-between ${
+                                                    className={`p-3 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
                                                         isSelected
-                                                            ? 'bg-amber-950/40 border-amber-400 shadow-lg shadow-amber-500/15'
-                                                            : 'bg-neutral-900/80 border-neutral-800 hover:border-neutral-700'
+                                                            ? 'bg-[#FAF8F4] border-charcoal'
+                                                            : 'bg-white border-neutral-200 hover:border-neutral-400'
                                                     }`}
                                                 >
                                                     <div>
-                                                        <div className="flex items-center justify-between gap-1.5 mb-1.5">
-                                                            <span 
-                                                                className="w-4 h-4 rounded-full border border-white/20 shrink-0 shadow-xs" 
+                                                        <div className="flex items-center justify-between gap-1.5 mb-2">
+                                                            <span
+                                                                className="w-4 h-4 rounded-full border border-black/10 shrink-0"
                                                                 style={{ backgroundColor: design.swatch_color }}
                                                             />
-                                                            <span className="text-[9px] font-semibold uppercase tracking-wider text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded-full border border-amber-500/30">
+                                                            <span className="text-[9px] font-medium uppercase tracking-wider text-neutral-500">
                                                                 {design.tag}
                                                             </span>
                                                         </div>
-                                                        <h4 className="text-xs font-semibold text-white line-clamp-1 mb-1">
+                                                        <h4 className="text-xs font-semibold text-charcoal line-clamp-1 mb-1">
                                                             {design.name}
                                                         </h4>
-                                                        <p className="text-[10px] text-neutral-400 line-clamp-2 leading-relaxed font-light">
+                                                        <p className="text-[10px] text-neutral-500 line-clamp-2 leading-relaxed">
                                                             {design.description}
                                                         </p>
                                                     </div>
-                                                    <div className="mt-2 pt-2 border-t border-neutral-800/80 flex items-center justify-between text-[10px]">
-                                                        <span className="text-neutral-400 truncate">{design.finish}</span>
-                                                        {isSelected && <Check size={12} className="text-amber-400 shrink-0" />}
+                                                    <div className="mt-2.5 pt-2 border-t border-neutral-100 flex items-center justify-between text-[10px]">
+                                                        <span className="text-neutral-500 truncate">{design.finish}</span>
+                                                        {isSelected && <Check size={12} className="text-charcoal shrink-0" />}
                                                     </div>
                                                 </motion.div>
                                             );
                                         })}
                                     </div>
 
-                                    {/* Fine-Tuning Sliders (Eye-Catching Glow & Dark Cards) */}
-                                    <div className="pt-2 border-t border-neutral-800/80 space-y-2.5">
-                                        <div className="bg-neutral-900/70 p-3 rounded-2xl border border-neutral-800">
-                                            <div className="flex justify-between text-[11px] mb-1.5">
-                                                <span className="text-neutral-300 font-medium flex items-center gap-1.5">
-                                                    <SlidersHorizontal size={12} className="text-amber-400" />
-                                                    Efek Kilau Kuku (Glossy Shine)
+                                    {/* Fine Tuning */}
+                                    <div className="pt-3 border-t border-neutral-100 space-y-2.5">
+                                        <div className="bg-[#FAF8F4] p-3 rounded-xl border border-neutral-200">
+                                            <div className="flex justify-between text-[11px] mb-2">
+                                                <span className="text-charcoal font-medium flex items-center gap-1.5">
+                                                    <SlidersHorizontal size={12} className="text-neutral-500" />
+                                                    Efek kilau
                                                 </span>
-                                                <span className="text-amber-300 font-mono font-bold bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30 text-[10px]">
+                                                <span className="text-neutral-600 font-mono text-[10px]">
                                                     {Math.round(glossIntensity * 100)}%
                                                 </span>
                                             </div>
-                                            <input 
-                                                type="range" 
-                                                min="0.4" 
-                                                max="1.0" 
+                                            <input
+                                                type="range"
+                                                min="0.4"
+                                                max="1.0"
                                                 step="0.05"
                                                 value={glossIntensity}
                                                 onChange={(e) => setGlossIntensity(parseFloat(e.target.value))}
-                                                className="w-full accent-amber-400 bg-neutral-800 h-2 rounded-full cursor-pointer"
+                                                className="w-full accent-charcoal bg-neutral-200 h-1.5 rounded-full cursor-pointer"
                                             />
                                         </div>
 
-                                        <div className="bg-neutral-900/70 p-3 rounded-2xl border border-neutral-800">
-                                            <div className="flex justify-between text-[11px] mb-1.5">
-                                                <span className="text-neutral-300 font-medium flex items-center gap-1.5">
-                                                    <SlidersHorizontal size={12} className="text-amber-400" />
-                                                    Kesesuaian Panjang Kuku
+                                        <div className="bg-[#FAF8F4] p-3 rounded-xl border border-neutral-200">
+                                            <div className="flex justify-between text-[11px] mb-2">
+                                                <span className="text-charcoal font-medium flex items-center gap-1.5">
+                                                    <SlidersHorizontal size={12} className="text-neutral-500" />
+                                                    Panjang kuku
                                                 </span>
-                                                <span className="text-amber-300 font-mono font-bold bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30 text-[10px]">
+                                                <span className="text-neutral-600 font-mono text-[10px]">
                                                     {Math.round(nailLengthFactor * 100)}%
                                                 </span>
                                             </div>
-                                            <input 
-                                                type="range" 
-                                                min="0.6" 
-                                                max="1.6" 
+                                            <input
+                                                type="range"
+                                                min="0.6"
+                                                max="1.6"
                                                 step="0.05"
                                                 value={nailLengthFactor}
                                                 onChange={(e) => setNailLengthFactor(parseFloat(e.target.value))}
-                                                className="w-full accent-amber-400 bg-neutral-800 h-2 rounded-full cursor-pointer"
+                                                className="w-full accent-charcoal bg-neutral-200 h-1.5 rounded-full cursor-pointer"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* GENERATE ACTION BUTTON */}
-                                <div className="pt-2">
+                                <div className="pt-1">
                                     <motion.button
                                         type="button"
                                         onClick={handleDecorateNails}
                                         disabled={isDecorating || !analysisResult}
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.96 }}
-                                        className="w-full py-4 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-charcoal font-bold text-xs tracking-[0.2em] uppercase rounded-full shadow-lg hover:shadow-amber-500/25 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                                        whileHover={{ scale: 1.01 }}
+                                        whileTap={{ scale: 0.99 }}
+                                        className="w-full py-3.5 bg-charcoal text-white hover:bg-black font-semibold text-[11px] tracking-[0.18em] uppercase rounded-full transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
                                     >
                                         {isDecorating ? (
                                             <>
-                                                <RefreshCw size={16} className="animate-spin text-charcoal" />
-                                                <span>{processingStep || 'MEMPROSES NAIL ART AI...'}</span>
+                                                <RefreshCw size={15} className="animate-spin" />
+                                                <span>{processingStep || 'Memproses...'}</span>
                                             </>
                                         ) : (
                                             <>
-                                                <Sparkles size={16} className="text-charcoal" />
-                                                <span>PASANG MOTIF KUKU DENGAN AI</span>
+                                                <Sparkles size={15} />
+                                                <span>Terapkan Motif</span>
                                             </>
                                         )}
                                     </motion.button>
@@ -1193,35 +1174,31 @@ export default function NailArtDecoratorSection() {
                             </div>
                         )}
                     </div>
-
                 </div>
 
-                {/* BOTTOM ROW: LANGKAH 3 (PREVIEW HASIL SENI KUKU) — Rapi & Seimbang Antara Kanan & Kirinya */}
-                <div className="bg-[#1f1f1f] border border-neutral-800 p-6 sm:p-8 rounded-3xl shadow-xl space-y-6">
-                    {/* Header Langkah 3 */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-neutral-800/80">
+                {/* BOTTOM ROW: Preview */}
+                <div className="bg-white border border-neutral-200 p-6 sm:p-8 rounded-3xl space-y-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-neutral-100">
                         <div>
-                            <span className="text-[10px] font-semibold tracking-[0.25em] uppercase text-amber-400 block mb-1">
-                                3. PREVIEW HASIL SENI KUKU
+                            <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-neutral-400 block mb-1">
+                                Langkah 03
                             </span>
-                            <h3 className="font-serif text-2xl sm:text-3xl text-white font-medium flex items-center gap-3">
-                                <span>Before vs After View</span>
+                            <h3 className="font-serif text-2xl sm:text-3xl text-charcoal font-normal flex items-center gap-3">
+                                <span>Preview Hasil</span>
                                 {decorationResult && (
-                                    <span className="text-xs font-sans font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 px-3 py-1 rounded-full">
-                                        ✨ {decorationResult.detectedNailsCount} Kuku Presisi
+                                    <span className="text-[11px] font-sans font-medium bg-neutral-100 text-neutral-600 px-2.5 py-1 rounded-full">
+                                        {decorationResult.detectedNailsCount} kuku terdeteksi
                                     </span>
                                 )}
                             </h3>
                         </div>
 
-                        {/* View Mode Switcher */}
-                        <div className="flex items-center gap-1.5 bg-neutral-900 p-1.5 rounded-2xl border border-neutral-800">
+                        <div className="flex items-center gap-1 bg-neutral-100 p-1 rounded-full">
                             <button
                                 type="button"
                                 onClick={() => setViewMode('slider')}
-                                title="Interactive Split Slider"
-                                className={`px-3 py-1.5 text-xs rounded-xl transition cursor-pointer ${
-                                    viewMode === 'slider' ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm' : 'text-neutral-400 hover:text-white'
+                                className={`px-3 py-1.5 text-[11px] rounded-full transition cursor-pointer ${
+                                    viewMode === 'slider' ? 'bg-white text-charcoal shadow-sm font-medium' : 'text-neutral-500 hover:text-charcoal'
                                 }`}
                             >
                                 Slider
@@ -1229,9 +1206,8 @@ export default function NailArtDecoratorSection() {
                             <button
                                 type="button"
                                 onClick={() => setViewMode('side-by-side')}
-                                title="Side by Side"
-                                className={`px-3 py-1.5 text-xs rounded-xl transition cursor-pointer ${
-                                    viewMode === 'side-by-side' ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm' : 'text-neutral-400 hover:text-white'
+                                className={`px-3 py-1.5 text-[11px] rounded-full transition cursor-pointer ${
+                                    viewMode === 'side-by-side' ? 'bg-white text-charcoal shadow-sm font-medium' : 'text-neutral-500 hover:text-charcoal'
                                 }`}
                             >
                                 2 Kolom
@@ -1239,19 +1215,17 @@ export default function NailArtDecoratorSection() {
                             <button
                                 type="button"
                                 onClick={() => setViewMode('after')}
-                                title="Hanya After"
-                                className={`px-3 py-1.5 text-xs rounded-xl transition cursor-pointer ${
-                                    viewMode === 'after' ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm' : 'text-neutral-400 hover:text-white'
+                                className={`px-3 py-1.5 text-[11px] rounded-full transition cursor-pointer ${
+                                    viewMode === 'after' ? 'bg-white text-charcoal shadow-sm font-medium' : 'text-neutral-500 hover:text-charcoal'
                                 }`}
                             >
-                                Hasil AI
+                                Hasil
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setViewMode('before')}
-                                title="Hanya Foto Asli"
-                                className={`px-3 py-1.5 text-xs rounded-xl transition cursor-pointer ${
-                                    viewMode === 'before' ? 'bg-neutral-800 text-white font-medium border border-neutral-700 shadow-sm' : 'text-neutral-400 hover:text-white'
+                                className={`px-3 py-1.5 text-[11px] rounded-full transition cursor-pointer ${
+                                    viewMode === 'before' ? 'bg-white text-charcoal shadow-sm font-medium' : 'text-neutral-500 hover:text-charcoal'
                                 }`}
                             >
                                 Asli
@@ -1259,156 +1233,143 @@ export default function NailArtDecoratorSection() {
                         </div>
                     </div>
 
-                    {/* Internal Grid Langkah 3: Rapi Seimbang Antara Kiri (Viewer) & Kanan (Diagnosis & CTA Booking) */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        
-                        {/* SISI KIRI (lg:col-span-7): Comparison Canvas */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+                        {/* Viewer */}
                         <div className="lg:col-span-7">
-                            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-black border border-neutral-800 select-none shadow-inner">
+                            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200 select-none">
                                 {isDecorating ? (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-4 bg-neutral-950/90 z-20">
-                                        <RefreshCw size={36} className="animate-spin text-amber-400 mx-auto" />
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-3 bg-white/90 z-20">
+                                        <RefreshCw size={28} className="animate-spin text-neutral-500 mx-auto" />
                                         <div className="space-y-1">
-                                            <p className="text-sm font-semibold text-white">
-                                                AI Decorator Engine Sedang Memproses...
+                                            <p className="text-sm font-semibold text-charcoal">
+                                                Menyiapkan preview...
                                             </p>
-                                            <p className="text-xs text-neutral-400 font-light">
-                                                {processingStep || 'Menghitung landmark jari & memasang motif gel polish'}
+                                            <p className="text-[11px] text-neutral-500">
+                                                {processingStep || 'Memetakan titik kuku dan menerapkan motif'}
                                             </p>
                                         </div>
                                     </div>
                                 ) : errorMessage ? (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-3 bg-red-950/20 z-20">
-                                        <p className="text-sm font-semibold text-red-300">Gagal Memproses AI</p>
-                                        <p className="text-xs text-red-400 max-w-md">{errorMessage}</p>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center space-y-2.5 bg-white z-20">
+                                        <p className="text-sm font-semibold text-red-700">Preview gagal dibuat</p>
+                                        <p className="text-[11px] text-red-600 max-w-md">{errorMessage}</p>
                                         <button
                                             type="button"
                                             onClick={handleDecorateNails}
-                                            className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-xs rounded-xl cursor-pointer"
+                                            className="px-4 py-2 bg-charcoal hover:bg-black text-white text-[11px] font-medium rounded-full cursor-pointer"
                                         >
-                                            Coba Kembali
+                                            Coba lagi
                                         </button>
                                     </div>
                                 ) : !decorationResult ? (
-                                    <div className="relative w-full h-full group">
-                                        <img 
-                                            src={currentInputImage} 
-                                            alt="Input Hand" 
+                                    <div className="relative w-full h-full">
+                                        <img
+                                            src={currentInputImage}
+                                            alt="Foto tangan"
                                             className="w-full h-full object-cover"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex flex-col items-center justify-end p-6 text-center space-y-2">
-                                            <span className="text-xs font-semibold text-neutral-200 bg-black/70 px-3.5 py-1.5 rounded-full border border-neutral-700/80">
-                                                Foto Tangan Siap Di-Generate
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col items-center justify-end p-6 text-center gap-2">
+                                            <span className="text-[11px] font-medium text-white bg-black/35 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                                                Preview akan muncul di sini
                                             </span>
-                                            <p className="text-[11px] text-neutral-300 max-w-sm">
-                                                Pilih motif kuku di Langkah 2 (kanan atas) dan tekan tombol "PASANG MOTIF KUKU DENGAN AI" untuk melihat hasil visual presisi di sini.
+                                            <p className="text-[11px] text-white/75 max-w-xs leading-relaxed">
+                                                Pilih motif pada langkah 02, lalu tekan "Terapkan Motif".
                                             </p>
                                         </div>
                                     </div>
                                 ) : (
-                                    /* ACTIVE RESULT RENDERING */
                                     <>
-                                        {/* MODE 1: INTERACTIVE SPLIT SLIDER */}
                                         {viewMode === 'slider' && (
-                                            <div 
+                                            <div
                                                 ref={sliderContainerRef}
                                                 onMouseDown={onMouseDownSlider}
                                                 onTouchStart={onMouseDownSlider}
                                                 className="relative w-full h-full cursor-ew-resize overflow-hidden"
                                             >
-                                                {/* Background: AFTER Image (Result) */}
-                                                <img 
-                                                    src={decorationResult.afterImage} 
-                                                    alt="Hasil Nail Art AI" 
+                                                <img
+                                                    src={decorationResult.afterImage}
+                                                    alt="Hasil nail art"
                                                     className="absolute inset-0 w-full h-full object-cover"
                                                 />
-                                                
-                                                {/* Foreground: BEFORE Image (clipped) */}
-                                                <div 
+                                                <div
                                                     className="absolute inset-0"
                                                     style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
                                                 >
-                                                    <img 
-                                                        src={decorationResult.beforeImage} 
-                                                        alt="Foto Asli" 
+                                                    <img
+                                                        src={decorationResult.beforeImage}
+                                                        alt="Foto asli"
                                                         className="absolute inset-0 w-full h-full object-cover"
                                                     />
                                                 </div>
-
-                                                {/* Draggable Divider Line & Handle */}
-                                                <div 
-                                                    className="absolute top-0 bottom-0 w-1 bg-white shadow-2xl z-10 flex items-center justify-center -translate-x-1/2"
+                                                <div
+                                                    className="absolute top-0 bottom-0 w-px bg-white shadow-lg z-10 flex items-center justify-center"
                                                     style={{ left: `${sliderPos}%` }}
                                                 >
-                                                    <div className="w-8 h-8 rounded-full bg-white text-black shadow-xl flex items-center justify-center text-[10px] font-bold border-2 border-neutral-900 cursor-ew-resize">
+                                                    <div className="w-8 h-8 rounded-full bg-white text-charcoal shadow-lg flex items-center justify-center text-[11px] font-semibold border border-neutral-200 cursor-ew-resize">
                                                         ↔
                                                     </div>
                                                 </div>
-
-                                                {/* Badges on left & right */}
                                                 <div className="absolute top-3 left-3 z-10 pointer-events-none">
-                                                    <span className="text-[10px] font-bold tracking-wider uppercase text-neutral-200 bg-black/75 px-2.5 py-1 rounded-full border border-neutral-700">
-                                                        BEFORE (ASLI)
+                                                    <span className="text-[10px] font-medium tracking-wider uppercase text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                                                        Sebelum
                                                     </span>
                                                 </div>
                                                 <div className="absolute top-3 right-3 z-10 pointer-events-none">
-                                                    <span className="text-[10px] font-bold tracking-wider uppercase text-amber-300 bg-black/75 px-2.5 py-1 rounded-full border border-amber-500/50">
-                                                        AFTER (AI NAIL ART)
+                                                    <span className="text-[10px] font-medium tracking-wider uppercase text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                                                        Sesudah
                                                     </span>
                                                 </div>
                                             </div>
                                         )}
 
-                                        {/* MODE 2: SIDE BY SIDE (2 Kolom) */}
                                         {viewMode === 'side-by-side' && (
                                             <div className="grid grid-cols-2 w-full h-full">
-                                                <div className="relative h-full border-r border-neutral-800">
-                                                    <img 
-                                                        src={decorationResult.beforeImage} 
-                                                        alt="Foto Asli" 
+                                                <div className="relative h-full border-r border-neutral-200">
+                                                    <img
+                                                        src={decorationResult.beforeImage}
+                                                        alt="Foto asli"
                                                         className="w-full h-full object-cover"
                                                     />
-                                                    <span className="absolute bottom-2 left-2 text-[10px] font-bold uppercase text-neutral-300 bg-black/80 px-2 py-0.5 rounded-full">
-                                                        Foto Asli
+                                                    <span className="absolute bottom-2 left-2 text-[10px] font-medium uppercase text-white bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                                                        Sebelum
                                                     </span>
                                                 </div>
                                                 <div className="relative h-full">
-                                                    <img 
-                                                        src={decorationResult.afterImage} 
-                                                        alt="Hasil Nail Art AI" 
+                                                    <img
+                                                        src={decorationResult.afterImage}
+                                                        alt="Hasil nail art"
                                                         className="w-full h-full object-cover"
                                                     />
-                                                    <span className="absolute bottom-2 right-2 text-[10px] font-bold uppercase text-amber-300 bg-black/80 px-2 py-0.5 rounded-full border border-amber-500/40">
-                                                        Hasil AI
+                                                    <span className="absolute bottom-2 right-2 text-[10px] font-medium uppercase text-white bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                                                        Sesudah
                                                     </span>
                                                 </div>
                                             </div>
                                         )}
 
-                                        {/* MODE 3: ONLY AFTER */}
                                         {viewMode === 'after' && (
                                             <div className="relative w-full h-full">
-                                                <img 
-                                                    src={decorationResult.afterImage} 
-                                                    alt="Hasil Nail Art AI" 
+                                                <img
+                                                    src={decorationResult.afterImage}
+                                                    alt="Hasil nail art"
                                                     className="w-full h-full object-cover"
                                                 />
-                                                <span className="absolute bottom-3 left-3 text-[11px] font-bold uppercase text-amber-300 bg-black/80 px-3 py-1 rounded-full border border-amber-500/40">
-                                                    {decorationResult.design?.name} ({decorationResult.design?.finish})
+                                                <span className="absolute bottom-3 left-3 text-[11px] font-medium text-white bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                                                    {decorationResult.design?.name}
                                                 </span>
                                             </div>
                                         )}
 
-                                        {/* MODE 4: ONLY BEFORE */}
                                         {viewMode === 'before' && (
                                             <div className="relative w-full h-full">
-                                                <img 
-                                                    src={decorationResult.beforeImage} 
-                                                    alt="Foto Asli" 
+                                                <img
+                                                    src={decorationResult.beforeImage}
+                                                    alt="Foto asli"
                                                     className="w-full h-full object-cover"
                                                 />
-                                                <span className="absolute bottom-3 left-3 text-[11px] font-bold uppercase text-neutral-300 bg-black/80 px-3 py-1 rounded-full border border-neutral-700">
-                                                    Foto Asli Tangan
+                                                <span className="absolute bottom-3 left-3 text-[11px] font-medium text-white bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                                                    Foto asli
                                                 </span>
                                             </div>
                                         )}
@@ -1417,81 +1378,72 @@ export default function NailArtDecoratorSection() {
                             </div>
                         </div>
 
-                        {/* SISI KANAN (lg:col-span-5): Diagnosis Metrics, Kurasi AI, & Booking Actions */}
+                        {/* Details & Actions */}
                         <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
                             {decorationResult ? (
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between pb-2 border-b border-neutral-800">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-white">
-                                            Diagnosis &amp; Metrik Pemasangan
+                                    <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
+                                        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-charcoal">
+                                            Detail
                                         </span>
-                                        <span className="text-[10px] text-neutral-400 font-mono">
-                                            Motif: {activeDesign.name}
+                                        <span className="text-[10px] text-neutral-500">
+                                            {activeDesign.name}
                                         </span>
                                     </div>
 
-                                    {/* 4 Metrics Grid */}
-                                    <div className="grid grid-cols-2 gap-2.5">
-                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-2xl">
-                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                BENTUK KUKU
-                                            </span>
-                                            <p className="text-xs font-semibold text-white">
+                                    <div className="divide-y divide-neutral-100">
+                                        <div className="flex items-center justify-between py-2.5">
+                                            <span className="text-[11px] text-neutral-500">Bentuk kuku</span>
+                                            <span className="text-[11px] font-semibold text-charcoal text-right">
                                                 {decorationResult.analysis.nail_bed_shape}
-                                            </p>
-                                        </div>
-                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-2xl">
-                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                UNDERTONE KULIT
                                             </span>
-                                            <p className="text-xs font-semibold text-white">
+                                        </div>
+                                        <div className="flex items-center justify-between py-2.5">
+                                            <span className="text-[11px] text-neutral-500">Undertone kulit</span>
+                                            <span className="text-[11px] font-semibold text-charcoal text-right">
                                                 {decorationResult.analysis.skin_tone}
-                                            </p>
-                                        </div>
-                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-2xl">
-                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                FINISHING GEL
                                             </span>
-                                            <p className="text-xs font-semibold text-amber-300 truncate">
+                                        </div>
+                                        <div className="flex items-center justify-between py-2.5">
+                                            <span className="text-[11px] text-neutral-500">Finishing</span>
+                                            <span className="text-[11px] font-semibold text-charcoal text-right">
                                                 {decorationResult.analysis.finish_type}
-                                            </p>
-                                        </div>
-                                        <div className="bg-[#181818] border border-neutral-800 p-3 rounded-2xl">
-                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase block mb-0.5">
-                                                AI MATCH SCORE
                                             </span>
-                                            <p className="text-xs font-semibold text-emerald-400 font-mono">
+                                        </div>
+                                        <div className="flex items-center justify-between py-2.5">
+                                            <span className="text-[11px] text-neutral-500">Kecocokan</span>
+                                            <span className="text-[11px] font-semibold text-emerald-700">
                                                 {decorationResult.analysis.ai_match_percentage}%
-                                            </p>
+                                            </span>
                                         </div>
                                     </div>
 
-                                    {/* Rekomendasi Note Box */}
-                                    <div className="bg-neutral-800/60 border border-neutral-700/80 p-3.5 rounded-2xl text-xs text-neutral-300 leading-relaxed font-light">
-                                        <span className="font-semibold text-amber-300">💡 Kurasi Nailist AI: </span>
-                                        {decorationResult.analysis.recommendation_note}
+                                    <div className="bg-[#FAF8F4] border border-neutral-200 p-3.5 rounded-xl">
+                                        <span className="text-[10px] font-semibold text-charcoal block mb-1">Catatan nailist</span>
+                                        <p className="text-[11px] text-neutral-600 leading-relaxed">
+                                            {decorationResult.analysis.recommendation_note}
+                                        </p>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="p-5 bg-neutral-900/60 border border-neutral-800 rounded-2xl space-y-2">
-                                    <div className="flex items-center gap-2 text-amber-300 text-xs font-semibold">
-                                        <Sparkles size={14} />
-                                        <span>Menunggu Pemasangan Motif</span>
+                                <div className="p-5 bg-[#FAF8F4] border border-neutral-200 rounded-2xl space-y-2">
+                                    <div className="flex items-center gap-2 text-charcoal text-xs font-semibold">
+                                        <Sparkles size={13} />
+                                        <span>Belum ada hasil</span>
                                     </div>
-                                    <p className="text-xs text-neutral-400 leading-relaxed font-light">
-                                        Pilih motif seni kuku favorit Anda pada Langkah 2 di atas, lalu tekan <strong>"PASANG MOTIF KUKU DENGAN AI"</strong>. Hasil simulasi, kurasi kecocokan, dan metrik diagnosis akan muncul di sini.
+                                    <p className="text-[11px] text-neutral-500 leading-relaxed">
+                                        Pilih motif favorit Anda, lalu tekan "Terapkan Motif". Detail dan rekomendasi akan tampil di sini.
                                     </p>
                                 </div>
                             )}
 
-                            {/* CARD FOOTER & ACTIONS (Download + WhatsApp Booking) */}
-                            <div className="pt-4 border-t border-neutral-800/80 space-y-3">
+                            <div className="pt-4 border-t border-neutral-100 space-y-3">
                                 <div>
-                                    <p className="text-xs text-white font-medium">
-                                        Puas dengan simulasi kuku AI Anda?
+                                    <p className="text-xs text-charcoal font-semibold">
+                                        Sudah menemukan gaya favorit?
                                     </p>
-                                    <p className="text-[11px] text-neutral-400 font-light">
-                                        Simpan gambarnya atau langsung reservasi jadwal pengerjaan di salon kami.
+                                    <p className="text-[11px] text-neutral-500 mt-0.5">
+                                        Simpan hasilnya atau langsung reservasi jadwal di studio.
                                     </p>
                                 </div>
 
@@ -1500,28 +1452,28 @@ export default function NailArtDecoratorSection() {
                                         <motion.button
                                             type="button"
                                             onClick={handleDownload}
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.96 }}
-                                            className="w-full sm:w-auto px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase border border-neutral-700 flex items-center justify-center gap-2 cursor-pointer transition"
+                                            whileHover={{ scale: 1.01 }}
+                                            whileTap={{ scale: 0.99 }}
+                                            className="w-full sm:w-auto px-4 py-2.5 bg-white hover:bg-neutral-50 text-charcoal rounded-full text-[11px] font-semibold tracking-wider uppercase border border-neutral-300 flex items-center justify-center gap-2 cursor-pointer transition"
                                         >
                                             <Download size={14} />
-                                            <span>Download Gambar</span>
+                                            <span>Simpan</span>
                                         </motion.button>
                                     )}
                                     <motion.a
                                         href={`https://wa.me/6281234567890?text=${encodeURIComponent(
                                             decorationResult
-                                                ? `Halo Shofi Eyelash, saya sudah mencoba AI Nail Art Decorator dengan motif *${activeDesign.name}* (${activeDesign.category}) dan ingin reservasi jadwal treatment kuku di salon. Apakah ada slot kosong?`
+                                                ? `Halo Shofi Eyelash, saya sudah mencoba virtual nail try-on dengan motif *${activeDesign.name}* (${activeDesign.category}) dan ingin reservasi jadwal treatment kuku di salon. Apakah ada slot kosong?`
                                                 : `Halo Shofi Eyelash, saya tertarik dengan layanan Nail Art dan ingin reservasi jadwal treatment di salon.`
                                         )}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.96 }}
-                                        className="w-full flex-1 px-5 py-3 bg-white text-charcoal hover:bg-neutral-200 text-xs font-bold tracking-wider uppercase rounded-full transition flex items-center justify-center gap-2 text-center cursor-pointer shadow-md"
+                                        whileHover={{ scale: 1.01 }}
+                                        whileTap={{ scale: 0.99 }}
+                                        className="w-full flex-1 px-5 py-3 bg-charcoal hover:bg-black text-white text-[11px] font-semibold tracking-wider uppercase rounded-full transition flex items-center justify-center gap-2 text-center cursor-pointer"
                                     >
-                                        <MessageCircle size={15} className="text-emerald-600" />
-                                        <span>BOOKING VIA WA</span>
+                                        <MessageCircle size={14} />
+                                        <span>Booking via WhatsApp</span>
                                     </motion.a>
                                 </div>
                             </div>

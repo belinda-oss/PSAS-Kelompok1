@@ -32,6 +32,7 @@ export default function AdminLayout() {
     { name: 'Ulasan', path: '/admin/ulasan' },
     { name: 'Layanan', path: '/admin/layanan' },
     { name: 'Nail Art', path: '/admin/nail-art' },
+    { name: 'Rekrutmen', path: '/admin/rekrutmen' },
     { name: 'Pengaturan', path: '/admin/pengaturan' },
   ];
 

@@ -1,33 +1,62 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, Send, Briefcase, Mail, Phone, User, FileText } from 'lucide-react';
+import { X, CheckCircle2, Send, Briefcase, Mail, Phone, User, FileText, AlertCircle } from 'lucide-react';
+import { submitJobApplication } from '../../services/recruitmentService';
+
+const POSITION_OPTIONS = [
+    'Senior Eyelash Artist',
+    'Nail Art Specialist',
+    'Logistics & Warehouse Staff',
+    'Supply Chain Coordinator',
+    'Digital Marketing & Social Media',
+    'Internship Program (Magang KMP)',
+];
+
+const buildInitialForm = (role) => ({
+    fullName: '',
+    email: '',
+    phone: '',
+    position: role,
+    experience: '1-3 Tahun',
+    portfolio: '',
+    coverLetter: ''
+});
 
 export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Superteam PT GSU' }) {
-    const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
-        phone: '',
-        position: initialRole,
-        experience: '1-3 Tahun',
-        portfolio: '',
-        coverLetter: ''
-    });
+    const [formData, setFormData] = useState(() => buildInitialForm(initialRole));
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e) => {
+    const resetAndClose = () => {
+        setFormData(buildInitialForm(initialRole));
+        setErrorMessage(null);
+        onClose();
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setTimeout(() => {
-            setIsSubmitting(false);
+        setErrorMessage(null);
+
+        try {
+            await submitJobApplication(formData);
             setIsSuccess(true);
             setTimeout(() => {
                 setIsSuccess(false);
-                onClose();
+                resetAndClose();
             }, 2500);
-        }, 1200);
+        } catch (err) {
+            setErrorMessage(err.message || 'Gagal mengirim lamaran. Silakan coba lagi.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
+    const positionOptions = POSITION_OPTIONS.includes(initialRole)
+        ? POSITION_OPTIONS
+        : [initialRole, ...POSITION_OPTIONS];
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
@@ -39,7 +68,7 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                         <h3 className="font-serif text-xl font-bold text-charcoal">Apply for {formData.position || 'Superteam'}</h3>
                     </div>
                     <button 
-                        onClick={onClose}
+                        onClick={resetAndClose}
                         className="p-1 text-gray-400 hover:text-charcoal hover:bg-gray-100 rounded-full transition"
                         aria-label="Close modal"
                     >
@@ -126,12 +155,9 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                             onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                                             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition bg-white"
                                         >
-                                            <option value="Senior Eyelash Artist">Senior Eyelash Artist</option>
-                                            <option value="Nail Art Specialist">Nail Art Specialist</option>
-                                            <option value="Logistics & Warehouse Staff">Logistics & Warehouse Staff</option>
-                                            <option value="Supply Chain Coordinator">Supply Chain Coordinator</option>
-                                            <option value="Digital Marketing & Social Media">Digital Marketing & Social Media</option>
-                                            <option value="Internship Program (Magang KMP)">Internship Program (Magang KMP)</option>
+                                            {positionOptions.map((option) => (
+                                                <option key={option} value={option}>{option}</option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
@@ -181,6 +207,13 @@ export default function JobApplicationModal({ isOpen, onClose, initialRole = 'Su
                                     className="w-full p-3 text-sm border border-gray-200 rounded-xl focus:border-charcoal focus:ring-1 focus:ring-charcoal outline-none transition resize-none"
                                 />
                             </div>
+
+                            {errorMessage && (
+                                <div className="flex items-start gap-2 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl px-3 py-2.5">
+                                    <AlertCircle size={15} className="shrink-0 mt-0.5" />
+                                    <span>{errorMessage}</span>
+                                </div>
+                            )}
 
                             <button 
                                 type="submit" 

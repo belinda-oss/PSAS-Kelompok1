@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(NailDesignSeeder::class);
         $this->call(NailArtExampleSeeder::class);
+        $this->call(JobApplicationSeeder::class);
     }
 }

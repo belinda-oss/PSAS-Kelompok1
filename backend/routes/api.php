@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\NailArtExampleController as AdminNailArtExampleController;
 use App\Http\Controllers\Admin\NailDesignController as AdminNailDesignController;
+use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\NailAnalysisController;
 use App\Http\Controllers\NailArtExampleController;
 use App\Http\Controllers\NailArtGenerationController;
@@ -113,3 +115,26 @@ Route::patch('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleCo
     ->name('api.admin.nail-art-examples.toggle');
 Route::delete('/admin/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'destroy'])
     ->name('api.admin.nail-art-examples.destroy');
+
+/*
+|--------------------------------------------------------------------------
+| Recruitment / Job Applications
+|--------------------------------------------------------------------------
+| Form "APPLY NOW" di halaman /recruit menyimpan lamaran ke tabel
+| `job_applications`. Dashboard admin membaca, memoderasi status, dan
+| menghapus lamaran dari endpoint /api/admin/job-applications.
+|
+*/
+
+// Kirim lamaran dari halaman publik Recruit
+Route::post('/job-applications', [JobApplicationController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('api.job-applications.store');
+
+// CRUD dashboard admin
+Route::get('/admin/job-applications', [AdminJobApplicationController::class, 'index'])
+    ->name('api.admin.job-applications.index');
+Route::patch('/admin/job-applications/{jobApplication}', [AdminJobApplicationController::class, 'update'])
+    ->name('api.admin.job-applications.update');
+Route::delete('/admin/job-applications/{jobApplication}', [AdminJobApplicationController::class, 'destroy'])
+    ->name('api.admin.job-applications.destroy');
