@@ -1,269 +1,147 @@
 /**
  * servicesService.js
  * ─────────────────────────────────────────────────────────────────────────────
- * Shared services data layer — dual-mode (REST API + localStorage real-time bridge)
+ * Data layer layanan Shofi Eyelash — terhubung langsung ke tabel `services`.
  *
- * • Public page (/shofi-eyelash) fetches active services (is_active: true).
- * • Admin page (/admin/layanan) performs full CRUD (Create, Read, Update, Delete)
- *   and toggles visibility (is_active / status).
- * • Works immediately with offline/localStorage fallback, and syncs with Laravel
- *   API (GET /api/services, POST, PUT, PATCH, DELETE) when available.
+ * • Public page (/shofi-eyelash) membaca layanan dengan is_visible = true
+ *   dari GET /api/services.
+ * • Admin page (/admin/layanan) melakukan CRUD penuh lewat
+ *   GET/POST/PUT/PATCH/DELETE /api/admin/services (token Sanctum).
+ * • Gambar diunggah sebagai file (multipart/form-data) dan disimpan backend
+ *   sebagai data URL Base64 di kolom `image`.
+ * • Tidak ada data dummy / seeding / fallback localStorage.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+import { adminFetch } from './adminAuth';
+
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '');
-const LS_KEY = 'gsu_services_v1';
+const UPDATE_EVENT = 'gsu_services_updated';
 
-// Seed initial services matching Shofi Eyelash catalogue
-const SEED_SERVICES = [
-    {
-        id: 1,
-        title: 'Eyebrow & Lip Embroidery',
-        price: 'From $150',
-        description: 'Wake up effortlessly beautiful with our semi-permanent makeup solutions. Precision techniques for natural-looking enhancement.',
-        image: '/assets/images/service-eyebrow.jpg',
-        status: 'Aktif',
-        is_active: true,
-        created_at: new Date().toISOString(),
-    },
-    {
-        id: 2,
-        title: 'Eyelash Extension',
-        price: 'From $80',
-        description: 'Customized lash designs tailored to your eye shape. Choose from classic, volume, or hybrid sets for the perfect flutter.',
-        image: '/assets/images/service-eyelash.jpg',
-        status: 'Aktif',
-        is_active: true,
-        created_at: new Date().toISOString(),
-    },
-    {
-        id: 3,
-        title: 'Nail Art (Motif, Plain, 3D)',
-        price: 'From $45',
-        description: 'Express your style with our premium manicure services. Featuring intricate motifs, classic solids, and stunning 3D designs.',
-        image: '/assets/images/service-nail-art.jpg',
-        status: 'Aktif',
-        is_active: true,
-        created_at: new Date().toISOString(),
-    },
-    {
-        id: 4,
-        title: 'Foot Spa',
-        price: 'From $60',
-        description: 'A rejuvenating retreat for your feet. Includes deep exfoliation, soothing massage, and a restorative hydrating mask.',
-        image: '/assets/images/service-foot-spa.jpg',
-        status: 'Aktif',
-        is_active: true,
-        created_at: new Date().toISOString(),
-    },
-];
+// Bersihkan cache dummy lama dari versi localStorage sebelumnya.
+try {
+    localStorage.removeItem('gsu_services_v1');
+} catch (_) {}
 
-const IMAGE_MIGRATIONS = {
-    'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80': '/assets/images/service-eyebrow.jpg',
-    'https://images.unsplash.com/photo-1583001931096-959e9a1a6223?auto=format&fit=crop&w=800&q=80': '/assets/images/service-eyelash.jpg',
-    'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80': '/assets/images/service-nail-art.jpg',
-    'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80': '/assets/images/service-foot-spa.jpg',
-    'https://images.unsplash.com/photo-1560750588-73207b1ef5b8?auto=format&fit=crop&w=800&q=80': '/assets/images/service-eyelash.jpg',
-};
-
-function lsRead() {
-    try {
-        const raw = localStorage.getItem(LS_KEY);
-        if (raw) {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                const migrated = parsed.map(s => IMAGE_MIGRATIONS[s.image] ? { ...s, image: IMAGE_MIGRATIONS[s.image] } : s);
-                if (migrated.some((s, i) => s.image !== parsed[i].image)) {
-                    localStorage.setItem(LS_KEY, JSON.stringify(migrated));
-                }
-                return migrated;
-            }
-        }
-    } catch (_) {}
-    localStorage.setItem(LS_KEY, JSON.stringify(SEED_SERVICES));
-    return SEED_SERVICES;
+function notifyUpdated() {
+    window.dispatchEvent(new Event(UPDATE_EVENT));
 }
 
-function lsWrite(services) {
+async function readJson(res) {
     try {
-        localStorage.setItem(LS_KEY, JSON.stringify(services));
-        window.dispatchEvent(new Event('gsu_services_updated'));
-    } catch (e) {
-        console.error('Error writing services to localStorage', e);
-    }
-}
-
-let backendCheckCache = { alive: false, lastCheck: 0 };
-async function isBackendAlive() {
-    const now = Date.now();
-    if (now - backendCheckCache.lastCheck < 10000) {
-        return backendCheckCache.alive;
-    }
-    try {
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 1200);
-        const res = await fetch(`${BASE_URL}/api/services?active=true&limit=1`, {
-            headers: { Accept: 'application/json' },
-            signal: ctrl.signal,
-        });
-        clearTimeout(timer);
-        backendCheckCache = { alive: res.ok, lastCheck: now };
-        return res.ok;
+        return await res.json();
     } catch (_) {
-        backendCheckCache = { alive: false, lastCheck: now };
-        return false;
+        return {};
     }
 }
 
+function extractList(data) {
+    if (Array.isArray(data?.data)) return data.data;
+    if (Array.isArray(data?.data?.data)) return data.data.data;
+    return [];
+}
+
+async function ensureOk(res, fallbackMessage) {
+    const data = await readJson(res);
+    if (!res.ok || !data.success) {
+        const error = new Error(data.message || fallbackMessage);
+        error.status = res.status;
+        error.errors = data.errors || null;
+        throw error;
+    }
+    return data;
+}
+
+function buildFormData(payload, file) {
+    const formData = new FormData();
+    ['name', 'price', 'description'].forEach((key) => {
+        if (payload[key] !== undefined && payload[key] !== null) {
+            formData.append(key, payload[key]);
+        }
+    });
+    if (typeof payload.is_visible === 'boolean') {
+        formData.append('is_visible', payload.is_visible ? '1' : '0');
+    }
+    if (file) formData.append('image', file);
+    return formData;
+}
+
 /**
- * Fetch active services for public page (/shofi-eyelash)
+ * Layanan yang tampil di website publik (is_visible = true).
  */
-export async function fetchActiveServices() {
-    const alive = await isBackendAlive();
-    if (alive) {
-        try {
-            const res = await fetch(`${BASE_URL}/api/services?active=true`, {
-                headers: { Accept: 'application/json' },
-            });
-            const data = await res.json();
-            if (data.success) {
-                const list = Array.isArray(data.data) ? data.data : (data.data?.data ?? []);
-                return list;
-            }
-        } catch (_) {}
-    }
-    return lsRead().filter(s => s.is_active === true || s.status === 'Aktif');
+export async function fetchVisibleServices() {
+    const res = await fetch(`${BASE_URL}/api/services`, {
+        headers: { Accept: 'application/json' },
+    });
+    const data = await ensureOk(res, 'Gagal memuat layanan.');
+    return extractList(data).filter((service) => service.is_visible !== false);
 }
 
+// Alias untuk kompatibilitas dengan import lama.
+export const fetchActiveServices = fetchVisibleServices;
+
 /**
- * Fetch all services for admin panel (/admin/layanan)
+ * Semua layanan (tampil + disembunyikan) untuk panel admin.
  */
 export async function fetchAllServices() {
-    const alive = await isBackendAlive();
-    if (alive) {
-        try {
-            const res = await fetch(`${BASE_URL}/api/services`, {
-                headers: { Accept: 'application/json' },
-            });
-            const data = await res.json();
-            if (data.success) {
-                const list = Array.isArray(data.data) ? data.data : (data.data?.data ?? []);
-                return list;
-            }
-        } catch (_) {}
-    }
-    return lsRead();
+    const res = await adminFetch('/api/admin/services');
+    const data = await ensureOk(res, 'Gagal memuat daftar layanan.');
+    return extractList(data);
 }
 
 /**
- * Create a new service (Admin)
+ * Tambah layanan baru. `file` (gambar) wajib.
  */
-export async function createService(serviceData) {
-    const newService = {
-        id: Date.now(),
-        title: serviceData.title,
-        price: serviceData.price,
-        description: serviceData.description,
-        image: serviceData.image || '/assets/images/service-eyelash.jpg',
-        status: serviceData.status || 'Aktif',
-        is_active: serviceData.status === 'Aktif',
-        created_at: new Date().toISOString(),
-    };
-
-    const all = lsRead();
-    lsWrite([newService, ...all]);
-
-    const alive = await isBackendAlive();
-    if (alive) {
-        try {
-            await fetch(`${BASE_URL}/api/services`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify(newService),
-            });
-        } catch (_) {}
-    }
-
-    return newService;
-}
-
-/**
- * Update an existing service (Admin)
- */
-export async function updateService(id, updatedData) {
-    const all = lsRead();
-    const updated = all.map(s => {
-        if (String(s.id) === String(id)) {
-            const is_active = updatedData.is_active !== undefined 
-                ? updatedData.is_active 
-                : (updatedData.status ? updatedData.status === 'Aktif' : s.is_active);
-            const status = updatedData.status || (is_active ? 'Aktif' : 'Nonaktif');
-            return { ...s, ...updatedData, is_active, status };
-        }
-        return s;
+export async function createService(payload, file) {
+    const res = await adminFetch('/api/admin/services', {
+        method: 'POST',
+        body: buildFormData({ is_visible: true, ...payload }, file),
     });
-    lsWrite(updated);
-
-    const alive = await isBackendAlive();
-    if (alive) {
-        try {
-            await fetch(`${BASE_URL}/api/services/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify(updatedData),
-            });
-        } catch (_) {}
-    }
+    const data = await ensureOk(res, 'Gagal menyimpan layanan.');
+    notifyUpdated();
+    return data.data;
 }
 
 /**
- * Toggle service visibility (Admin)
+ * Perbarui layanan. `file` opsional — bila kosong, gambar lama dipertahankan.
+ * Memakai POST + _method=PUT karena PHP tidak mem-parse multipart pada PUT.
  */
-export async function toggleServiceVisibility(id) {
-    const all = lsRead();
-    let nextActive = false;
-    const updated = all.map(s => {
-        if (String(s.id) === String(id)) {
-            nextActive = !s.is_active;
-            return {
-                ...s,
-                is_active: nextActive,
-                status: nextActive ? 'Aktif' : 'Nonaktif',
-            };
-        }
-        return s;
+export async function updateService(id, payload, file = null) {
+    const formData = buildFormData(payload, file);
+    formData.append('_method', 'PUT');
+
+    const res = await adminFetch(`/api/admin/services/${id}`, {
+        method: 'POST',
+        body: formData,
     });
-    lsWrite(updated);
-
-    const alive = await isBackendAlive();
-    if (alive) {
-        try {
-            await fetch(`${BASE_URL}/api/services/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                body: JSON.stringify({ is_active: nextActive }),
-            });
-        } catch (_) {}
-    }
-
-    return nextActive;
+    const data = await ensureOk(res, 'Gagal memperbarui layanan.');
+    notifyUpdated();
+    return data.data;
 }
 
 /**
- * Delete a service (Admin)
+ * Toggle "Tampil di Web" / "Sembunyikan". Mengembalikan status is_visible baru.
+ */
+export async function toggleServiceVisibility(id, isVisible) {
+    const body = typeof isVisible === 'boolean' ? { is_visible: isVisible } : {};
+    const res = await adminFetch(`/api/admin/services/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    const data = await ensureOk(res, 'Gagal mengubah status layanan.');
+    notifyUpdated();
+    return Boolean(data.data?.is_visible);
+}
+
+/**
+ * Hapus layanan.
  */
 export async function deleteService(id) {
-    const all = lsRead();
-    const filtered = all.filter(s => String(s.id) !== String(id));
-    lsWrite(filtered);
-
-    const alive = await isBackendAlive();
-    if (alive) {
-        try {
-            await fetch(`${BASE_URL}/api/services/${id}`, {
-                method: 'DELETE',
-                headers: { Accept: 'application/json' },
-            });
-        } catch (_) {}
-    }
+    const res = await adminFetch(`/api/admin/services/${id}`, {
+        method: 'DELETE',
+    });
+    await ensureOk(res, 'Gagal menghapus layanan.');
+    notifyUpdated();
+    return true;
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star, CheckCircle2, Loader2 } from 'lucide-react';
 import { fetchApprovedReviews, submitReview } from '../services/reviewsService';
-import { fetchActiveServices } from '../services/servicesService';
+import { fetchVisibleServices } from '../services/servicesService';
 import NailArtDecoratorSection from '../components/sections/NailArtDecoratorSection';
 
 // Stagger reveal variants for card grids (one-by-one pop-up)
@@ -17,17 +17,18 @@ const cardVariants = {
 };
 
 export default function ShofiEyelashPage() {
-    // 1. Services State — dynamically loaded from servicesService (localStorage ↔ API)
+    // 1. Services State — loaded from the `services` table (is_visible = true only)
     const [services, setServices] = useState([]);
     const [servicesLoading, setServicesLoading] = useState(true);
 
     const loadServices = async () => {
         setServicesLoading(true);
         try {
-            const data = await fetchActiveServices();
+            const data = await fetchVisibleServices();
             setServices(data);
         } catch (err) {
             console.error('Failed to load services:', err);
+            setServices([]);
         } finally {
             setServicesLoading(false);
         }
@@ -68,13 +69,11 @@ export default function ShofiEyelashPage() {
         window.addEventListener('gsu_reviews_updated', handleReviewsUpdate);
         window.addEventListener('gsu_services_updated', handleServicesUpdate);
         window.addEventListener('storage', handleReviewsUpdate);
-        window.addEventListener('storage', handleServicesUpdate);
 
         return () => {
             window.removeEventListener('gsu_reviews_updated', handleReviewsUpdate);
             window.removeEventListener('gsu_services_updated', handleServicesUpdate);
             window.removeEventListener('storage', handleReviewsUpdate);
-            window.removeEventListener('storage', handleServicesUpdate);
         };
     }, []);
 
@@ -233,8 +232,8 @@ export default function ShofiEyelashPage() {
                             <span>Memuat katalog layanan...</span>
                         </div>
                     ) : services.length === 0 ? (
-                        <div className="py-16 text-center text-xs text-gray-400 bg-white border border-dashed border-gray-200 max-w-xl mx-auto rounded-2xl">
-                            Layanan belum tersedia saat ini.
+                        <div className="py-16 px-6 flex items-center justify-center text-center text-sm text-gray-400 font-light bg-white border border-dashed border-gray-200 max-w-xl mx-auto rounded-2xl">
+                            Belum ada layanan yang tersedia
                         </div>
                     ) : (
                         <motion.div
@@ -250,12 +249,12 @@ export default function ShofiEyelashPage() {
                                     variants={cardVariants}
                                     className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm group flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
                                     data-aos="fade-up"
-                                    data-aos-delay={srv.id === 'embroidery' || srv.id === 'eyelash' ? 0 : 150}
+                                    data-aos-delay={idx % 2 === 0 ? 0 : 150}
                                 >
                                     <div className="h-56 sm:h-64 overflow-hidden bg-neutral-100">
                                         <img 
                                             src={srv.image} 
-                                            alt={srv.title} 
+                                            alt={srv.name} 
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                             loading="lazy"
                                         />
@@ -264,7 +263,7 @@ export default function ShofiEyelashPage() {
                                         <div>
                                             <div className="flex items-baseline justify-between gap-4 mb-2.5">
                                                 <h3 className="font-serif text-lg sm:text-xl font-medium text-charcoal">
-                                                    {srv.title}
+                                                    {srv.name}
                                                 </h3>
                                                 <span className="text-xs sm:text-sm font-semibold text-[#b08556] tracking-wide whitespace-nowrap">
                                                     {srv.price}

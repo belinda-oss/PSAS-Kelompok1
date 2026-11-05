@@ -5,12 +5,14 @@ use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationCo
 use App\Http\Controllers\Admin\NailArtExampleController as AdminNailArtExampleController;
 use App\Http\Controllers\Admin\NailDesignController as AdminNailDesignController;
 use App\Http\Controllers\Admin\ReviewModerationController as AdminReviewModerationController;
+use App\Http\Controllers\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\NailAnalysisController;
 use App\Http\Controllers\NailArtExampleController;
 use App\Http\Controllers\NailArtGenerationController;
 use App\Http\Controllers\NailDesignController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +42,18 @@ Route::get('/reviews', [ReviewController::class, 'index'])
 Route::post('/reviews', [ReviewController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('api.reviews.store');
+
+/*
+|--------------------------------------------------------------------------
+| Services (Layanan Shofi Eyelash)
+|--------------------------------------------------------------------------
+| Section "Our Services" hanya membaca layanan dengan is_visible = true dari
+| tabel `services`. CRUD lengkap ada di /api/admin/services.
+|
+*/
+
+Route::get('/services', [ServiceController::class, 'index'])
+    ->name('api.services.index');
 
 /*
 |--------------------------------------------------------------------------
@@ -154,6 +168,18 @@ Route::prefix('admin')->group(function () {
             ->name('api.admin.nail-art-examples.toggle');
         Route::delete('/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'destroy'])
             ->name('api.admin.nail-art-examples.destroy');
+
+        // CRUD layanan Shofi Eyelash (dashboard admin)
+        Route::get('/services', [AdminServiceController::class, 'index'])
+            ->name('api.admin.services.index');
+        Route::post('/services', [AdminServiceController::class, 'store'])
+            ->name('api.admin.services.store');
+        Route::put('/services/{service}', [AdminServiceController::class, 'update'])
+            ->name('api.admin.services.update');
+        Route::patch('/services/{service}', [AdminServiceController::class, 'toggle'])
+            ->name('api.admin.services.toggle');
+        Route::delete('/services/{service}', [AdminServiceController::class, 'destroy'])
+            ->name('api.admin.services.destroy');
 
         // Moderasi ulasan website (dashboard admin)
         Route::get('/reviews', [AdminReviewModerationController::class, 'index'])

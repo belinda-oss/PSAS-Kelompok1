@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, Plus, Pencil, X, Check, Trash2, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
@@ -9,29 +10,35 @@ import {
   deleteService,
 } from '../../services/servicesService';
 
+const EMPTY_FORM = {
+  name: '',
+  price: '',
+  description: '',
+};
+
 export default function AdminLayananPage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [notification, setNotification] = useState(null);
 
   // Modal State for Add / Edit
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    price: '',
-    description: '',
-    image: '',
-    status: 'Aktif',
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [imageFile, setImageFile] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef(null);
 
   const loadData = async () => {
     try {
       const data = await fetchAllServices();
       setServices(data);
+      setLoadError(null);
     } catch (err) {
       console.error('Failed to load services:', err);
+      setLoadError(err.message || 'Gagal memuat daftar layanan.');
     } finally {
       setLoading(false);
     }
@@ -39,90 +46,122 @@ export default function AdminLayananPage() {
 
   useEffect(() => {
     loadData();
-
-    const handleUpdate = () => loadData();
-    window.addEventListener('gsu_services_updated', handleUpdate);
-    window.addEventListener('storage', handleUpdate);
-    return () => {
-      window.removeEventListener('gsu_services_updated', handleUpdate);
-      window.removeEventListener('storage', handleUpdate);
-    };
   }, []);
+
+  // Kunci scroll halaman saat modal terbuka
+  useEffect(() => {
+    if (!isModalOpen) return undefined;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const handleKey = (e) => {
+      if (e.key === 'Escape' && !saving) setIsModalOpen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener('keydown', handleKey);
+    };
+  }, [isModalOpen, saving]);
 
   const showToast = (msg) => {
     setNotification(msg);
     setTimeout(() => setNotification(null), 3000);
   };
 
+  const resetFileInput = () => {
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleOpenAdd = () => {
     setEditingService(null);
-    setFormData({
-      title: '',
-      price: '',
-      description: '',
-      image: '/assets/images/service-eyelash.jpg',
-      status: 'Aktif',
-    });
+    setFormData(EMPTY_FORM);
+    resetFileInput();
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (item) => {
     setEditingService(item);
     setFormData({
-      title: item.title,
-      price: item.price,
-      description: item.description,
-      image: item.image,
-      status: item.status || (item.is_active ? 'Aktif' : 'Nonaktif'),
+      name: item.name || '',
+      price: item.price || '',
+      description: item.description || '',
     });
+    resetFileInput();
     setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    if (saving) return;
+    setIsModalOpen(false);
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (saving) return;
+
+    if (!editingService && !imageFile) {
+      showToast('Silakan pilih gambar layanan terlebih dahulu.');
+      return;
+    }
+
+    setSaving(true);
     try {
       if (editingService) {
-        await updateService(editingService.id, formData);
-        showToast(`Layanan "${formData.title}" berhasil diperbarui.`);
+        // Gambar lama dipertahankan bila tidak ada file baru yang dipilih
+        await updateService(editingService.id, formData, imageFile);
+        showToast(`Layanan "${formData.name}" berhasil diperbarui.`);
       } else {
-        await createService(formData);
-        showToast(`Layanan baru "${formData.title}" berhasil ditambahkan.`);
+        await createService(formData, imageFile);
+        showToast(`Layanan baru "${formData.name}" berhasil ditambahkan.`);
       }
       await loadData();
       setIsModalOpen(false);
     } catch (err) {
       console.error('Error saving service:', err);
-      showToast('Gagal menyimpan layanan.');
+      showToast(err.message || 'Gagal menyimpan layanan.');
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleToggleVisibility = async (service) => {
-    const isNowActive = await toggleServiceVisibility(service.id);
-    await loadData();
-    showToast(
-      isNowActive
-        ? `Layanan "${service.title}" kini tampil di website publik.`
-        : `Layanan "${service.title}" disembunyikan dari website publik.`
-    );
+    try {
+      const isNowVisible = await toggleServiceVisibility(service.id, !service.is_visible);
+      await loadData();
+      showToast(
+        isNowVisible
+          ? `Layanan "${service.name}" kini tampil di website publik.`
+          : `Layanan "${service.name}" disembunyikan dari website publik.`
+      );
+    } catch (err) {
+      console.error('Error toggling service:', err);
+      showToast(err.message || 'Gagal mengubah status layanan.');
+    }
   };
 
-  const handleDelete = async (id, title) => {
-    if (window.confirm(`Apakah Anda yakin ingin menghapus layanan "${title}"?`)) {
-      await deleteService(id);
-      await loadData();
-      showToast(`Layanan "${title}" telah dihapus.`);
+  const handleDelete = async (id, name) => {
+    if (window.confirm(`Apakah Anda yakin ingin menghapus layanan "${name}"?`)) {
+      try {
+        await deleteService(id);
+        await loadData();
+        showToast(`Layanan "${name}" telah dihapus.`);
+      } catch (err) {
+        console.error('Error deleting service:', err);
+        showToast(err.message || 'Gagal menghapus layanan.');
+      }
     }
   };
 
   const filteredServices = services.filter((s) =>
-    s.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    s.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="space-y-8 font-sans">
       {/* Toast Alert */}
       {notification && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#1f2421] text-white text-xs px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-2.5 animate-fadeIn border border-white/10">
+        <div className="fixed bottom-6 right-6 z-[10000] bg-[#1f2421] text-white text-xs px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-2.5 animate-fadeIn border border-white/10">
           <Check className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{notification}</span>
         </div>
@@ -178,13 +217,21 @@ export default function AdminLayananPage() {
           <div className="col-span-full py-16 text-center text-xs text-gray-400 rounded-2xl">
             Memuat daftar layanan...
           </div>
+        ) : loadError ? (
+          <div className="col-span-full py-16 text-center text-xs text-red-500 bg-white border border-dashed border-red-200 rounded-2xl">
+            {loadError}
+          </div>
+        ) : services.length === 0 ? (
+          <div className="col-span-full py-16 px-6 text-center text-xs text-gray-400 bg-white border border-dashed border-gray-200 rounded-2xl leading-relaxed">
+            Belum ada layanan yang ditambahkan. Klik &apos;+ TAMBAH LAYANAN BARU&apos; untuk mulai menambahkan layanan.
+          </div>
         ) : filteredServices.length === 0 ? (
           <div className="col-span-full py-16 text-center text-xs text-gray-400 bg-white border border-dashed border-gray-200 rounded-2xl">
             Tidak ada layanan yang ditemukan untuk "{searchQuery}".
           </div>
         ) : (
           filteredServices.map((service, index) => {
-            const isShown = service.is_active !== false && service.status !== 'Nonaktif';
+            const isShown = Boolean(service.is_visible);
 
             return (
               <motion.div
@@ -199,7 +246,7 @@ export default function AdminLayananPage() {
                 <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-gray-100">
                   <img
                     src={service.image}
-                    alt={service.title}
+                    alt={service.name}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
                   {isShown ? (
@@ -221,7 +268,7 @@ export default function AdminLayananPage() {
                     {/* Title & Price */}
                     <div className="flex items-baseline justify-between gap-2 mb-2">
                       <h2 className="font-serif text-xl font-normal text-[#1f2421] tracking-wide">
-                        {service.title}
+                        {service.name}
                       </h2>
                       <span className="text-xs sm:text-sm font-semibold text-[#b08556] font-serif shrink-0">
                         {service.price}
@@ -269,7 +316,7 @@ export default function AdminLayananPage() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleDelete(service.id, service.title)}
+                        onClick={() => handleDelete(service.id, service.name)}
                         className="text-xs text-gray-400 hover:text-red-600 transition-colors p-1"
                         title="Hapus Layanan"
                       >
@@ -284,13 +331,21 @@ export default function AdminLayananPage() {
           )}
       </div>
 
-      {/* Modal for Add / Edit */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+      {/* Modal for Add / Edit — dirender via portal ke <body> agar backdrop
+          menutupi 100% viewport termasuk navbar admin (tidak terpengaruh
+          margin space-y-* atau stacking context parent). */}
+      {isModalOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-sans"
+          style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', margin: 0, zIndex: 9999 }}
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) handleCloseModal();
+          }}
+        >
           <div className="bg-white max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative rounded-3xl">
             <button
               type="button"
-              onClick={() => setIsModalOpen(false)}
+              onClick={handleCloseModal}
               className="absolute top-5 right-5 text-gray-400 hover:text-gray-700"
               aria-label="Tutup"
             >
@@ -313,8 +368,8 @@ export default function AdminLayananPage() {
                   <input
                     type="text"
                     required
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Contoh: Russian Volume Eyelash"
                     className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] transition-all rounded-xl"
                   />
@@ -335,17 +390,26 @@ export default function AdminLayananPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-semibold tracking-widest text-gray-600 uppercase mb-1.5">
-                    URL GAMBAR
+                  <label
+                    htmlFor="service-image-input"
+                    className="block text-[10px] font-semibold tracking-widest text-gray-600 uppercase mb-1.5"
+                  >
+                    GAMBAR LAYANAN
                   </label>
                   <input
-                    type="url"
-                    required
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="/assets/images/..."
-                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] transition-all rounded-xl"
+                    id="service-image-input"
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    required={!editingService}
+                    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                    className="w-full px-3 py-2 border border-gray-200 focus:outline-none focus:border-[#c49a6c] transition-all rounded-xl text-gray-600 cursor-pointer file:mr-3 file:px-3 file:py-1 file:border-0 file:rounded-full file:bg-[#1f2421] file:text-white file:text-[10px] file:font-medium file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-[#c49a6c] file:transition-colors"
                   />
+                  {editingService && !imageFile && (
+                    <p className="mt-1.5 text-[10px] text-gray-400 font-light">
+                      Biarkan kosong untuk mempertahankan gambar saat ini.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -365,22 +429,24 @@ export default function AdminLayananPage() {
                 <div className="pt-2 flex justify-end gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsModalOpen(false)}
+                    onClick={handleCloseModal}
                     className="px-4 py-2 border border-gray-200 text-gray-600 hover:text-[#1f2421] rounded-full transition-colors"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-[#1f2421] text-white hover:bg-[#c49a6c] rounded-full transition-colors font-medium tracking-wide uppercase text-[11px]"
+                    disabled={saving}
+                    className="px-6 py-2 bg-[#1f2421] text-white hover:bg-[#c49a6c] rounded-full transition-colors font-medium tracking-wide uppercase text-[11px] disabled:opacity-60 disabled:cursor-wait"
                   >
-                    Simpan Layanan
+                    {saving ? 'Menyimpan...' : 'Simpan Layanan'}
                   </button>
                 </div>
               </form>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
