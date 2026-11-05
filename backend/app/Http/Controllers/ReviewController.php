@@ -19,10 +19,13 @@ class ReviewController extends Controller
     {
         $reviews = Review::where('status', 'published')
             ->latest('created_at')
-            ->get();
+            ->get()
+            ->map(fn (Review $review) => $review->toApiArray())
+            ->values();
 
         return response()->json([
             'success' => true,
+            'count' => $reviews->count(),
             'data' => $reviews,
         ], 200);
     }
@@ -50,7 +53,7 @@ class ReviewController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Ulasan kamu sedang ditinjau sebelum tampil.',
-            'data' => $review,
+            'data' => $review->toApiArray(),
         ], 201);
     }
 }

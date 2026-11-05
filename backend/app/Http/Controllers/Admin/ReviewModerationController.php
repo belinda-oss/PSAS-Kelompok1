@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Review;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ReviewModerationController extends Controller
 {
     /**
-     * Display listing of reviews for moderation with status filter as JSON.
+     * List every review (pending, approved, hidden) for the admin dashboard.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
@@ -21,67 +22,81 @@ class ReviewModerationController extends Controller
 
         $query = Review::query()->latest('created_at');
 
-        if (in_array($status, ['pending', 'published', 'rejected'], true)) {
-            $query->where('status', $status);
+        $dbStatus = Review::toDatabaseStatus((string) $status);
+        if ($dbStatus !== null) {
+            $query->where('status', $dbStatus);
         }
 
-        $reviews = $query->paginate(15)->withQueryString();
+        $reviews = $query->get();
 
         $counts = [
             'all' => Review::count(),
             'pending' => Review::where('status', 'pending')->count(),
-            'published' => Review::where('status', 'published')->count(),
-            'rejected' => Review::where('status', 'rejected')->count(),
+            'approved' => Review::where('status', 'published')->count(),
+            'hidden' => Review::where('status', 'rejected')->count(),
         ];
 
         return response()->json([
             'success' => true,
+            'message' => 'Daftar ulasan berhasil dimuat.',
             'filter' => $status,
             'counts' => $counts,
-            'data' => $reviews,
+            'count' => $reviews->count(),
+            'data' => $reviews->map(fn (Review $review) => $review->toApiArray())->values(),
         ], 200);
     }
 
     /**
-     * Publish review and set published_at timestamp.
+     * Update a review moderation status.
      *
-     * @param int|string $id
+     * Accepted statuses: pending, approved, hidden.
+     *
+     * @param  Request  $request
+     * @param  Review  $review
      * @return JsonResponse
      */
-    public function publish($id): JsonResponse
+    public function update(Request $request, Review $review): JsonResponse
     {
-        $review = Review::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:pending,approved,hidden,published,rejected',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $dbStatus = Review::toDatabaseStatus($validator->validated()['status']);
 
         $review->update([
-            'status' => 'published',
-            'published_at' => now(),
+            'status' => $dbStatus,
+            'published_at' => $dbStatus === 'published' ? ($review->published_at ?? now()) : null,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => "Ulasan dari '{$review->name}' telah berhasil diterbitkan.",
-            'data' => $review,
+            'message' => "Ulasan dari '{$review->name}' berhasil diperbarui.",
+            'data' => $review->fresh()->toApiArray(),
         ], 200);
     }
 
     /**
-     * Reject review.
+     * Delete a review permanently.
      *
-     * @param int|string $id
+     * @param  Review  $review
      * @return JsonResponse
      */
-    public function reject($id): JsonResponse
+    public function destroy(Review $review): JsonResponse
     {
-        $review = Review::findOrFail($id);
-
-        $review->update([
-            'status' => 'rejected',
-        ]);
+        $name = $review->name;
+        $review->delete();
 
         return response()->json([
             'success' => true,
-            'message' => "Ulasan dari '{$review->name}' telah ditolak.",
-            'data' => $review,
+            'message' => "Ulasan dari '{$name}' telah dihapus.",
         ], 200);
     }
 }

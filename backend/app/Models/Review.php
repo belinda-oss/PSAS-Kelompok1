@@ -50,6 +50,50 @@ class Review extends Model
     ];
 
     /**
+     * Map a frontend status ("approved" / "hidden" / "pending") to the
+     * database status stored in the `reviews.status` enum column.
+     */
+    public static function toDatabaseStatus(string $status): ?string
+    {
+        return match ($status) {
+            'approved', 'published' => 'published',
+            'hidden', 'rejected' => 'rejected',
+            'pending' => 'pending',
+            default => null,
+        };
+    }
+
+    /**
+     * Map the database status to the status vocabulary used by the frontend.
+     */
+    public static function toFrontendStatus(?string $status): string
+    {
+        return match ($status) {
+            'published' => 'approved',
+            'rejected' => 'hidden',
+            default => 'pending',
+        };
+    }
+
+    /**
+     * Serialize the review for API responses consumed by the frontend.
+     *
+     * @return array<string, mixed>
+     */
+    public function toApiArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'rating' => (int) $this->rating,
+            'comment' => $this->comment,
+            'status' => self::toFrontendStatus($this->status),
+            'created_at' => optional($this->created_at)->toIso8601String(),
+            'published_at' => optional($this->published_at)->toIso8601String(),
+        ];
+    }
+
+    /**
      * Application-level validation rules for Review model.
      *
      * @return array<string, string>

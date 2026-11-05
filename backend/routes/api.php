@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminJobApplicationController;
 use App\Http\Controllers\Admin\NailArtExampleController as AdminNailArtExampleController;
 use App\Http\Controllers\Admin\NailDesignController as AdminNailDesignController;
+use App\Http\Controllers\Admin\ReviewModerationController as AdminReviewModerationController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\NailAnalysisController;
 use App\Http\Controllers\NailArtExampleController;
@@ -153,6 +154,14 @@ Route::prefix('admin')->group(function () {
             ->name('api.admin.nail-art-examples.toggle');
         Route::delete('/nail-art-examples/{nailArtExample}', [AdminNailArtExampleController::class, 'destroy'])
             ->name('api.admin.nail-art-examples.destroy');
+
+        // Moderasi ulasan website (dashboard admin)
+        Route::get('/reviews', [AdminReviewModerationController::class, 'index'])
+            ->name('api.admin.reviews.index');
+        Route::patch('/reviews/{review}', [AdminReviewModerationController::class, 'update'])
+            ->name('api.admin.reviews.update');
+        Route::delete('/reviews/{review}', [AdminReviewModerationController::class, 'destroy'])
+            ->name('api.admin.reviews.destroy');
 
         // CRUD lamaran kerja (dashboard admin)
         Route::get('/job-applications', [AdminJobApplicationController::class, 'index'])
